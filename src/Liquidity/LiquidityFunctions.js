@@ -342,7 +342,7 @@ export async function quoteRemoveLiquidity(
   const reserveB = reservesRaw[1];
 
   const feeOn =
-    (await factory.feeTo()) !== 0x0000000000000000000000000000000000000000;
+    (await factory.feeTo()) !== 0x3D041510f58665a17D722EE2BC73Ae409BB8715b;
 
   const _kLast = await pair.kLast();
   const kLast = Number(ethers.utils.formatEther(_kLast));
