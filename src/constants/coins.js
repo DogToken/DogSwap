@@ -248,11 +248,6 @@ const MINTMECoins = [
     address: "", // Weth address is fetched from the router
   },
   {
-    name: "Wrapped MintMe",
-    abbr: "WMINT",
-    address: "0x067fa59cd5d5cd62be16c8d1df0d80e35a1d88dc",
-  },
-  {
     name: "DogSwap",
     abbr: "DOGSWAP",
     address: "0x1628160C66e0330090248a163A34Ba5B5A82D4f7",
