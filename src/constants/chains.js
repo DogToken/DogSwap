@@ -9,7 +9,7 @@ export const ChainId = {
   DEVNET: 65110000,
   AUTONITY: 65010000,
   PARASTATE: 123,
-  GANCHE: 1337
+  GANCHE: 1337,
   MINTME: 24734
 };
 
