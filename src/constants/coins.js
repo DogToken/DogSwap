@@ -243,19 +243,19 @@ const GÖRLICoins = [
 
 const MINTMECoins = [
   {
-    name: "Ether",
-    abbr: "ETH",
+    name: "MintMe",
+    abbr: "MINTME",
     address: "", // Weth address is fetched from the router
   },
   {
-    name: "Dai",
-    abbr: "DAI",
-    address: "0x73967c6a0904aa032c103b4104747e88c566b1a2",
+    name: "Wrapped MintMe",
+    abbr: "WMINT",
+    address: "0x067fa59cd5d5cd62be16c8d1df0d80e35a1d88dc",
   },
   {
-    name: "Tether USD",
-    abbr: "USDT",
-    address: "0x509ee0d083ddf8ac028f2a56731412edd63223b9",
+    name: "DogSwap",
+    abbr: "DOGSWAP",
+    address: "0x1628160C66e0330090248a163A34Ba5B5A82D4f7",
   },
 ]
 
