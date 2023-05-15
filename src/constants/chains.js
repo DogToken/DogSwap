@@ -1,4 +1,4 @@
-export const networks = [1, 3,4,5,42,123, 1337, 65110000, 65010000]
+export const networks = [1, 3,4,5,42,123, 1337, 65110000, 65010000, 24734]
 
 export const ChainId = {
   MAINNET: 1,
