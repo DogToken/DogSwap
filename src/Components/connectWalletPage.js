@@ -49,7 +49,7 @@ function ConnectWalletPage() {
     <div>
       <div className="Title">
         <h1 className="navbar-logo">
-          Alternative Uniswap Interface
+          DogSwap
         </h1>
       </div>
 
