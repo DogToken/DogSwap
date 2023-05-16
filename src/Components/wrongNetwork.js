@@ -29,7 +29,7 @@ export default function WrongNetwork(props) {
       maxWidth="sm"
       classes={{ paper: classes.dialogContainer }}
     >
-      <MuiDialogTitle>Unsupported Network</MuiDialogTitle>
+      <MuiDialogTitle>Unsupported Network, make sure you are connected to the MintMe chain.</MuiDialogTitle>
     </Dialog>
   );
 }
