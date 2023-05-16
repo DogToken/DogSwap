@@ -13,11 +13,13 @@ I am not a coder, as you can see, and designwise i'm not the best either but it'
 You need to be connected to the MintMe chain. 
 
 ### Metamask settings
+```
 Network Name: MintMe.com Coin
 WebSite:  https://www.mintme.com
 ChainID:   24734
 NetworkID:   37480
 Symbol:   MINTME
+```
 
 ## Supporting
 
