@@ -57,6 +57,12 @@ const MINTMECoins = [
     address: "0xe67f14Fa595947bd63546866a1FCCf27E2D58203",
     logoURI: "/images/coins/PMINT-icon.png",
   },
+  {
+    name: "1000x",
+    abbr: "1000X",
+    address: "0x7b535379bBAfD9cD12b35D91aDdAbF617Df902B2",
+    logoURI: "/images/coins/1000X-icon.png",
+  },
 ]
 
 const COINS = new Map();
