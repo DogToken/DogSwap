@@ -184,21 +184,19 @@ export async function getAmountOut(
   signer
 ) {
   try {
-    const token1 = new ethers.Contract(address1, ERC20.abi, signer);
+    const token1 = new Contract(address1, ERC20.abi, signer);
     const token1Decimals = await getDecimals(token1);
-  
-    const token2 = new ethers.Contract(address2, ERC20.abi, signer);
+
+    const token2 = new Contract(address2, ERC20.abi, signer);
     const token2Decimals = await getDecimals(token2);
-  
+
     const values_out = await routerContract.getAmountsOut(
       ethers.utils.parseUnits(String(amountIn), token1Decimals),
       [address1, address2]
     );
-  
-    const amount_out = ethers.utils.formatUnits(values_out[1], token2Decimals);
-    console.log('amount out: ', amount_out);
-  
-    return parseFloat(amount_out);
+    const amount_out = values_out[1]*10**(-token2Decimals);
+    console.log('amount out: ', amount_out)
+    return Number(amount_out);
   } catch {
     return false;
   }
