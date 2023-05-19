@@ -61,7 +61,6 @@ function LiquidityRemover(props) {
   const [dialog2Open, setDialog2Open] = React.useState(false);
   const [wrongNetworkOpen, setwrongNetworkOpen] = React.useState(false);
 
-
   // Stores data about their respective coin
   const [coin1, setCoin1] = React.useState({
     address: undefined,
@@ -94,386 +93,148 @@ function LiquidityRemover(props) {
   const switchFields = () => {
     setCoin1(coin2);
     setCoin2(coin1);
-    setReserves(reserves.reverse());
-  };
+    setReserves(reserves.reverse());  };
 
-  // These functions take an HTML event, pull the data out and puts it into a state variable.
-  const handleChange = {
-    field1: (e) => {
-      setField1Value(e.target.value);
-    },
-  };
+  // Handles the removal of liquidity
+  const handleRemoveLiquidity = async () => {
+    if (!coin1.address || !coin2.address) {
+      return;
+    }
 
-  // Turns the account's balance into something nice and readable
-  const formatBalance = (balance, symbol) => {
-    if (balance && symbol)
-      return parseFloat(balance).toPrecision(8) + " " + symbol;
-    else return "0.0";
-  };
-
-  // Turns the coin's reserves into something nice and readable
-  const formatReserve = (reserve, symbol) => {
-    if (reserve && symbol) return reserve + " " + symbol;
-    else return "0.0";
-  };
-
-  // Determines whether the button should be enabled or not
-  const isButtonEnabled = () => {
-
-    // If both coins have been selected, and a valid float has been entered for both, which are less than the user's balances, then return true
-    const parsedInput = parseFloat(field1Value);
-    return (
-      coin1.address &&
-      coin2.address &&
-      parsedInput !== NaN &&
-      0 < parsedInput &&
-      parsedInput <= liquidityTokens
-    );
-  };
-
-  const remove = () => {
-    console.log("Attempting to remove liquidity...");
     setLoading(true);
 
-    removeLiquidity(
-      coin1.address,
-      coin2.address,
-      field1Value,
-      0,
-      0,
-      props.network.router,
-      props.network.account,
-      props.network.signer,
-      props.network.factory
-    )
-      .then(() => {
-        setLoading(false);
-
-        // If the transaction was successful, we clear to input to make sure the user doesn't accidental redo the transfer
-        setField1Value("");
-        enqueueSnackbar("Removal Successful", { variant: "success" });
-      })
-      .catch((e) => {
-        setLoading(false);
-        enqueueSnackbar("Deployment Failed (" + e.message + ")", {
-          variant: "error",
-          autoHideDuration: 10000,
-        });
-      });
-  };
-
-  // Called when the dialog window for coin1 exits
-  const onToken1Selected = (address) => {
-    // Close the dialog window
-    setDialog1Open(false);
-
-    // If the user inputs the same token, we want to switch the data in the fields
-    if (address === coin2.address) {
-      switchFields();
-    }
-    // We only update the values if the user provides a token
-    else if (address) {
-      // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      getBalanceAndSymbol(
-        props.network.account,
-        address,
-        props.network.provider,
-        props.network.signer,
-        props.network.weth.address,
-        props.network.coins
-        ).then((data) => {
-        setCoin1({
-          address: address,
-          symbol: data.symbol,
-          balance: data.balance,
-        });
-      });
-    }
-  };
-
-  // Called when the dialog window for coin2 exits
-  const onToken2Selected = (address) => {
-    // Close the dialog window
-    setDialog2Open(false);
-
-    // If the user inputs the same token, we want to switch the data in the fields
-    if (address === coin1.address) {
-      switchFields();
-    }
-    // We only update the values if the user provides a token
-    else if (address) {
-      // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      getBalanceAndSymbol(props.network.account,
-        address,
-        props.network.provider,
-        props.network.signer,
-        props.network.weth.address,
-        props.network.coins
-        ).then((data) => {
-        setCoin2({
-          address: address,
-          symbol: data.symbol,
-          balance: data.balance,
-        });
-      });
-    }
-  };
-
-  // This hook is called when either of the state variables `coin1.address` or `coin2.address` change.
-  // This means that when the user selects a different coin to convert between, or the coins are swapped,
-  // the new reserves will be calculated.
-  useEffect(() => {
-    console.log(
-      "Trying to get reserves between:\n" + coin1.address + "\n" + coin2.address
-    );
-
-    if (coin1.address && coin2.address && props.network.account) {
-      getReserves(
-        coin1.address,
-        coin2.address,
-        props.network.factory,
-        props.network.signer,
-        props.network.account).then(
-        (data) => {
-          setReserves([data[0], data[1]]);
-          setLiquidityTokens(data[2]);
-        }
-      );
-    }
-  }, [coin1.address, coin2.address, props.network.account, props.network.factory, props.network.signer]);
-
-  // This hook is called when either of the state variables `field1Value`, `coin1.address` or `coin2.address` change.
-  // It will give a preview of the liquidity removal.
-  useEffect(() => {
-    if (isButtonEnabled()) {
-      console.log("Trying to preview the liquidity removal");
-      quoteRemoveLiquidity(
+    try {
+      const result = await removeLiquidity(
         coin1.address,
         coin2.address,
         field1Value,
-        props.network.factory,
-        props.network.signer
-      ).then((data) => {
-        setTokensOut(data);
+        liquidityTokens
+      );
+
+      // Display success message
+      enqueueSnackbar("Liquidity removed successfully", {
+        variant: "success",
+      });
+
+      // Clear input fields
+      setField1Value("");
+      setLiquidityTokens("");
+      setTokensOut([0, 0, 0]);
+
+      // TODO: Perform any additional actions after removing liquidity
+
+    } catch (error) {
+      // Display error message
+      enqueueSnackbar("Error removing liquidity", {
+        variant: "error",
       });
     }
-  }, [coin1.address, coin2.address, field1Value, props.network.factory, props.network.signer]);
+
+    setLoading(false);
+  };
 
   useEffect(() => {
-    // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
-    // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
+    const fetchData = async () => {
+      // Check if the user is connected to the correct network
+      const isConnectedToCorrectNetwork = await checkNetwork();
 
-    const coinTimeout = setTimeout(() => {
-      console.log("Checking balances & Getting reserves...");
-
-      if (coin1.address && coin2.address && props.network.account) {
-        getReserves(
-          coin1.address,
-          coin2.address,
-          props.network.factory,
-          props.network.signer,
-          props.network.account
-        ).then((data) => {
-          setReserves([data[0], data[1]]);
-          setLiquidityTokens(data[2]);
-        });
+      if (!isConnectedToCorrectNetwork) {
+        setwrongNetworkOpen(true);
+        return;
       }
 
-      if (coin1.address && props.network.account &&!wrongNetworkOpen) {
-        getBalanceAndSymbol(
-          props.network.account,
-          coin1.address, props.network.provider,
-          props.network.signer,
-          props.network.weth.address,
-          props.network.coins
-          ).then(
-          (data) => {
-            setCoin1({
-              ...coin1,
-              balance: data.balance,
-            });
-          }
-        );
-      }
-      if (coin2.address && props.network.account &&!wrongNetworkOpen) {
-        getBalanceAndSymbol(props.network.account,
-          coin2.address,
-          props.network.provider,
-          props.network.signer,
-          props.network.weth.address,
-          props.network.coins
-          ).then(
-          (data) => {
-            setCoin2({
-              ...coin2,
-              balance: data.balance,
-            });
-          }
-        );
-      }
-    }, 10000);
+      // Fetch the balance and symbol for coin1
+      const coin1Data = await getBalanceAndSymbol(coin1.address);
+      setCoin1(coin1Data);
 
-    return () => clearTimeout(coinTimeout);
-  });
+      // Fetch the balance and symbol for coin2
+      const coin2Data = await getBalanceAndSymbol(coin2.address);
+      setCoin2(coin2Data);
+
+      // Fetch the current reserves in the liquidity pool
+      const reservesData = await getReserves(coin1.address, coin2.address);
+      setReserves(reservesData);
+    };
+
+    fetchData();
+  }, [coin1.address, coin2.address]);
 
   return (
-    <div>
-      {/* Coin Swapper */}
-      <Typography variant="h5" className={classes.title}></Typography>
-
-      {/* Dialog Windows */}
-      <CoinDialog
-        open={dialog1Open}
-        onClose={onToken1Selected}
-        coins={props.network.coins}
-        signer={props.network.signer}
-      />
-      <CoinDialog
-        open={dialog2Open}
-        onClose={onToken2Selected}
-        coins={props.network.coins}
-        signer={props.network.signer}
-      />
-      <WrongNetwork
-        open={wrongNetworkOpen}
-      />
-
-      <Grid container direction="column" alignItems="center" spacing={2}>
-        <Grid item xs={12} className={classes.fullWidth}>
-          <RemoveLiquidityField1
-            activeField={true}
-            value={field1Value}
-            onClick={() => setDialog1Open(true)}
-            onChange={handleChange.field1}
-            symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
-          />
-        </Grid>
-
-        <Grid item xs={12} className={classes.fullWidth}>
-          <RemoveLiquidityField2
-            activeField={true}
-            onClick={() => setDialog2Open(true)}
-            symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
-          />
-        </Grid>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Typography variant="h6" className={classes.title}>
+          Remove Liquidity
+        </Typography>
       </Grid>
-
-      <Grid
-        container
-        direction="row"
-        alignItems="center"
-        justifyContent="center"
-        spacing={4}
-        className={classes.balance}
-      >
-        <hr className={classes.hr} />
-        <Grid
-          container
-          item
-          className={classes.values}
-          direction="column"
-          alignItems="center"
-          spacing={2}
-        >
-          {/* Balance Display */}
-          <Typography variant="h6">Your Balances</Typography>
-          <Grid container direction="row" justifyContent="space-between">
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
-                {formatBalance(coin1.balance, coin1.symbol)}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
-                {formatBalance(coin2.balance, coin2.symbol)}
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <hr className={classes.hr} />
-
-          {/* Reserves Display */}
-          <Typography variant="h6">Reserves</Typography>
-          <Grid container direction="row" justifyContent="space-between">
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
-                {formatReserve(reserves[0], coin1.symbol)}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
-                {formatReserve(reserves[1], coin2.symbol)}
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <hr className={classes.hr} />
-
-          {/* Liquidity Tokens Display */}
-          <Typography variant="h6">Your Liquidity Pool Tokens</Typography>
-          <Grid container direction="row" justifyContent="center">
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
-                {formatReserve(liquidityTokens, "UNI-V2")}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
-
+      <Grid item xs={12} sm={6}>
         <Paper className={classes.paperContainer}>
-          {/*Red  Display to show the quote */}
-          <Grid
-            container
-            item
-            direction="column"
-            alignItems="center"
-            spacing={2}
+          <Typography variant="h6" className={classes.title}>
+            <span className={classes.values}>
+              {coin1.balance ? coin1.balance.toFixed(2) : "0.00"}
+            </span>{" "}
+            {coin1.symbol}
+          </Typography>
+          <RemoveLiquidityField1
+            coin={coin1}
+            dialogOpen={dialog1Open}
+            setDialogOpen={setDialog1Open}
+            setCoin={setCoin1}
+          />
+        </Paper>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <Paper className={classes.paperContainer}>
+          <Typography variant="h6" className={classes.title}>
+            <span className={classes.values}>
+              {coin2.balance ? coin2.balance.toFixed(2) : "0.00"}
+            </span>{" "}
+            {coin2.symbol}
+          </Typography>
+          <RemoveLiquidityField2
+            coin={coin2}
+            dialogOpen={dialog2Open}
+            setDialogOpen={setDialog2Open}
+            setCoin={setCoin2}
+          />
+        </Paper>
+      </Grid>
+      <Grid item xs={12}>
+        <Paper className={classes.paperContainer}>
+          <Typography variant="h6" className={classes.title}>
+            Your Liquidity
+          </Typography>
+          <Typography variant="body1" className={classes.balance}>
+            {liquidityTokens ? liquidityTokens.toFixed(2) : "0.00"} LP Tokens
+          </Typography>
+          <CoinDialog
+            open={dialog1Open}
+            setOpen={setDialog1Open}
+            setCoin={setCoin1}
+          />
+          <CoinDialog
+            open={dialog2Open}
+            setOpen={setDialog2Open}
+            setCoin={setCoin2}
+          />
+          <Typography variant="body1" className={classes.balance}>
+            {tokensOut[0]} {coin1.symbol} + {tokensOut[1]} {coin2.symbol}
+          </Typography>
+          <Typography variant="body1" className={classes.balance}>
+            = {tokensOut[2]} LP Tokens
+          </Typography>
+          <LoadingButton
+            onClick={handleRemoveLiquidity}
+            loading={loading}
+            disabled={!field1Value || !liquidityTokens}
+            startIcon={<ArrowDownwardIcon />}
             className={classes.fullWidth}
           >
-            {/* Tokens in */}
-            <Typography variant="h6">Liquidity Pool Tokens in</Typography>
-            <Grid container direction="row" justifyContent="center">
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
-                  {formatBalance(tokensOut[0], "UNI-V2")}
-                </Typography>
-              </Grid>
-            </Grid>
-
-            <hr className={classes.hr} />
-
-            {/* Liquidity Tokens Display */}
-            <Typography variant="h6">Tokens Out</Typography>
-            <Grid container direction="row" justifyContent="space-between">
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
-                  {formatBalance(tokensOut[1], coin1.symbol)}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
-                  {formatBalance(tokensOut[2], coin2.symbol)}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
+            Remove Liquidity
+          </LoadingButton>
         </Paper>
-        <hr className={classes.hr} />
       </Grid>
-
-      <Grid container direction="column" alignItems="center" spacing={2}>
-        <LoadingButton
-          loading={loading}
-          valid={isButtonEnabled()}
-          success={false}
-          fail={false}
-          onClick={remove}
-        >
-          <ArrowDownwardIcon className={classes.buttonIcon} />
-          Remove
-        </LoadingButton>
-      </Grid>
-    </div>
+      <WrongNetwork open={wrongNetworkOpen} setOpen={setwrongNetworkOpen} />
+    </Grid>
   );
 }
 
