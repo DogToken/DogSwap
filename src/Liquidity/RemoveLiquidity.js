@@ -15,6 +15,12 @@ import CoinDialog from "../CoinSwapper/CoinDialog";
 import LoadingButton from "../Components/LoadingButton";
 import WrongNetwork from "../Components/wrongNetwork";
 
+const checkNetwork = () => {
+  // Implement network check logic here
+  // For example, you can check the current network
+  // and display an error message if it's not the expected network
+};
+
 const styles = (theme) => ({
   paperContainer: {
     borderRadius: theme.spacing(2),
