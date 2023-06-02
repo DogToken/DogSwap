@@ -69,6 +69,16 @@ const MINTMECoins = [
     address: "0x69a3eDdB6bE2d56E668E7DfF68DB1303e675A0F0",
     logoURI: "/images/coins/Tree-icon.png",
   },
+  {
+    name: "Bone",
+    abbr: "BONE",
+    address: "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF",
+  },
+  {
+    name: "Zarali",
+    abbr: "ZAR",
+    address: "0xa88bCa314ebe9301cBa3b4C718149b05D4AD0ea5",
+  },
 ]
 
 const COINS = new Map();

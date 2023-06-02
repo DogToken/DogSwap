@@ -72,7 +72,7 @@ export async function getDecimals(token) {
 // This function returns an object with 2 fields: `balance` which container's the account's balance in the particular token,
 // and `symbol` which is the abbreviation of the token name. To work correctly it must be provided with 4 arguments:
 //    `accountAddress` - An Ethereum address of the current user's account
-//    `address` - An Ethereum address of the token to check for (either a token or AUT)
+//    `address` - An Ethereum address of the token to check for (either a token or MINTME)
 //    `provider` - The current provider
 //    `signer` - The current signer
 export async function getBalanceAndSymbol(
@@ -109,11 +109,11 @@ export async function getBalanceAndSymbol(
   }
 }
 
-// This function swaps two particular tokens / AUT, it can handle switching from AUT to ERC20 token, ERC20 token to AUT, and ERC20 token to ERC20 token.
+// This function swaps two particular tokens, it can handle switching from MINTME to ERC20 token, ERC20 token to MINTME, and ERC20 token to ERC20 token.
 // No error handling is done, so any issues can be caught with the use of .catch()
 // To work correctly, there needs to be 7 arguments:
-//    `address1` - An Ethereum address of the token to trade from (either a token or AUT)
-//    `address2` - An Ethereum address of the token to trade to (either a token or AUT)
+//    `address1` - An Ethereum address of the token to trade from (either a token or MINTME)
+//    `address2` - An Ethereum address of the token to trade to (either a token or MINTME)
 //    `amount` - A float or similar number representing the value of address1's token to trade
 //    `routerContract` - The router contract to carry out this trade
 //    `accountAddress` - An Ethereum address of the current user's account
@@ -172,8 +172,8 @@ export async function swapTokens(
 }
 
 //This function returns the conversion rate between two token addresses
-//    `address1` - An Ethereum address of the token to swaped from (either a token or AUT)
-//    `address2` - An Ethereum address of the token to swaped to (either a token or AUT)
+//    `address1` - An Ethereum address of the token to swaped from (either a token or MINTME)
+//    `address2` - An Ethereum address of the token to swaped to (either a token or MINTME)
 //    `amountIn` - Amount of the token at address 1 to be swaped from
 //    `routerContract` - The router contract to carry out this swap
 export async function getAmountOut(
@@ -205,8 +205,8 @@ export async function getAmountOut(
 // This function calls the pair contract to fetch the reserves stored in a the liquidity pool between the token of address1 and the token
 // of address2. Some extra logic was needed to make sure that the results were returned in the correct order, as
 // `pair.getReserves()` would always return the reserves in the same order regardless of which order the addresses were.
-//    `address1` - An Ethereum address of the token to trade from (either a ERC20 token or AUT)
-//    `address2` - An Ethereum address of the token to trade to (either a ERC20 token or AUT)
+//    `address1` - An Ethereum address of the token to trade from (either a ERC20 token or MINTME)
+//    `address2` - An Ethereum address of the token to trade to (either a ERC20 token or MINTME)
 //    `pair` - The pair contract for the two tokens
 export async function fetchReserves(address1, address2, pair, signer) {
   try {
@@ -241,8 +241,8 @@ export async function fetchReserves(address1, address2, pair, signer) {
 
 // This function returns the reserves stored in a the liquidity pool between the token of address1 and the token
 // of address2, as well as the liquidity tokens owned by accountAddress for that pair.
-//    `address1` - An Ethereum address of the token to trade from (either a token or AUT)
-//    `address2` - An Ethereum address of the token to trade to (either a token or AUT)
+//    `address1` - An Ethereum address of the token to trade from (either a token or MINTME)
+//    `address2` - An Ethereum address of the token to trade to (either a token or MINTME)
 //    `factory` - The current factory
 //    `signer` - The current signer
 export async function getReserves(
@@ -263,10 +263,10 @@ export async function getReserves(
       const liquidityTokens = Number(
         ethers.utils.formatEther(liquidityTokens_BN)
       );
-    
+    // This might be the cause of the liquidity issue we experience right now. #BUG
       return [
-        reservesRaw[0].toPrecision(6),
-        reservesRaw[1].toPrecision(6),
+        reservesRaw[0].toPrecision(0),
+        reservesRaw[1].toPrecision(),
         liquidityTokens,
       ];
     } else {
