@@ -433,8 +433,8 @@ export async function getReserves(
       );
     
       return [
-        reservesRaw[0].toPrecision(6),
-        reservesRaw[1].toPrecision(6),
+        reservesRaw[0].toPrecision(0),
+        reservesRaw[1].toPrecision(),
         liquidityTokens,
       ];
     } else {
