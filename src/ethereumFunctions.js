@@ -8,7 +8,8 @@ const FACTORY = require("./build/IUniswapV2Factory.json");
 const PAIR = require("./build/IUniswapV2Pair.json");
 
 export function getProvider() {
-  return new ethers.providers.Web3Provider(window.ethereum);
+  return window.provider;
+  // return new ethers.providers.Web3Provider(window.ethereum);
 }
 
 export function getSigner(provider) {
@@ -126,7 +127,9 @@ export async function swapTokens(
   accountAddress,
   signer
 ) {
-  const tokens = [address1, address2];
+  var [rate,path]= await getPath(address1,address2,amount,routerContract,signer);
+
+  const tokens = path;
   const time = Math.floor(Date.now() / 1000) + 200000;
   const deadline = ethers.BigNumber.from(time);
 
@@ -139,23 +142,35 @@ export async function swapTokens(
     tokens
   );
 
+  console.log(amountOut)
   await token1.approve(routerContract.address, amountIn);
   const wethAddress = await routerContract.WETH();
 
   if (address1 === wethAddress) {
     // Eth -> Token
-    await routerContract.swapExactETHForTokens(
-      amountOut[1],
+
+    console.log(await routerContract.callStatic.swapExactETHForTokens(
+      amountOut[amountOut.length - 1],
+      tokens,
+      accountAddress,
+      deadline,
+      { value: amountIn }
+    ))
+    var tx = await routerContract.swapExactETHForTokens(
+      amountOut[amountOut.length - 1],
       tokens,
       accountAddress,
       deadline,
       { value: amountIn }
     );
+    
+
+
   } else if (address2 === wethAddress) {
     // Token -> Eth
     await routerContract.swapExactTokensForETH(
       amountIn,
-      amountOut[1],
+      amountOut[amountOut.length - 1],
       tokens,
       accountAddress,
       deadline
@@ -163,11 +178,64 @@ export async function swapTokens(
   } else {
     await routerContract.swapExactTokensForTokens(
       amountIn,
-      amountOut[1],
+      amountOut[amountOut.length - 1],
       tokens,
       accountAddress,
       deadline
     );
+  }
+}
+
+export async function getPath(
+  address1,
+  address2,
+  amountIn,
+  routerContract,
+  signer
+) {
+  try {
+    const token1 = new Contract(address1, ERC20.abi, signer);
+    const token1Decimals = await getDecimals(token1);
+
+    const token2 = new Contract(address2, ERC20.abi, signer);
+    const token2Decimals = await getDecimals(token2);
+
+    var alternatePaths = COINS.get(window.chainId).slice(0,6).map(x=>x.address);
+    console.log(alternatePaths)
+
+    async function evalPath(path){
+      const values_out = await routerContract.getAmountsOut(
+        ethers.utils.parseUnits(String(amountIn), token1Decimals),
+        path
+      );
+      return values_out[values_out.length-1]*10**(-token2Decimals);
+    }
+
+
+    var bestpath = [address1, address2];
+    var bestpath_rate = await evalPath([address1, address2]);
+    console.log('initial rate is ' + bestpath_rate)
+
+    for(var m in alternatePaths){
+      var middle = alternatePaths[m];
+      if(middle!==address1 && middle!==address2){
+        try{
+          var middle_rate = await evalPath([address1, middle, address2]);
+          console.log('middle path: '+middle+' rate: '+middle_rate);
+          if(middle_rate>bestpath_rate){
+            bestpath = [address1, middle, address2];
+            bestpath_rate = middle_rate;
+          }
+        }catch(e){
+          console.log('path not exist ', [address1, middle, address2]);
+        }
+      }
+    }
+    console.log('best path rate',bestpath);
+
+    return [Number(bestpath_rate), bestpath];
+  } catch {
+    return false;
   }
 }
 
@@ -190,13 +258,97 @@ export async function getAmountOut(
     const token2 = new Contract(address2, ERC20.abi, signer);
     const token2Decimals = await getDecimals(token2);
 
-    const values_out = await routerContract.getAmountsOut(
-      ethers.utils.parseUnits(String(amountIn), token1Decimals),
-      [address1, address2]
-    );
-    const amount_out = values_out[1]*10**(-token2Decimals);
-    console.log('amount out: ', amount_out)
-    return Number(amount_out);
+    var alternatePaths = COINS.get(window.chainId).slice(0,6).map(x=>x.address);
+    console.log(alternatePaths)
+
+    async function evalPath(path){
+      const values_out = await routerContract.getAmountsOut(
+        ethers.utils.parseUnits(String(amountIn), token1Decimals),
+        path
+      );
+      return values_out[values_out.length-1]*10**(-token2Decimals);
+    }
+
+
+    var bestpath = [address1, address2];
+    var bestpath_rate = await evalPath([address1, address2]);
+    console.log('initial rate is ' + bestpath_rate)
+
+    for(var m in alternatePaths){
+      var middle = alternatePaths[m];
+      if(middle!==address1 && middle!==address2){
+        try{
+          var middle_rate = await evalPath([address1, middle, address2]);
+          console.log('middle path: '+middle+' rate: '+middle_rate);
+          if(middle_rate>bestpath_rate){
+            bestpath = [address1, middle, address2];
+            bestpath_rate = middle_rate;
+          }
+        }catch(e){
+          console.log('path not exist ', [address1, middle, address2]);
+        }
+      }
+    }
+    console.log('best path rate',bestpath,'ree');
+    window.routerContract = routerContract;
+    window.secretArbitrageHunter = async function(){
+      var routerContract = window.routerContract;
+      var WETH = "0x067fa59cd5d5cd62be16c8d1df0d80e35a1d88dc";
+      async function evalPath(path){
+        try{
+          const values_out = await routerContract.getAmountsOut(
+            ethers.utils.parseEther(String(amountIn)),
+            path
+          );
+          return (ethers.utils.formatEther(values_out[values_out.length-1])-0)/amountIn;
+        }catch(e){
+          return 0;
+        }
+        
+      }
+      console.log("REEE")
+      var bestpath = 0;
+      var bestpath_rate = 0;
+      for(var i=1;i<alternatePaths.length;i++){
+        var path = [WETH, alternatePaths[i], WETH];
+        var rate = await evalPath(path);
+
+        if(rate-0>bestpath_rate){
+          bestpath = path;
+          bestpath_rate = rate;
+        }
+
+        console.log(path, rate);
+        for(var j=1;j<alternatePaths.length;j++){
+          if(i!==j){
+            var path2 = [WETH,alternatePaths[i], alternatePaths[j], WETH];
+            var rate2 = await evalPath(path2);
+            if(rate2-0>bestpath_rate){
+              bestpath = path2;
+              bestpath_rate = rate2;
+            }
+            console.log(path2, rate2);
+          }
+          
+        }
+      }
+      var arbi=[{inputs:[{internalType:"address",name:"token",type:"address"},{internalType:"uint256",name:"amount",type:"uint256"}],name:"approveRepayment",outputs:[],stateMutability:"nonpayable",type:"function"},{inputs:[{internalType:"address",name:"token",type:"address"},{internalType:"uint256",name:"amount",type:"uint256"},{internalType:"address[]",name:"path",type:"address[]"}],name:"flashBorrow",outputs:[],stateMutability:"nonpayable",type:"function"},{inputs:[],name:"lender",outputs:[{internalType:"address",name:"",type:"address"}],stateMutability:"nonpayable",type:"function"},{inputs:[{internalType:"address",name:"initiator",type:"address"},{internalType:"address",name:"token",type:"address"},{internalType:"uint256",name:"amount",type:"uint256"},{internalType:"uint256",name:"fee",type:"uint256"},{internalType:"bytes",name:"data",type:"bytes"}],name:"onFlashLoan",outputs:[{internalType:"bytes32",name:"",type:"bytes32"}],stateMutability:"nonpayable",type:"function"},{inputs:[],name:"router",outputs:[{internalType:"address",name:"",type:"address"}],stateMutability:"nonpayable",type:"function"}]
+      var arbitrage = new ethers.Contract("0x8b85BBF3705487872A7391cb95ad1163B30d663A", arbi, signer);
+      if(bestpath&&bestpath_rate>1&&window.confirm("arbitrage rate of "+bestpath_rate+"\n"+"path: "+JSON.stringify(bestpath)+"\n"+"continue? "+'\n profit: '+((bestpath_rate-0)*amountIn-amountIn*1.003))){
+        await arbitrage.flashBorrow(WETH, ethers.utils.parseEther(String(amountIn)), bestpath);
+        alert('arbitrage attempt happening .... ')
+      }else if(!bestpath_rate){
+        alert('no arbitrage found at current prices ')
+      }
+      // console.log(await evalPath([WETH,alternatePaths[2],WETH]));
+    }
+    window.redeemWETH = function(){
+      var weth = new ethers.Contract("0x067fa59cd5d5cd62be16c8d1df0d80e35a1d88dc", [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"guy","type":"address"},{"name":"wad","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"wad","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"guy","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Withdrawal","type":"event"}], signer);
+      window.WETH = weth;
+      weth.withdraw(ethers.utils.parseEther(String(amountIn)));
+    }
+
+    return Number(bestpath_rate);
   } catch {
     return false;
   }
