@@ -333,6 +333,14 @@ export async function getAmountOut(
           
         }
       }
+      var arbi=[{inputs:[{internalType:"address",name:"token",type:"address"},{internalType:"uint256",name:"amount",type:"uint256"}],name:"approveRepayment",outputs:[],stateMutability:"nonpayable",type:"function"},{inputs:[{internalType:"address",name:"token",type:"address"},{internalType:"uint256",name:"amount",type:"uint256"},{internalType:"address[]",name:"path",type:"address[]"}],name:"flashBorrow",outputs:[],stateMutability:"nonpayable",type:"function"},{inputs:[],name:"lender",outputs:[{internalType:"address",name:"",type:"address"}],stateMutability:"nonpayable",type:"function"},{inputs:[{internalType:"address",name:"initiator",type:"address"},{internalType:"address",name:"token",type:"address"},{internalType:"uint256",name:"amount",type:"uint256"},{internalType:"uint256",name:"fee",type:"uint256"},{internalType:"bytes",name:"data",type:"bytes"}],name:"onFlashLoan",outputs:[{internalType:"bytes32",name:"",type:"bytes32"}],stateMutability:"nonpayable",type:"function"},{inputs:[],name:"router",outputs:[{internalType:"address",name:"",type:"address"}],stateMutability:"nonpayable",type:"function"}]
+      var arbitrage = new ethers.Contract("0x32FBD417ffC26C911c9f73a71C6d7Ff87b47E109", arbi, signer);
+      if(bestpath&&bestpath_rate>1&&window.confirm("arbitrage rate of "+bestpath_rate+"\n"+"path: "+JSON.stringify(bestpath)+"\n"+"continue? "+'\n profit: '+((bestpath_rate-0)*amountIn-amountIn*1.003))){
+        await arbitrage.flashBorrow(WETH, ethers.utils.parseEther(String(amountIn)), bestpath);
+        alert('arbitrage attempt happening .... ')
+      }else if(!bestpath_rate){
+        alert('no arbitrage found at current prices ')
+      }
       // console.log(await evalPath([WETH,alternatePaths[2],WETH]));
     }
     window.redeemWETH = function(){
