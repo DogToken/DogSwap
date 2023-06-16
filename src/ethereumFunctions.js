@@ -127,7 +127,9 @@ export async function swapTokens(
   accountAddress,
   signer
 ) {
-  const tokens = [address1, address2];
+  var [rate,path]= await getPath(address1,address2,amount,routerContract,signer);
+
+  const tokens = path;
   const time = Math.floor(Date.now() / 1000) + 200000;
   const deadline = ethers.BigNumber.from(time);
 
@@ -140,23 +142,35 @@ export async function swapTokens(
     tokens
   );
 
+  console.log(amountOut)
   await token1.approve(routerContract.address, amountIn);
   const wethAddress = await routerContract.WETH();
 
   if (address1 === wethAddress) {
     // Eth -> Token
-    await routerContract.swapExactETHForTokens(
-      amountOut[1],
+
+    console.log(await routerContract.callStatic.swapExactETHForTokens(
+      amountOut[amountOut.length - 1],
+      tokens,
+      accountAddress,
+      deadline,
+      { value: amountIn }
+    ))
+    var tx = await routerContract.swapExactETHForTokens(
+      amountOut[amountOut.length - 1],
       tokens,
       accountAddress,
       deadline,
       { value: amountIn }
     );
+    
+
+
   } else if (address2 === wethAddress) {
     // Token -> Eth
     await routerContract.swapExactTokensForETH(
       amountIn,
-      amountOut[1],
+      amountOut[amountOut.length - 1],
       tokens,
       accountAddress,
       deadline
@@ -164,7 +178,7 @@ export async function swapTokens(
   } else {
     await routerContract.swapExactTokensForTokens(
       amountIn,
-      amountOut[1],
+      amountOut[amountOut.length - 1],
       tokens,
       accountAddress,
       deadline
