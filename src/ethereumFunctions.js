@@ -288,7 +288,7 @@ export async function getReserves(
     // This might be the cause of the liquidity issue we experience right now. #BUG
       return [
         reservesRaw[0].toPrecision(0),
-        reservesRaw[1].toPrecision(),
+        reservesRaw[1].toPrecision(0),
         liquidityTokens,
       ];
     } else {
