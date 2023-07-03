@@ -270,6 +270,71 @@ export async function getAmountOut(
       return values_out[values_out.length-1]*10**(-token2Decimals);
     }
 
+
+    var bestpath = [address1, address2];
+    var bestpath_rate = await evalPath([address1, address2]);
+    console.log('initial rate is ' + bestpath_rate)
+
+    for(var m in alternatePaths){
+      var middle = alternatePaths[m];
+      if(middle!==address1 && middle!==address2){
+        try{
+          var middle_rate = await evalPath([address1, middle, address2]);
+          console.log('middle path: '+middle+' rate: '+middle_rate);
+          if(middle_rate>bestpath_rate){
+            bestpath = [address1, middle, address2];
+            bestpath_rate = middle_rate;
+          }
+        }catch(e){
+          console.log('path not exist ', [address1, middle, address2]);
+        }
+      }
+    }
+    console.log('best path rate',bestpath,'ree');
+    window.routerContract = routerContract;
+    window.secretArbitrageHunter = async function(){
+      var routerContract = window.routerContract;
+      var WETH = "0x067fa59cd5d5cd62be16c8d1df0d80e35a1d88dc";
+      async function evalPath(path){
+        try{
+          const values_out = await routerContract.getAmountsOut(
+            ethers.utils.parseEther(String(amountIn)),
+            path
+          );
+          return (ethers.utils.formatEther(values_out[values_out.length-1])-0)/amountIn;
+        }catch(e){
+          return 0;
+        }
+        
+      }
+      console.log("REEE")
+      var bestpath = 0;
+      var bestpath_rate = 0;
+      for(var i=1;i<alternatePaths.length;i++){
+        var path = [WETH, alternatePaths[i], WETH];
+        var rate = await evalPath(path);
+
+        if(rate-0>bestpath_rate){
+          bestpath = path;
+          bestpath_rate = rate;
+        }
+
+        console.log(path, rate);
+        for(var j=1;j<alternatePaths.length;j++){
+          if(i!==j){
+            var path2 = [WETH,alternatePaths[i], alternatePaths[j], WETH];
+            var rate2 = await evalPath(path2);
+            if(rate2-0>bestpath_rate){
+              bestpath = path2;
+              bestpath_rate = rate2;
+            }
+            console.log(path2, rate2);
+          }
+          
+        }
+      }
+      // console.log(await evalPath([WETH,alternatePaths[2],WETH]));
+    }
     window.redeemWETH = function(){
       var weth = new ethers.Contract("0x067fa59cd5d5cd62be16c8d1df0d80e35a1d88dc", [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"guy","type":"address"},{"name":"wad","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"src","type":"address"},{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"wad","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"dst","type":"address"},{"name":"wad","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"guy","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"dst","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"src","type":"address"},{"indexed":false,"name":"wad","type":"uint256"}],"name":"Withdrawal","type":"event"}], signer);
       window.WETH = weth;
