@@ -243,7 +243,7 @@ function CoinSwapper(props) {
       setField2Value("");
     } else if (parseFloat(field1Value) && coin1.address && coin2.address) {
       getAmountOut(coin1.address, coin2.address, field1Value, props.network.router, props.network.signer).then(
-        (amount) => setField2Value(amount.toFixed(7))
+        (amount) => setField2Value(amount)
       ).catch(e => {
         console.log(e);
         setField2Value("NA");
