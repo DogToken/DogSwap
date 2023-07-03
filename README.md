@@ -52,6 +52,7 @@ If you wish to contribute, please don't hold back. You can contact me anytime!
 Maybe we can pair up and get more functionalities together?
 
 
+
 ## Donations
 
 ☕ Always welcome: 0x3D041510f58665a17D722EE2BC73Ae409BB8715b
