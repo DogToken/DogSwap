@@ -83,18 +83,6 @@ const MINTMECoins = [
     address: "0xdcb579aa78e35e34581c72c291d493105949ac27",
     logoURI: "/images/coins/USDC-icon.png",
   },
-  {
-    name: "Tether USD",
-    abbr: "USDT",
-    address: "0xaae3f40c4d02c9cfa7d5cb6f371226b3fa9c8fc8",
-    logoURI: "/images/coins/USDT-icon.png",
-  },
-  {
-    name: "Wrapped BTC",
-    abbr: "WBTC",
-    address: "0x67f44cb704884e0eb53c48fec8f1b1e7f8a63729",
-    logoURI: "/images/coins/WBTC-icon.png",
-  },
 ]
 
 const COINS = new Map();
