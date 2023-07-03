@@ -11,9 +11,53 @@ const MINTMECoins = [
   },
   {
     name: "DogSwap",
-    abbr: "DOGSWAP",
+    abbr: "DOGSWP",
     address: "0x1628160C66e0330090248a163A34Ba5B5A82D4f7",
     logoURI: "/images/coins/DOGSWAP-icon.png",
+  },
+  {
+    name: "Bone",
+    abbr: "BONE",
+    address: "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF",
+    logoURI: "/images/coins/DOGSWAP-icon.png",
+  },
+  {
+    name: "Peppermint",
+    abbr: "PMINT",
+    address: "0xe67f14Fa595947bd63546866a1FCCf27E2D58203",
+    logoURI: "/images/coins/PMINT-icon.png",
+  },
+  {
+    name: "1000x",
+    abbr: "1000X",
+    address: "0x7b535379bBAfD9cD12b35D91aDdAbF617Df902B2",
+    logoURI: "/images/coins/1000X-icon.png",
+  },
+  {
+    name: "Zarali",
+    abbr: "ZAR",
+    address: "0xa88bCa314ebe9301cBa3b4C718149b05D4AD0ea5",
+  },
+  {
+    name: "Anukis",
+    abbr: "ANUKS",
+    address: "0xfcC19E279D0240cFdaBdEEB6885f6829FCCfa501",
+  },
+  {
+    name: "Shells",
+    abbr: "SHELLS",
+    address: "0xaa153ce997e1363cb31231e644c4266d9c954630",
+  },
+  {
+    name: "Prunity",
+    abbr: "PRNTY",
+    address: "0x78CF733E6e113BA393b3bd17E4738E4dd63366fb",
+  },
+  {
+    name: "TREE",
+    abbr: "TREE",
+    address: "0x69a3eDdB6bE2d56E668E7DfF68DB1303e675A0F0",
+    logoURI: "/images/coins/Tree-icon.png",
   },
   {
     name: "BNB",
@@ -50,24 +94,6 @@ const MINTMECoins = [
     abbr: "WBTC",
     address: "0x67f44cb704884e0eb53c48fec8f1b1e7f8a63729",
     logoURI: "/images/coins/WBTC-icon.png",
-  },
-  {
-    name: "Peppermint",
-    abbr: "PMINT",
-    address: "0xe67f14Fa595947bd63546866a1FCCf27E2D58203",
-    logoURI: "/images/coins/PMINT-icon.png",
-  },
-  {
-    name: "1000x",
-    abbr: "1000X",
-    address: "0x7b535379bBAfD9cD12b35D91aDdAbF617Df902B2",
-    logoURI: "/images/coins/1000X-icon.png",
-  },
-  {
-    name: "TREE",
-    abbr: "TREE",
-    address: "0x69a3eDdB6bE2d56E668E7DfF68DB1303e675A0F0",
-    logoURI: "/images/coins/Tree-icon.png",
   },
 ]
 
