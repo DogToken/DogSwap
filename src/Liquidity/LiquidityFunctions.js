@@ -1,8 +1,30 @@
-import { Contract, ethers } from "ethers";
-import { fetchReserves, getDecimals } from "../ethereumFunctions";
+import { Contract, ethers, BigNumber } from "ethers";
+import { fetchReserves, fetchReservesRaw, getDecimals } from "../ethereumFunctions";
+
+window.BigNumber = BigNumber;
 
 const ERC20 = require("../build/ERC20.json");
 const PAIR = require("../build/IUniswapV2Pair.json");
+
+const ONE = ethers.BigNumber.from(1);
+const TWO = ethers.BigNumber.from(2);
+
+function sqrt(value) {
+    let x = ethers.BigNumber.from(value);
+    let z = x.add(ONE).div(TWO);
+    let y = x;
+    while (z.sub(y).isNegative()) {
+        y = z;
+        z = x.div(z).add(z).div(TWO);
+    }
+    return y;
+}
+function min(a,b){
+  if(a.lt(b)){
+    return a;
+  }
+  return b;
+}
 
 // Function used to add Liquidity to any pair of tokens or token-AUT
 // To work correctly, there needs to be 9 arguments:
@@ -201,6 +223,28 @@ const quote = (amount1, reserve1, reserve2) => {
 //    `amountB_desired` - The prefered value of the second token that the user would like to deploy as liquidity
 //    `factory` - The current factory
 //    `signer` - The current signer
+async function estimateFee(pair,factory,_reserve0,_reserve1){
+  const feeOn = (await factory.feeTo()) !== '0x0000000000000000000000000000000000000000';
+  let kLast = await pair.kLast();
+  console.log(kLast.toString(),_reserve0,_reserve1)
+  let totalSupply = await pair.totalSupply();
+  let _kLast = kLast; // gas savings
+  if (feeOn) {
+      if (!_kLast.eq(0)) {
+          let rootK = sqrt((_reserve0).mul(_reserve1));
+          let rootKLast = sqrt(_kLast);
+          if (rootK.gt(rootKLast)) {
+              let numerator = totalSupply.mul(rootK.sub(rootKLast));
+              let denominator = rootK.mul(5).add(rootKLast);
+              let liquidity = numerator.div(denominator);
+              if (liquidity.gt(0)){
+                return liquidity;
+              };
+          }
+      }
+  }
+  return 0;
+}
 
 async function quoteMintLiquidity(
   address1,
@@ -214,21 +258,21 @@ async function quoteMintLiquidity(
   let _reserveA = 0;
   let _reserveB = 0;
   let totalSupply = 0;
-  [_reserveA, _reserveB, totalSupply] = await factory.getPair(address1, address2).then(async (pairAddress) => {
+  let pair = null;
+  [_reserveA, _reserveB, totalSupply,pair] = await factory.getPair(address1, address2).then(async (pairAddress) => {
     if (pairAddress !== '0x0000000000000000000000000000000000000000'){
       const pair = new Contract(pairAddress, PAIR.abi, signer);
 
-      const reservesRaw = await fetchReserves(address1, address2, pair, signer); // Returns the reserves already formated as ethers
+      const reservesRaw = await fetchReservesRaw(address1, address2, pair, signer); // Returns the reserves already formated as ethers
       const reserveA = reservesRaw[0];
       const reserveB = reservesRaw[1];
-    
-      const _totalSupply = await pair.totalSupply();
-      const totalSupply = Number(ethers.utils.formatEther(_totalSupply));
-      return [reserveA, reserveB, totalSupply]
+      const totalSupply = await pair.totalSupply();
+      return [reserveA, reserveB, totalSupply,pair]
     } else {
-      return [0,0,0]
+      return [0,0,0,null]
     }
   });
+
 
   const token1 = new Contract(address1, ERC20.abi, signer);
   const token2 = new Contract(address2, ERC20.abi, signer);
@@ -237,20 +281,30 @@ async function quoteMintLiquidity(
 
   const token1Decimals = await getDecimals(token1);
   const token2Decimals = await getDecimals(token2);
+  amountA*=1;
+  amountB*=1;
+  if(isNaN(amountA)||isNaN(amountB)){
+    amountA=amountB=0;
+  }
+  // let amountA = amountA*1, amountB = amountB*1;
 
-  const valueA = amountA*(10**token1Decimals);
-  const valueB = amountB*(10**token2Decimals);
+  console.log(amountA,amountB)
+  const valueA = ethers.utils.parseUnits(amountA+'', token1Decimals)
+  const valueB = ethers.utils.parseUnits(amountB+'', token2Decimals)
 
-  const reserveA = _reserveA*(10**token1Decimals);
-  const reserveB = _reserveB*(10**token2Decimals);
+  const reserveA = _reserveA
+  const reserveB = _reserveB
 
-  if (totalSupply == 0){
-    return Math.sqrt(((valueA * valueB)-MINIMUM_LIQUIDITY))*10**(-18);
+
+  if (totalSupply === 0){
+    const val = sqrt(valueA.mul(valueB).sub(MINIMUM_LIQUIDITY));
+    return ethers.utils.formatEther(val)-0;
   };
-  
-  return (
-    Math.min(valueA*totalSupply/reserveA, valueB*totalSupply/reserveB)
-  );
+  const fee = await estimateFee(pair,factory,reserveA,reserveB);
+  console.log(fee);
+  totalSupply = totalSupply.add(fee);
+  let liquidity = min(valueA.mul(totalSupply).div(reserveA), valueB.mul(totalSupply).div(reserveB));
+  return ethers.utils.formatEther(liquidity)-0;
 };
 
 export async function quoteAddLiquidity(
@@ -338,27 +392,33 @@ export async function quoteRemoveLiquidity(
   const pair = new Contract(pairAddress, PAIR.abi, signer);
 
   const reservesRaw = await fetchReserves(address1, address2, pair, signer); // Returns the reserves already formated as ethers
-  const reserveA = reservesRaw[0];
-  const reserveB = reservesRaw[1];
+  const reserveA = ethers.utils.parseEther(reservesRaw[0]+"");
+  const reserveB = ethers.utils.parseEther(reservesRaw[1]+"");
 
   const feeOn =
-    (await factory.feeTo()) !== 0x3D041510f58665a17D722EE2BC73Ae409BB8715b;
+    (await factory.feeTo()) !== '0x0000000000000000000000000000000000000000';
 
-  const _kLast = await pair.kLast();
-  const kLast = Number(ethers.utils.formatEther(_kLast));
+  const kLast = await pair.kLast();
+  
+  let totalSupply = await pair.totalSupply();
+  const fee = await estimateFee(pair,factory,reserveA,reserveB);
 
-  const _totalSupply = await pair.totalSupply();
-  let totalSupply = Number(ethers.utils.formatEther(_totalSupply));
+  totalSupply = totalSupply.add(fee)
 
-  if (feeOn && kLast > 0) {
-    const feeLiquidity =
-      (totalSupply * (Math.sqrt(reserveA * reserveB) - Math.sqrt(kLast))) /
-      (5 * Math.sqrt(reserveA * reserveB) + Math.sqrt(kLast));
-    totalSupply = totalSupply + feeLiquidity;
-  }
+  //  if( feeOn && kLast.gt(0)){
+  //   const rootK = sqrt(kLast);
+  //   const rootReserve = sqrt(reserveA.mul(reserveB));
+  //   const feeLiquidity = (totalSupply.mul(rootReserve).sub(rootK)).div(rootReserve.mul(5).add(rootK));
+  //   totalSupply = totalSupply.add(feeLiquidity);
+  //   console.log(ethers.utils.formatEther(totalSupply),ethers.utils.formatEther(feeLiquidity))
+  // }
 
-  const Aout = (reserveA * liquidity) / totalSupply;
-  const Bout = (reserveB * liquidity) / totalSupply;
+  totalSupply = ethers.utils.formatEther(totalSupply)-0;
+
+
+  const Aout = (reservesRaw[0] * liquidity) / totalSupply;
+  const Bout = (reservesRaw[1] * liquidity) / totalSupply;
+  
 
   return [liquidity, Aout, Bout];
 }
