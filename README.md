@@ -55,8 +55,3 @@ Maybe we can pair up and get more functionalities together?
 ## Donations
 
 ☕ Always welcome: 0x3D041510f58665a17D722EE2BC73Ae409BB8715b
-
-## BUGS
-
-Right now there is 1 bug that shows the wrong token output when withdrawing liquidity.
-Correct liquidity is withdrawn instead, the numbers just show wrong. Trying to bugfix this!
