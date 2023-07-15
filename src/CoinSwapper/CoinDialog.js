@@ -9,6 +9,7 @@ import {
   Typography,
   withStyles,
 } from "@material-ui/core";
+import COINS from "../constants/coins";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogActions from "@material-ui/core/DialogActions";
 import CloseIcon from "@material-ui/icons/Close";
