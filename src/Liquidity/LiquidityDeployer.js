@@ -21,7 +21,7 @@ const styles = (theme) => ({
     paddingBottom: theme.spacing(3),
     width: "40%",
     overflow: "wrap",
-    background: "linear-gradient(45deg, #ff0000 30%, #53ff8e 90%)",
+    background: "linear-gradient(45deg, #008e31 30%, #53ff8e 90%)",
     color: "white",
   },
   fullWidth: {
