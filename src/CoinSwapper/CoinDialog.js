@@ -45,7 +45,8 @@ const styles = (theme) => ({
     paddingRight: theme.spacing(0.5),
     paddingTop: theme.spacing(2),
     marginTop: theme.spacing(2),
-    overflow: "hidden",
+    overflow: "hidden", 
+    overflowY:"scroll"
   },
 });
 
