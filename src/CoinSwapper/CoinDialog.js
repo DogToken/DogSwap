@@ -136,7 +136,7 @@ export default function CoinDialog(props) {
                 address: value, // The address that the token is at.
                 symbol: info.abbr, // A ticker symbol or shorthand, up to 5 chars.
                 decimals: info.decimals||18, // The number of decimals in the token
-                image: 'https://dogswap.online/coins/'+info.abbr.toLocaleLowerCase()+'.png', // A string url of the token logo
+                image: 'https://dogswap.online/images/coins/'+info.abbr.toLocaleLowerCase()+'.png', // A string url of the token logo
               },
             },
           });
