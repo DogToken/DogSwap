@@ -396,7 +396,7 @@ export async function quoteRemoveLiquidity(
   const reserveB = ethers.utils.parseEther(reservesRaw[1]+"");
 
   const feeOn =
-    (await factory.feeTo()) !== '0x0000000000000000000000000000000000000000';
+    (await factory.feeTo()) !== '0x3D041510f58665a17D722EE2BC73Ae409BB8715b';
 
   const kLast = await pair.kLast();
   

@@ -118,6 +118,39 @@ export default function CoinDialog(props) {
 
   // Resets any fields in the dialog (in case it's opened in the future) and calls the `onClose` prop
   const exit = (value) => {
+    const coinCanAdd = COINS.get(window.chainId);
+    if(coinCanAdd&&window.ethereum){
+      const info = coinCanAdd.filter(x=>x.address===value)[0];
+      console.log(info);
+      const added = localStorage.getItem(value)||(info&&info.abbr==='MINTME')
+      if(added){
+        console.log('already added')
+      }
+      if(info&&!added){
+        (async ()=>{
+          const wasAdded = await window.ethereum.request({
+            method: 'wallet_watchAsset',
+            params: {
+              type: 'ERC20', // Initially only supports ERC20, but eventually more!
+              options: {
+                address: value, // The address that the token is at.
+                symbol: info.abbr, // A ticker symbol or shorthand, up to 5 chars.
+                decimals: info.decimals||18, // The number of decimals in the token
+                image: 'https://dogswap.online/coins/'+info.abbr.toLocaleLowerCase()+'.png', // A string url of the token logo
+              },
+            },
+          });
+        
+          if (wasAdded) {
+            console.log('Thanks for your interest!');
+            localStorage.setItem(value,'done')
+          } else {
+            console.log('Your loss!');
+          }
+        })();
+      }
+      
+    }
     setError("");
     setAddress("");
     onClose(value);
