@@ -69,3 +69,11 @@ body {
   width: 80%;
   margin: auto;
 }
+
+.NavbarContainer {
+  margin-top: 20px; /* Adjust this value as needed */
+}
+
+.Footer {
+  /* Footer styles, if any */
+}

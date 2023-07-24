@@ -30,16 +30,22 @@ const App = () => {
           <Web3Provider
             render={(network) => (
               <div>
-                <NarBar />
-                <Route exact path="/">
-                  <CoinSwapper network={network} />
-                </Route>
-                <Route exact path="/liquidity">
-                  <Liquidity network={network} />
-                </Route>
-                <Route exact path="/farms">
-                  <Liquidity network={network} />
-                </Route>
+                <NavBar />
+                <div className="NavbarContainer">
+                  <Route exact path="/">
+                    <CoinSwapper network={network} />
+                  </Route>
+                  <Route exact path="/liquidity">
+                    <Liquidity network={network} />
+                  </Route>
+                  <Route exact path="/farms">
+                    <Liquidity network={network} />
+                  </Route>
+                </div>
+                {/* Add the Footer here */}
+                <div className="Footer">
+                  {/* Footer content */}
+                </div>
               </div>
             )}
           ></Web3Provider>
