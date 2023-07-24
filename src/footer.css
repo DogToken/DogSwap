@@ -2,7 +2,7 @@
 
 .footer {
   background-color: #f4f4f4;
-  padding: 20px;
+  padding: 15px; /* Decrease total footer height by 30% */
   text-align: center;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -52,18 +52,19 @@
   .footer {
     position: relative;
     bottom: auto;
+    padding: 10px; /* Decrease total footer height by 30% */
   }
   
   .company-info div {
     display: flex;
-    gap: 10px;
+    gap: 20px; /* Add some space between the buttons */
   }
 
-  /* Make buttons smaller and adjust padding */
+  /* Make buttons 50% smaller and adjust padding */
   .company-info button {
-    padding: 6px 12px;
-    font-size: 14px;
-    transform: scale(0.7); /* Reduce size by 30% */
+    padding: 4px 8px;
+    font-size: 12px;
+    transform: scale(0.5); /* Reduce size by 50% */
   }
 }
 
