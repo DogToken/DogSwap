@@ -8,6 +8,7 @@ import { Route } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
 import Liquidity from "./Liquidity/Liquidity";
 import { createTheme, ThemeProvider } from "@material-ui/core";
+import Footer from "./Footer"; // Import the Footer component
 
 const theme = createTheme({
   palette: {
@@ -42,13 +43,11 @@ const App = () => {
                     <Liquidity network={network} />
                   </Route>
                 </div>
-                {/* Add the Footer here */}
-                <div className="Footer">
-                  {/* Footer content */}
-                </div>
               </div>
             )}
           ></Web3Provider>
+          {/* Include the Footer component here */}
+          <Footer />
         </ThemeProvider>
       </SnackbarProvider>
     </div>

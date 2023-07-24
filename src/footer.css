@@ -1,0 +1,31 @@
+/* Footer.css */
+
+.footer {
+  background-color: #f4f4f4;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.backlinks a {
+  color: #333;
+  margin-right: 10px;
+  text-decoration: none;
+}
+
+.backlinks a:hover {
+  color: #008e31;
+}
+
+.company-info {
+  text-align: left;
+}
+
+.company-info p {
+  margin: 5px 0;
+}

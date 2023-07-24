@@ -20,7 +20,7 @@
 }
 
 .navbar-logo {
-  color: rgb(226, 23, 23);
+  color: green;
   cursor: pointer;
   font-size: 1.5rem;
   text-transform: uppercase;
@@ -42,7 +42,7 @@
 
 .nav-links:hover {
   color: white;
-  background-color: red;
+  background-color: green;
 }
 
 /* Adding media query to make the navbar responsive */

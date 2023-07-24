@@ -9,4 +9,9 @@ export const MenuItems = [
     url: "/liquidity",
     cName: "nav-links",
   },
+  {
+    title: "Farms",
+    url: "/farms",
+    cName: "nav-links",
+  },
 ];
