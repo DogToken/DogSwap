@@ -12,16 +12,18 @@
 .footer-content {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap; /* Allow the content to wrap on smaller screens */
+  flex-wrap: wrap;
 }
 
 .backlinks {
-  margin-bottom: 10px; /* Add some space between the links and the company info */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .backlinks a {
   color: #333;
-  margin-right: 10px;
   text-decoration: none;
 }
 
@@ -37,14 +39,21 @@
   margin: 5px 0;
 }
 
-/* Media query for smaller screens */
-@media screen and (max-width: 768px) {
-  .footer-content {
-    flex-direction: column; /* Stack the content vertically */
-    align-items: center; /* Center the content horizontally */
-  }
-  
-  .backlinks {
-    margin-bottom: 0; /* Remove the space between links and company info */
-  }
+.discord-button,
+.twitter-button {
+  background-color: #7289da;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.discord-button:hover,
+.twitter-button:hover {
+  background-color: #6a7ec2;
 }
