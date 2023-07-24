@@ -1,5 +1,6 @@
 import React from "react";
 import { FaDiscord, FaTwitter } from "react-icons/fa";
+import Button from "@mui/material/Button";
 
 const Footer = () => {
   return (
@@ -12,16 +13,32 @@ const Footer = () => {
           <a href="/privacy-policy">Privacy Policy</a>
         </div>
         <div className="company-info">
+          <p>DogSwap</p>
+          <p>Email: contact@dogswap.online</p>
           {/* Styled buttons for Discord and Twitter */}
           <div>
-            <button className="discord-button">
-              <FaDiscord /> Join our Discord
-            </button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<FaDiscord />}
+              href="https://discord.gg/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Join our Discord
+            </Button>
           </div>
           <div>
-            <button className="twitter-button">
-              <FaTwitter /> Follow us on Twitter
-            </button>
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<FaTwitter />}
+              href="https://twitter.com/DogSwapDeFi"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Follow us on Twitter
+            </Button>
           </div>
         </div>
       </div>
