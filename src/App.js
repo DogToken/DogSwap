@@ -9,6 +9,7 @@ import { SnackbarProvider } from "notistack";
 import Liquidity from "./Liquidity/Liquidity";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./footer"; // Import the Footer component
+import "./footer.css"; // Import the Footer styles
 
 const theme = createTheme({
   palette: {

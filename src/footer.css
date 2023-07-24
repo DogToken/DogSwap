@@ -59,9 +59,14 @@
     gap: 10px;
   }
 
-  /* Make buttons smaller */
+  /* Make buttons smaller and adjust padding */
   .company-info button {
-    padding: 6px 12px;
+    padding: 8px 16px;
     font-size: 14px;
   }
+}
+
+/* Add box shadow to the footer */
+.footer {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
