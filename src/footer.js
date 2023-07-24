@@ -1,5 +1,5 @@
 import React from "react";
-import "./Footer.css"; // You can create a new CSS file for the footer styles
+import "./footer.css"; // You can create a new CSS file for the footer styles
 
 const Footer = () => {
   return (
