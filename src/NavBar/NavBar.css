@@ -27,10 +27,11 @@
 .backlinks a {
   color: #333;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .backlinks a:hover {
-  color: #008e31;
+  text-decoration: underline;
 }
 
 .company-info {
@@ -52,9 +53,15 @@
     position: relative;
     bottom: auto;
   }
-}
+  
+  .company-info div {
+    display: flex;
+    gap: 10px;
+  }
 
-/* Add box shadow to the footer */
-.footer {
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  /* Make buttons smaller */
+  .company-info button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
 }
