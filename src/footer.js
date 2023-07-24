@@ -14,7 +14,7 @@ const Footer = () => {
         </div>
         <div className="company-info">
           {/* Styled buttons for Discord and Twitter */}
-          <div>
+          <div className="button-container">
             <Button
               variant="contained"
               color="primary"
@@ -25,8 +25,6 @@ const Footer = () => {
             >
               Join our Discord
             </Button>
-          </div>
-          <div>
             <Button
               variant="contained"
               color="secondary"
