@@ -56,3 +56,16 @@
     margin-top: 20px;
   }
 }
+
+/* Add some space after the navbar */
+.NavbarContainer {
+  margin-top: 20px;
+}
+
+/* Optionally, you can add a footer styles for a better layout */
+.Footer {
+  background-color: #f4f4f4;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}

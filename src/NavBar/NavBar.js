@@ -10,9 +10,7 @@ class NavBar extends Component {
     return (
       <nav>
         <div className="Title">
-          <h1 className="navbar-logo">
-          🐶 DogSwap
-          </h1>
+          <h1 className="navbar-logo">🐶 DogSwap</h1>
         </div>
 
         <div className="NavbarItems">
