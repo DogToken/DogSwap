@@ -1,62 +1,80 @@
+/* NavBar.css */
+
 .Title {
   background: #f4f4f4;
   height: 50px;
   text-align: left;
-  margin-left: 25%;
   font-size: 1rem;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .NavbarItems {
   background: #f4f4f4;
-  height: 80px;
   display: flex;
-  justify-content: left;
-  align-items: left;
+  justify-content: space-between;
+  align-items: center;
   font-size: 1.2rem;
-  width: 75%;
-  text-align: left;
-  margin-left: 25%;
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-logo {
+<<<<<<< Updated upstream
   color: rgb(4, 122, 0);
   justify-self: start;
   margin-left: 0px;
+=======
+  color: rgb(226, 23, 23);
+>>>>>>> Stashed changes
   cursor: pointer;
-}
-
-.logo {
-  width: 230px;
+  font-size: 1.5rem;
+  text-transform: uppercase;
 }
 
 .nav-menu {
-  display: grid;
-  grid-template-columns: repeat(5, auto);
-  grid-gap: 50px;
+  display: flex;
   list-style: none;
   text-align: left;
-  justify-content: end;
-  padding-top: 1rem;
-  padding-left: 0rem;
-  font-size: 25px;
 }
 
 .nav-links {
   color: rgb(73, 73, 73);
   text-decoration: none;
+<<<<<<< Updated upstream
 }
 
 .nav-links-clicked {
   color: white;
   background-color: green;
   text-decoration: none;
+=======
+  padding: 10px 15px;
+>>>>>>> Stashed changes
   border-radius: 4px;
+  transition: all 0.2s ease-out;
 }
 
 .nav-links:hover {
   color: white;
+<<<<<<< Updated upstream
   background-color: green;
   text-decoration: none;
   border-radius: 4px;
   transition: all 0.2s ease-out;
+=======
+  background-color: red;
+}
+
+/* Adding media query to make the navbar responsive */
+@media screen and (max-width: 768px) {
+  .NavbarItems {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .nav-menu {
+    margin-top: 20px;
+  }
+>>>>>>> Stashed changes
 }
