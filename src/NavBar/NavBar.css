@@ -1,67 +1,71 @@
-/* Footer.css */
+/* NavBar.css */
 
-.footer {
+.Title {
+  background: #f4f4f4;
+  height: 50px;
+  text-align: left;
+  font-size: 1rem;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.NavbarItems {
+  background: #f4f4f4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-logo {
+  color: green;
+  cursor: pointer;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  text-align: left;
+}
+
+.nav-links {
+  color: rgb(73, 73, 73);
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  transition: all 0.2s ease-out;
+}
+
+.nav-links:hover {
+  color: white;
+  background-color: green;
+}
+
+/* Adding media query to make the navbar responsive */
+@media screen and (max-width: 768px) {
+  .NavbarItems {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .nav-menu {
+    margin-top: 20px;
+  }
+}
+
+/* Add some space after the navbar */
+.NavbarContainer {
+  margin-top: 20px;
+}
+
+/* Optionally, you can add a footer styles for a better layout */
+.Footer {
   background-color: #f4f4f4;
   padding: 20px;
   text-align: center;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  bottom: 0;
-}
-
-.footer-content {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.backlinks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.backlinks a {
-  color: #333;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.backlinks a:hover {
-  text-decoration: underline;
-}
-
-.company-info {
-  text-align: left;
-}
-
-.company-info p {
-  margin: 5px 0;
-}
-
-/* Media query for smaller screens */
-@media screen and (max-width: 768px) {
-  .footer-content {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .footer {
-    position: relative;
-    bottom: auto;
-  }
-  
-  .company-info div {
-    display: flex;
-    gap: 10px;
-  }
-
-  /* Make buttons smaller */
-  .company-info button {
-    padding: 6px 12px;
-    font-size: 14px;
-  }
 }

@@ -27,10 +27,11 @@
 .backlinks a {
   color: #333;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .backlinks a:hover {
-  color: #008e31;
+  text-decoration: underline;
 }
 
 .company-info {
@@ -46,5 +47,21 @@
   .footer-content {
     flex-direction: column;
     align-items: center;
+  }
+  
+  .footer {
+    position: relative;
+    bottom: auto;
+  }
+  
+  .company-info div {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Make buttons smaller */
+  .company-info button {
+    padding: 6px 12px;
+    font-size: 14px;
   }
 }

@@ -13,8 +13,6 @@ const Footer = () => {
           <a href="/privacy-policy">Privacy Policy</a>
         </div>
         <div className="company-info">
-          <p>DogSwap</p>
-          <p>Email: contact@dogswap.online</p>
           {/* Styled buttons for Discord and Twitter */}
           <div>
             <Button
