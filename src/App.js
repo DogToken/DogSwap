@@ -8,7 +8,7 @@ import { Route } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
 import Liquidity from "./Liquidity/Liquidity";
 import { createTheme, ThemeProvider } from "@material-ui/core";
-import Footer from "./Footer"; // Import the Footer component
+import Footer from "./footer"; // Import the Footer component
 
 const theme = createTheme({
   palette: {
