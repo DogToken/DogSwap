@@ -5,11 +5,18 @@
   padding: 20px;
   text-align: center;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  bottom: 0;
 }
 
 .footer-content {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap; /* Allow the content to wrap on smaller screens */
+}
+
+.backlinks {
+  margin-bottom: 10px; /* Add some space between the links and the company info */
 }
 
 .backlinks a {
@@ -28,4 +35,16 @@
 
 .company-info p {
   margin: 5px 0;
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 768px) {
+  .footer-content {
+    flex-direction: column; /* Stack the content vertically */
+    align-items: center; /* Center the content horizontally */
+  }
+  
+  .backlinks {
+    margin-bottom: 0; /* Remove the space between links and company info */
+  }
 }
