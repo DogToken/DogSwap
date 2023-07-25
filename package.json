@@ -32,7 +32,8 @@
     "@emotion/styled": "11.11.0",
     "@metamask/detect-provider": "2.0.0",
     "@fortawesome/react-fontawesome": "0.2.0",
-    "@fortawesome/free-solid-svg-icons": "6.4.0"
+    "@fortawesome/free-solid-svg-icons": "6.4.0",
+    "@fortawesome/fontawesome-svg-core": "6.4.0"
   },
   "homepage": "https://dogswap.online/",
   "scripts": {
