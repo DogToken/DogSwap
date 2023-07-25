@@ -381,7 +381,7 @@ function Farms(props) {
 
               {/* User Balance */}
               <Typography variant="body1" className={classes.balance}>
-                User Balance: {pool.userBalance} {/* Replace with formatted balance */}
+                Pool Balance: {pool.userBalance} {/* Replace with formatted balance */}
               </Typography>
 
               {/* Staked Balance */}
