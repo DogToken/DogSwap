@@ -10,7 +10,6 @@ import Liquidity from "./Liquidity/Liquidity";
 import Farms from "./Farms/Farms";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./footer"; // Import the Footer component
-import Game from "./Game/Game"
 import "./footer.css"; // Import the Footer styles
 
 const theme = createTheme({
