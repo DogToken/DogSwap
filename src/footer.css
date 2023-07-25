@@ -74,7 +74,7 @@
   .fa-heart {
     margin-right: 10px;
   }
-  
+
   .fa-robot {
     font-size: 10px;
     margin: 0 2px;
@@ -87,16 +87,15 @@
   }
   
   .company-info div {
-    display: flex;
-    gap: 20px; /* Add some space between the buttons */
-  }
+  display: flex;
+  gap: 30px; /* Add more space between the buttons */
+}
 
   /* Make buttons 50% smaller and adjust padding */
-  .company-info button {
-    padding: 4px 8px;
-    font-size: 12px;
-    transform: scale(0.5); /* Reduce size by 50% */
-  }
+.company-info button {
+  padding: 4px 8px;
+  font-size: 12px;
+  transform: scale(0.5); /* Reduce size by 50% */
 }
 
 /* Add box shadow to the footer */
