@@ -61,6 +61,11 @@ const styles = (theme) => ({
   footer: {
     marginTop: "25px",
   },
+  buttonContainer: {
+    marginTop: theme.spacing(2), // Add space between the buttons and the content above
+    display: "flex",
+    justifyContent: "space-between",
+  },
 });
 
 const useStyles = makeStyles(styles);
@@ -313,15 +318,24 @@ function Farms(props) {
   const poolsData = [
     {
       poolAddress: "0x123456789abcdef", // Replace with the actual pool address
-      poolName: "Pool 1", // Replace with the name of the pool
+      poolName: "Bone / MintMe", // Replace with the name of the pool
       userBalance: "100", // Replace with the user's balance in this pool
       stakedBalance: "50", // Replace with the user's staked balance in this pool
+      earnedBone: "100", 
     },
     {
       poolAddress: "0xabcdef123456789",
-      poolName: "Pool 2",
+      poolName: "DogSwap / MintMe",
       userBalance: "200",
       stakedBalance: "75",
+      earnedBone: "100", 
+    },
+    {
+      poolAddress: "0xabcdef123456789",
+      poolName: "DogSwap / Bone",
+      userBalance: "200",
+      stakedBalance: "75",
+      earnedBone: "100", 
     },
     // Add more pool data as needed...
   ];
@@ -351,12 +365,14 @@ function Farms(props) {
                 </Typography>
 
                 {/* Stake and Withdraw Buttons */}
-                <Button variant="contained" color="primary">
-                  Stake
-                </Button>
-                <Button variant="contained" color="secondary">
-                  Withdraw
-                </Button>
+                <div className={classes.buttonContainer}>
+                  <Button variant="contained" color="primary">
+                    Stake
+                  </Button>
+                  <Button variant="contained" color="secondary">
+                    Withdraw
+                  </Button>
+                </div>
               </Paper>
             </Grid>
           ))}
