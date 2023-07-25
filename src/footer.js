@@ -24,7 +24,7 @@ const Footer = () => {
               rel="noopener noreferrer"
             >
               Join our Discord
-            </Button>
+            </Button>  
             <Button
               variant="contained"
               color="secondary"
