@@ -11,7 +11,7 @@ import Farms from "./Farms/Farms";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./footer"; // Import the Footer component
 import "./footer.css"; // Import the Footer styles
-import Sidebar from "./Sidebar"; // Import the Sidebar component
+import SideBar from "./NavBar/SideBar"; // Import the Sidebar component
 
 // Create the theme for Material UI
 const theme = createTheme({
@@ -29,11 +29,11 @@ const theme = createTheme({
 
 const App = () => {
   // State to control the visibility of the sidebar
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSideBarOpen, setIsSideBarOpen] = useState(false);
 
   // Function to toggle the sidebar
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  const toggleSideBar = () => {
+    setIsSideBarOpen(!isSideBarOpen);
   };
 
   return (
@@ -44,9 +44,9 @@ const App = () => {
             render={(network) => (
               <div>
                 {/* Include the NavBar component with the toggleSidebar prop */}
-                <NavBar toggleSidebar={toggleSidebar} />
+                <NavBar toggleSideBar={toggleSideBar} />
                 {/* Include the Sidebar component with isOpen and toggleSidebar props */}
-                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <SideBar isOpen={isSideBarOpen} toggleSideBar={toggleSideBar} />
                 <div className="NavbarContainer">
                   <Route exact path="/">
                     <CoinSwapper network={network} />
