@@ -1,6 +1,7 @@
 import React from "react";
 import { FaDiscord, FaTwitter, FaRobot, FaHeart } from "react-icons/fa";
 import Button from "@mui/material/Button";
+import PrivacyPolicyPopup from "./PrivacyPolicyPopup";
 
 const Footer = () => {
   return (
@@ -10,7 +11,7 @@ const Footer = () => {
           <a href="/">Home</a>
           <a href="/about">About</a>
           <a href="/contact">Contact</a>
-          <a href="/privacy-policy">Privacy Policy</a>
+          <PrivacyPolicyPopup />
         </div>
         <div className="company-info">
           {/* Styled buttons for Discord and Twitter */}
