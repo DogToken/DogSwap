@@ -42,20 +42,15 @@
   margin: 5px 0;
 }
 
-/* Styles for the copyright line */
-.copyright {
-  text-align: center;
-  padding: 10px;
-  font-size: 12px;
+.company-info div {
+  display: flex;
+  gap: 30px; /* Add some space between the buttons */
 }
 
-/* Adjust the size and color of the FontAwesome icons */
-/* If necessary, you can add more styles for the icons */
-.fa-heart,
-.fa-robot {
+.company-info button {
+  padding: 4px 8px;
   font-size: 12px;
-  margin: 0 3px;
-  color: red; /* Heart icon color */
+  transform: scale(0.5); /* Reduce size by 50% */
 }
 
 /* Media query for smaller screens */
@@ -63,38 +58,28 @@
   .footer-content {
     flex-direction: column;
     align-items: center;
-}
+  }
   
-.copyright {
-  font-size: 10px; /* Adjust the font size for mobile devices */
-  padding: 5px; /* Adjust the padding for mobile devices */
-}
-
-/* Adjust the size and spacing of the FontAwesome icons for mobile devices */
-.fa-heart {
-  margin-right: 10px;
-}
-
-.fa-robot {
-  font-size: 10px;
-  margin: 0 2px;
-}
-
-.footer {
-  position: relative;
-  bottom: auto;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  padding: 10px; /* Decrease total footer height by 30% */
-}
+  .footer {
+    position: relative;
+    bottom: auto;
+    padding: 10px; /* Decrease total footer height by 30% */
+  }
   
-.company-info div {
-  display: flex;
-  gap: 30px; /* Add more space between the buttons */
-}
+  .company-info div {
+    display: flex;
+    gap: 30px; /* Add some space between the buttons */
+  }
 
   /* Make buttons 50% smaller and adjust padding */
-.company-info button {
-  padding: 4px 8px;
-  font-size: 12px;
-  transform: scale(0.5); /* Reduce size by 50% */
+  .company-info button {
+    padding: 4px 8px;
+    font-size: 12px;
+    transform: scale(0.5); /* Reduce size by 50% */
+  }
+}
+
+/* Add box shadow to the footer */
+.footer {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
