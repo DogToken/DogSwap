@@ -10,7 +10,7 @@ import { ethers } from "ethers";
 import COINS from "../constants/coins";
 import * as ethereumFunctions from "../ethereumFunctions";
 import SwitchButton from "../Liquidity/SwitchButton";
-import LiquidityDeployer from "../Liquidity/LiquidityDeployer";
+import FarmDeployer from "./FarmDeployer";
 import LiquidityRemover from "../Liquidity/RemoveLiquidity";
 
 const styles = (theme) => ({
@@ -42,7 +42,7 @@ function Farms(props) {
 
   const deploy_or_remove = (deploy) => {
     if (deploy === true) {
-      return <LiquidityDeployer network={props.network} />;
+      return <FarmDeployer network={props.network} />;
     }
     return <LiquidityRemover network={props.network} />;
   };
