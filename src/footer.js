@@ -24,7 +24,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Join our Discord
+              Discord
             </Button>  
             <Button
               variant="contained"
@@ -35,7 +35,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               style={{ backgroundColor: "#26a7de", color: "#fff" }}
             >
-              Follow us on Twitter
+              Twitter
             </Button>
           </div>
         </div>
