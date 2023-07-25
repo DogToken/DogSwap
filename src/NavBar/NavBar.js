@@ -11,33 +11,32 @@ const NavBar = () => {
   const [tvl, setTVL] = useState(null);
   const [connected, setConnected] = useState(false);
 
-  // Function to calculate TVL based on your specific logic (replace with your actual calculation)
-  const calculateTVL = (totalSupply, burnedSupply) => {
-    // Your TVL calculation logic here
-    // Example: const tvlValue = totalSupply - burnedSupply;
-    // Replace this with your specific TVL calculation logic
-    return YOUR_TV_CALCULATION;
-  };
+   // Function to calculate TVL based on totalSupply and tokenPrice
+      const calculateTVL = (totalSupply, tokenPrice) => {
+      return totalSupply * tokenPrice;
+      };
 
   const fetchTVLData = async () => {
     try {
-      // Make the API call to fetch TVL data
+      // Make the API call to fetch TVL data and tokenPrice
       const response = await fetch('https://api.dogswap.online');
       const data = await response.json();
-
+  
       // Extract the required data from the API response
       const totalSupply = data.totalSupply;
       const burnedSupply = data.burnedSupply;
-
-      // Calculate TVL based on your specific logic
-      const calculatedTVL = calculateTVL(totalSupply, burnedSupply);
-
+      const tokenPrice = data.tokenPrice;
+  
+      // Calculate TVL based on totalSupply and tokenPrice
+      const calculatedTVL = calculateTVL(totalSupply, tokenPrice);
+  
       // Update the state with the calculated TVL value
       setTVL(calculatedTVL);
     } catch (error) {
       console.error('Error fetching TVL data:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchTVLData();
