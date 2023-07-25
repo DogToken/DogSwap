@@ -42,11 +42,39 @@
   margin: 5px 0;
 }
 
+/* Styles for the copyright line */
+.copyright {
+  text-align: center;
+  padding: 10px;
+  font-size: 12px;
+}
+
+/* Adjust the size and color of the FontAwesome icons */
+/* If necessary, you can add more styles for the icons */
+.fa-heart,
+.fa-robot {
+  font-size: 12px;
+  margin: 0 3px;
+  color: red; /* Heart icon color */
+}
+
 /* Media query for smaller screens */
 @media screen and (max-width: 768px) {
   .footer-content {
     flex-direction: column;
     align-items: center;
+  }
+  
+  .copyright {
+    font-size: 10px; /* Adjust the font size for mobile devices */
+    padding: 5px; /* Adjust the padding for mobile devices */
+  }
+
+  /* Adjust the size and spacing of the FontAwesome icons for mobile devices */
+  .fa-heart,
+  .fa-robot {
+    font-size: 10px;
+    margin: 0 2px;
   }
   
   .footer {
