@@ -59,7 +59,7 @@ const styles = (theme) => ({
     textAlign: "center",
   },
   footer: {
-    marginTop: "25px",
+    marginTop: "500px",
   },
   buttonContainer: {
     marginTop: theme.spacing(2), // Add space between the buttons and the content above
@@ -67,10 +67,10 @@ const styles = (theme) => ({
     justifyContent: "space-between",
   },
   stakeButton: {
-    marginRight: theme.spacing(2), // Add 25px spacing to the right of the "Stake" button
+    marginRight: theme.spacing(4), // Add 25px spacing to the right of the "Stake" button
   },
   withdrawButton: {
-    marginLeft: theme.spacing(2), // Add 25px spacing to the left of the "Withdraw" button
+    marginLeft: theme.spacing(4), // Add 25px spacing to the left of the "Withdraw" button
   },
 });
 
@@ -358,7 +358,7 @@ function Farms(props) {
         </Grid>
       </Grid>
     </Container>
-    
+
       {/* Farms */}
       <Container maxWidth="md">
       <Grid container spacing={3}>
