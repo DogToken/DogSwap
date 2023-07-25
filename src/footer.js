@@ -33,6 +33,7 @@ const Footer = () => {
               href="https://twitter.com/DogSwapDeFi"
               target="_blank"
               rel="noopener noreferrer"
+              style={{ backgroundColor: "#26a7de", color: "#fff" }}
             >
               Follow us on Twitter
             </Button>
