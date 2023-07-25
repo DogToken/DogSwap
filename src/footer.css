@@ -63,30 +63,31 @@
   .footer-content {
     flex-direction: column;
     align-items: center;
-  }
+}
   
-  .copyright {
-    font-size: 10px; /* Adjust the font size for mobile devices */
-    padding: 5px; /* Adjust the padding for mobile devices */
-  }
+.copyright {
+  font-size: 10px; /* Adjust the font size for mobile devices */
+  padding: 5px; /* Adjust the padding for mobile devices */
+}
 
-  /* Adjust the size and spacing of the FontAwesome icons for mobile devices */
-  .fa-heart {
-    margin-right: 10px;
-  }
+/* Adjust the size and spacing of the FontAwesome icons for mobile devices */
+.fa-heart {
+  margin-right: 10px;
+}
 
-  .fa-robot {
-    font-size: 10px;
-    margin: 0 2px;
-  }
+.fa-robot {
+  font-size: 10px;
+  margin: 0 2px;
+}
 
-  .footer {
-    position: relative;
-    bottom: auto;
-    padding: 10px; /* Decrease total footer height by 30% */
-  }
+.footer {
+  position: relative;
+  bottom: auto;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  padding: 10px; /* Decrease total footer height by 30% */
+}
   
-  .company-info div {
+.company-info div {
   display: flex;
   gap: 30px; /* Add more space between the buttons */
 }
@@ -96,14 +97,4 @@
   padding: 4px 8px;
   font-size: 12px;
   transform: scale(0.5); /* Reduce size by 50% */
-}
-
-/* Add box shadow to the footer */
-.footer {
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Adjust spacing between buttons for PC browser version */
-.company-info div {
-  gap: 20px; /* Add some space between the buttons */
 }
