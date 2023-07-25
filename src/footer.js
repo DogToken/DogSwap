@@ -39,7 +39,7 @@ const Footer = () => {
         </div>
         <div className="copyright">
         <p>
-          <FaHeart /> DogSwap &nbsp;&nbsp; Created with the help of AI <FaRobot />
+          <FaHeart /> © DogSwap 2023 &nbsp;&nbsp; Created with the help of AI <FaRobot />
         </p>
       </div>
       </div>
