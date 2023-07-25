@@ -19,7 +19,7 @@ const Footer = () => {
               variant="contained"
               color="primary"
               startIcon={<FaDiscord />}
-              href="https://discord.gg/"
+              href="https://discord.gg/RSQZDGThfU"
               target="_blank"
               rel="noopener noreferrer"
             >
