@@ -25,7 +25,7 @@ const styles = (theme) => ({
     marginBottom: theme.spacing(1),
   },
   footer: {
-    marginTop: "155px",
+    marginTop: "25px",
   },
 });
 
