@@ -12,6 +12,7 @@ import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./footer"; // Import the Footer component
 import "./footer.css"; // Import the Footer styles
 import SideBar from "./NavBar/SideBar"; // Import the Sidebar component
+import { Analytics } from '@vercel/analytics/react';
 
 // Create the theme for Material UI
 const theme = createTheme({
@@ -61,6 +62,8 @@ const App = () => {
               </div>
             )}
           ></Web3Provider>
+
+        <Analytics />
           {/* Include the Footer component here */}
           <Footer />
         </ThemeProvider>
