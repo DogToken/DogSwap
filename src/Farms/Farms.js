@@ -58,7 +58,7 @@ const styles = (theme) => ({
     textAlign: "center",
   },
   footer: {
-    marginTop: "285px",
+    marginTop: "25px",
   },
 });
 
@@ -353,6 +353,15 @@ function Farms(props) {
           </Grid>
         </Grid>
       </Container>
+
+      <Grid
+        container
+        className={classes.footer}
+        direction="row"
+        justifyContent="center"
+        alignItems="flex-end"
+      >
+      </Grid>
     </div>
   );
 }
