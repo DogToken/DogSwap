@@ -309,48 +309,56 @@ function Farms(props) {
     return () => clearTimeout(coinTimeout);
   });
 
+  const poolsData = [
+    {
+      poolAddress: "0x123456789abcdef", // Replace with the actual pool address
+      poolName: "Pool 1", // Replace with the name of the pool
+      userBalance: "100", // Replace with the user's balance in this pool
+      stakedBalance: "50", // Replace with the user's staked balance in this pool
+    },
+    {
+      poolAddress: "0xabcdef123456789",
+      poolName: "Pool 2",
+      userBalance: "200",
+      stakedBalance: "75",
+    },
+    // Add more pool data as needed...
+  ];
+
   return (
     <div>
-      {/* Dialog Windows */}
-      <CoinDialog
-        open={dialog1Open}
-        onClose={onToken1Selected}
-        coins={props.network.coins}
-        props={props.network.signer}
-      />
-      <CoinDialog
-        open={dialog2Open}
-        onClose={onToken2Selected}
-        coins={props.network.coins}
-        signer={props.network.signer}
-      />
-      <WrongNetwork
-        open={wrongNetworkOpen}
-        />
-
-      {/* Coin Swapper */}
+      {/* Farms */}
       <Container maxWidth="md">
         <Grid container spacing={3}>
-          {/* First Paper */}
-          <Grid item xs={4}>
-            <Paper className={classes.paperContainer}>
-              {/* ... (existing content for the first Paper) */}
-            </Paper>
-          </Grid>
+          {/* Loop over poolsData and render each pool in a Paper */}
+          {poolsData.slice(0, 3).map((pool, index) => (
+            <Grid item xs={4} key={index}>
+              <Paper className={classes.paperContainer}>
+                {/* Pool Name */}
+                <Typography variant="h5" className={classes.title}>
+                  {pool.poolName}
+                </Typography>
 
-          {/* Second Paper */}
-          <Grid item xs={4}>
-            <Paper className={classes.paperContainer}>
-              {/* ... (existing content for the second Paper) */}
-            </Paper>
-          </Grid>
+                {/* User Balance */}
+                <Typography variant="body1" className={classes.balance}>
+                  User Balance: {pool.userBalance} {/* Replace with formatted balance */}
+                </Typography>
 
-          {/* Third Paper */}
-          <Grid item xs={4}>
-            <Paper className={classes.paperContainer}>
-              {/* ... (existing content for the third Paper) */}
-            </Paper>
-          </Grid>
+                {/* Staked Balance */}
+                <Typography variant="body1" className={classes.balance}>
+                  Staked Balance: {pool.stakedBalance} {/* Replace with formatted staked balance */}
+                </Typography>
+
+                {/* Stake and Withdraw Buttons */}
+                <Button variant="contained" color="primary">
+                  Stake
+                </Button>
+                <Button variant="contained" color="secondary">
+                  Withdraw
+                </Button>
+              </Paper>
+            </Grid>
+          ))}
         </Grid>
       </Container>
 
