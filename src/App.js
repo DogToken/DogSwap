@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import { ethers } from "ethers";
 import Web3Provider from "./network";
@@ -11,7 +11,9 @@ import Farms from "./Farms/Farms";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./footer"; // Import the Footer component
 import "./footer.css"; // Import the Footer styles
+import Sidebar from "./Sidebar"; // Import the Sidebar component
 
+// Create the theme for Material UI
 const theme = createTheme({
   palette: {
     primary: {
@@ -26,6 +28,14 @@ const theme = createTheme({
 });
 
 const App = () => {
+  // State to control the visibility of the sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Function to toggle the sidebar
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="App">
       <SnackbarProvider maxSnack={3}>
@@ -33,7 +43,10 @@ const App = () => {
           <Web3Provider
             render={(network) => (
               <div>
-                <NavBar />
+                {/* Include the NavBar component with the toggleSidebar prop */}
+                <NavBar toggleSidebar={toggleSidebar} />
+                {/* Include the Sidebar component with isOpen and toggleSidebar props */}
+                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
                 <div className="NavbarContainer">
                   <Route exact path="/">
                     <CoinSwapper network={network} />
