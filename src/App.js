@@ -44,6 +44,9 @@ const App = () => {
                   <Route exact path="/farms">
                     <Farms network={network} />
                   </Route>
+                  <Route exact path="/Game">
+                    <Game network={network} />
+                  </Route>
                 </div>
               </div>
             )}
