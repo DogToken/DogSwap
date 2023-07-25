@@ -1,5 +1,5 @@
 import React from "react";
-import { FaDiscord, FaTwitter } from "react-icons/fa";
+import { FaDiscord, FaTwitter, FaRobot } from "react-icons/fa";
 import Button from "@mui/material/Button";
 
 const Footer = () => {
@@ -37,6 +37,11 @@ const Footer = () => {
             </Button>
           </div>
         </div>
+        <div className="copyright">
+        <p>
+          <FaHeart /> DogSwap &nbsp;&nbsp; Created with the help of AI <FaRobot />
+        </p>
+      </div>
       </div>
     </footer>
   );
