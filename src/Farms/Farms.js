@@ -62,7 +62,7 @@ const styles = (theme) => ({
     textAlign: "center",
   },
   footer: {
-    marginTop: "500px",
+    marginTop: "50px",
   },
   buttonContainer: {
     marginTop: theme.spacing(2), // Add space between the buttons and the content above
@@ -328,23 +328,44 @@ function Farms(props) {
     {
       poolAddress: "0x123456789abcdef", // Replace with the actual pool address
       poolName: "Bone / MintMe", // Replace with the name of the pool
-      userBalance: "100", // Replace with the user's balance in this pool
-      stakedBalance: "50", // Replace with the user's staked balance in this pool
-      earnedBone: "100", 
+      userBalance: "0", // Replace with the user's balance in this pool
+      stakedBalance: "0", // Replace with the user's staked balance in this pool
+      earnedBone: "0", 
     },
     {
       poolAddress: "0xabcdef123456789",
       poolName: "DogSwap / MintMe",
-      userBalance: "200",
-      stakedBalance: "75",
-      earnedBone: "100", 
+      userBalance: "0",
+      stakedBalance: "0",
+      earnedBone: "0", 
     },
     {
       poolAddress: "0xabcdef123456789",
       poolName: "DogSwap / Bone",
-      userBalance: "200",
-      stakedBalance: "75",
-      earnedBone: "100", 
+      userBalance: "0",
+      stakedBalance: "0",
+      earnedBone: "0", 
+    },
+    {
+      poolAddress: "0xabcdef123456789",
+      poolName: "DogSwap / 1000X",
+      userBalance: "0",
+      stakedBalance: "0",
+      earnedBone: "0", 
+    },
+    {
+      poolAddress: "0xabcdef123456789",
+      poolName: "DogSwap / PMINT",
+      userBalance: "0",
+      stakedBalance: "0",
+      earnedBone: "0", 
+    },
+    {
+      poolAddress: "0xabcdef123456789",
+      poolName: "Bone / Cookie",
+      userBalance: "0",
+      stakedBalance: "0",
+      earnedBone: "0", 
     },
     // Add more pool data as needed...
   ];
