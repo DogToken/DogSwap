@@ -71,12 +71,15 @@
   }
 
   /* Adjust the size and spacing of the FontAwesome icons for mobile devices */
-  .fa-heart,
+  .fa-heart {
+    margin-right: 10px;
+  }
+  
   .fa-robot {
     font-size: 10px;
     margin: 0 2px;
   }
-  
+
   .footer {
     position: relative;
     bottom: auto;
