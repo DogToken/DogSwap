@@ -348,6 +348,17 @@ function Farms(props) {
 
   return (
     <div>
+    {/* Warning Message */}
+    <Container maxWidth="md">
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Typography variant="h6" color="error" align="center">
+            This page is currently in production and may not display accurate data.
+          </Typography>
+        </Grid>
+      </Grid>
+    </Container>
+    
       {/* Farms */}
       <Container maxWidth="md">
       <Grid container spacing={3}>
