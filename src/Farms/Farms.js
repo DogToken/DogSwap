@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import { ethers } from "ethers";
 import COINS from "./constants/coins";
-import * as ethereumFunctions from "./ethereumFunctions";
+import * as ethereumFunctions from "../ethereumFunctions";
 import SwitchButton from "./SwitchButton";
 import LiquidityDeployer from "./LiquidityDeployer";
 import LiquidityRemover from "./RemoveLiquidity";
