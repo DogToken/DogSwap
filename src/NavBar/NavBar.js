@@ -1,73 +1,40 @@
-// NavBar.js
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MenuItems } from "./MenuItems";
 import "./NavBar.css";
-import { ethers } from "ethers";
-import detectEthereumProvider from '@metamask/detect-provider';
+
+const baseUrl = "https://api.dogswap.online/api/v1";
+
+export const useGetStats = () => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/stat`);
+        const responsedata = await response.json();
+        setData(responsedata);
+      } catch (error) {
+        console.error("Unable to fetch data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return data;
+};
 
 const NavBar = () => {
   const [tvl, setTVL] = useState(null);
-  const [connected, setConnected] = useState(false);
-
-   // Function to calculate TVL based on totalSupply and tokenPrice
-      const calculateTVL = (totalSupply, tokenPrice) => {
-      return totalSupply * tokenPrice;
-      };
-
-  const fetchTVLData = async () => {
-    try {
-      // Make the API call to fetch TVL data and tokenPrice
-      const response = await fetch('https://api.dogswap.online');
-      const data = await response.json();
-  
-      // Extract the required data from the API response
-      const totalSupply = data.totalSupply;
-      const burnedSupply = data.burnedSupply;
-      const tokenPrice = data.tokenPrice;
-  
-      // Calculate TVL based on totalSupply and tokenPrice
-      const calculatedTVL = calculateTVL(totalSupply, tokenPrice);
-  
-      // Update the state with the calculated TVL value
-      setTVL(calculatedTVL);
-    } catch (error) {
-      console.error('Error fetching TVL data:', error);
-    }
-  };
-  
+  const data = useGetStats(); // Fetch the TVL data using the useGetStats hook
 
   useEffect(() => {
-    fetchTVLData();
-  }, []);
-
-  useEffect(() => {
-    // Check if MetaMask provider is available
-    detectEthereumProvider().then(provider => {
-      if (provider) {
-        setConnected(true);
-      }
-    });
-  }, []);
-
-  const connectToMetaMask = async () => {
-    try {
-      // Request access to the user's MetaMask accounts
-      const provider = await detectEthereumProvider();
-      if (provider) {
-        await provider.request({ method: 'eth_requestAccounts' });
-        // Once connected, you can interact with the Ethereum blockchain using ethers.js
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        // Perform Ethereum transactions or any other interactions
-        // Example: const signer = provider.getSigner();
-        //          const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-        //          const transaction = await contract.transfer(toAddress, amount);
-      }
-    } catch (error) {
-      console.error('Error connecting to MetaMask:', error);
+    // Set the TVL value once the data is fetched
+    if (data) {
+      setTVL(data.total_value_locked);
     }
-  };
+  }, [data]);
 
   return (
     <nav>
@@ -91,15 +58,6 @@ const NavBar = () => {
             );
           })}
         </ul>
-      </div>
-
-      {/* MetaMask button */}
-      <div className="metamask-button">
-        {connected ? (
-          <button onClick={connectToMetaMask}>Connect to MetaMask</button>
-        ) : (
-          <p>MetaMask not detected.</p>
-        )}
       </div>
     </nav>
   );
