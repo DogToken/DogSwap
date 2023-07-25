@@ -66,6 +66,12 @@ const styles = (theme) => ({
     display: "flex",
     justifyContent: "space-between",
   },
+  stakeButton: {
+    marginRight: theme.spacing(2), // Add 25px spacing to the right of the "Stake" button
+  },
+  withdrawButton: {
+    marginLeft: theme.spacing(2), // Add 25px spacing to the left of the "Withdraw" button
+  },
 });
 
 const useStyles = makeStyles(styles);
@@ -344,40 +350,40 @@ function Farms(props) {
     <div>
       {/* Farms */}
       <Container maxWidth="md">
-        <Grid container spacing={3}>
-          {/* Loop over poolsData and render each pool in a Paper */}
-          {poolsData.slice(0, 3).map((pool, index) => (
-            <Grid item xs={4} key={index}>
-              <Paper className={classes.paperContainer}>
-                {/* Pool Name */}
-                <Typography variant="h5" className={classes.title}>
-                  {pool.poolName}
-                </Typography>
+      <Grid container spacing={3}>
+        {/* Loop over poolsData and render each pool in a Paper */}
+        {poolsData.slice(0, 3).map((pool, index) => (
+          <Grid item xs={4} key={index}>
+            <Paper className={classes.paperContainer}>
+              {/* Pool Name */}
+              <Typography variant="h5" className={classes.title}>
+                {pool.poolName}
+              </Typography>
 
-                {/* User Balance */}
-                <Typography variant="body1" className={classes.balance}>
-                  User Balance: {pool.userBalance} {/* Replace with formatted balance */}
-                </Typography>
+              {/* User Balance */}
+              <Typography variant="body1" className={classes.balance}>
+                User Balance: {pool.userBalance} {/* Replace with formatted balance */}
+              </Typography>
 
-                {/* Staked Balance */}
-                <Typography variant="body1" className={classes.balance}>
-                  Staked Balance: {pool.stakedBalance} {/* Replace with formatted staked balance */}
-                </Typography>
+              {/* Staked Balance */}
+              <Typography variant="body1" className={classes.balance}>
+                Staked Balance: {pool.stakedBalance} {/* Replace with formatted staked balance */}
+              </Typography>
 
-                {/* Stake and Withdraw Buttons */}
-                <div className={classes.buttonContainer}>
-                  <Button variant="contained" color="primary">
-                    Stake
-                  </Button>
-                  <Button variant="contained" color="secondary">
-                    Withdraw
-                  </Button>
-                </div>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
+              {/* Stake and Withdraw Buttons */}
+              <div className={classes.buttonContainer}>
+                <Button variant="contained" color="primary" className={classes.stakeButton}>
+                  Stake
+                </Button>
+                <Button variant="contained" color="secondary" className={classes.withdrawButton}>
+                  Withdraw
+                </Button>
+              </div>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
 
       <Grid
         container
