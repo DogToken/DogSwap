@@ -7,7 +7,7 @@ const PrivacyPolicyPopup = () => {
 
   useEffect(() => {
     // Fetch the privacy policy content from the URL
-    fetch("https://dogswap.online/privacypolicy.md")
+    fetch("https://dogswap.online/privacypolicy.html")
       .then((response) => response.text())
       .then((data) => setPolicyContent(data));
   }, []);
