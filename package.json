@@ -1,5 +1,5 @@
 {
-  "name": "react-uniswap",
+  "name": "dogswap",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -28,9 +28,10 @@
     "notistack": "^1.0.10",
     "@mui/material": "5.14.1",
     "@emotion/react": "11.11.1",
-    "@emotion/styled": "11.11.0"
+    "@emotion/styled": "11.11.0",
+    "@metamask/detect-provider": "2.0.0"
   },
-  "homepage": "https://dog-swap-seven.vercel.app/",
+  "homepage": "https://dogswap.online/",
   "scripts": {
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
