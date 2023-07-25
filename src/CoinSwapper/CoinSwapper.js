@@ -58,7 +58,7 @@ const styles = (theme) => ({
     textAlign: "center",
   },
   footer: {
-    marginTop: "25px",
+    marginTop: "100px",
   },
 });
 
