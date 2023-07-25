@@ -9,9 +9,9 @@ import {
 import { ethers } from "ethers";
 import COINS from "./constants/coins";
 import * as ethereumFunctions from "../ethereumFunctions";
-import SwitchButton from "./SwitchButton";
-import LiquidityDeployer from "./LiquidityDeployer";
-import LiquidityRemover from "./RemoveLiquidity";
+import SwitchButton from "..Liquidity/SwitchButton";
+import LiquidityDeployer from "../Liquidity/LiquidityDeployer";
+import LiquidityRemover from "..Liquidity/RemoveLiquidity";
 
 const styles = (theme) => ({
   paperContainer: {
