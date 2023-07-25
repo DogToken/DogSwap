@@ -1,5 +1,5 @@
 import React from "react";
-import { FaDiscord, FaTwitter, FaRobot } from "react-icons/fa";
+import { FaDiscord, FaTwitter, FaRobot, FaHeart } from "react-icons/fa";
 import Button from "@mui/material/Button";
 
 const Footer = () => {
