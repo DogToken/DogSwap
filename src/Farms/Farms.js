@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { ethers } from "ethers";
-import COINS from "./constants/coins";
+import COINS from "../constants/coins";
 import * as ethereumFunctions from "../ethereumFunctions";
 import SwitchButton from "../Liquidity/SwitchButton";
 import LiquidityDeployer from "../Liquidity/LiquidityDeployer";
