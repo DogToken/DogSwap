@@ -10,6 +10,9 @@ import {
 } from "@material-ui/core";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import { useSnackbar } from "notistack";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import FontAwesomeIcon
+import { faMoneyBillAlt } from "@fortawesome/free-solid-svg-icons"; // Import the money icon from Font Awesome
+
 import LoopIcon from "@material-ui/icons/Loop";
 import {
   getAccount,
@@ -236,7 +239,7 @@ function Farms(props) {
   // the new reserves will be calculated.
   useEffect(() => {
     console.log(
-      "Trying to get Reserves between:\n" + coin1.address + "\n" + coin2.address
+      "Trying to get data from:\n" + coin1.address + "\n" + coin2.address
     );
 
     if (coin1.address && coin2.address) {
@@ -370,6 +373,11 @@ function Farms(props) {
               <Typography variant="h5" className={classes.title}>
                 {pool.poolName}
               </Typography>
+
+              {/* Placeholder Pool Picture */}
+              <div style={{ textAlign: "center", marginBottom: 20 }}>
+                <FontAwesomeIcon icon={faMoneyBillAlt} size="5x" color="grey" />
+              </div>
 
               {/* User Balance */}
               <Typography variant="body1" className={classes.balance}>
