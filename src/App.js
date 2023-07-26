@@ -13,6 +13,7 @@ import Footer from "./footer"; // Import the Footer component
 import "./footer.css"; // Import the Footer styles
 import SideBar from "./NavBar/SideBar"; // Import the Sidebar component
 import { inject } from '@vercel/analytics';
+import Stake from "./Stake/Stake";
 
 inject();
 
@@ -59,6 +60,9 @@ const App = () => {
                   </Route>
                   <Route exact path="/farms">
                     <Farms network={network} />
+                  </Route>
+                  <Route exact path="/stake">
+                    <Stake network={network} />
                   </Route>
                 </div>
               </div>

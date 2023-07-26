@@ -1,0 +1,126 @@
+/* Styles go here */
+:root {
+    --primary: rgb(165, 85, 185);
+    --primary-dark: rgb(74, 14, 94);
+    --secondary: rgb(3, 232, 252);
+    --secondary-dark: rgb(0, 128, 133);
+  }
+  /* default */
+  
+  * {
+    transition: 0.2s;
+  }
+  
+  body {
+    background-color: #ececec;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  
+  a {
+    text-decoration: none;
+    color: var(--primary);
+  }
+  
+  a:hover {
+    text-decoration: none;
+    color: var(--primary-dark);
+  }
+  
+  li {
+    list-style: none;
+  }
+  
+  ul {
+    padding: 0pcx;
+    margin: 0px;
+  }
+  
+  /* nav */
+  .navbar {
+    background-color: #f6f6f6;
+    padding: 0px 2rem;
+    margin: 0px;
+    position: fixed;
+    overflow: hidden;
+    top: 0;
+    width: 100%;
+  
+    border-bottom: 5px solid var(--primary);
+  }
+  
+  .navbar-icon {
+    text-align: center;
+  }
+  
+  /* button */
+  
+  .button {
+    background-color: var(--secondary);
+    color: black;
+    border: none;
+  }
+  
+  .button:hover {
+    background-color: var(--secondary-dark);
+    color: white;
+    border: none;
+  }
+  
+  /* main */
+  
+  .token {
+    padding-left: 12px;
+    width: 100%;
+    height: auto;
+  }
+  
+  .main-grid {
+    padding: 0px;
+    display: grid;
+    grid-template-columns: repeat(2, 2fr);
+  }
+  
+  #title {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+  }
+  #title h1 {
+    text-shadow: #ececec 0px 0px 1px;
+  }
+  #title b {
+    color: var(--primary-dark);
+  }
+  #title p {
+    font-weight: bold;
+    color: var(--primary-dark);
+  }
+  
+  #content {
+    margin-top: 7rem;
+  }
+  
+  #refund div.card {
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    background-size: 20rem;
+  }
+  /* card */
+  
+  .card {
+    margin: 10px;
+    padding-top: 2rem;
+    min-height: 13rem;
+    position: relative;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: none;
+    border-radius: 15px;
+  }
