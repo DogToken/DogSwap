@@ -38,7 +38,7 @@ const styles = (theme) => ({
   },
   coinList: {
     height: "300px",
-    overflowY: "scroll",
+    // overflowY: "scroll",
   },
   coinContainer: {
     paddingLeft: theme.spacing(0.5),
@@ -57,7 +57,6 @@ const DialogTitle = withStyles(styles)((props) => {
   const { children, classes, onClose, ...other } = props;
   return (
     <MuiDialogTitle
-      disableTypography
       className={classes.titleSection}
       {...other}
     >
@@ -164,6 +163,7 @@ export default function CoinDialog(props) {
       onClose={() => exit(undefined)}
       fullWidth
       maxWidth="sm"
+      sx={{zIndex:500000}}
       classes={{ paper: classes.dialogContainer }}
     >
       <DialogTitle onClose={() => exit(undefined)}>Select Coin</DialogTitle>
