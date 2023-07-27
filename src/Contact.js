@@ -28,21 +28,20 @@ const useStyles = makeStyles((theme) => ({
   resetButton: {
     marginRight: theme.spacing(2),
   },
-  accordion: {
-    marginBottom: theme.spacing(2),
-  },
   footer: {
     marginTop: "250px",
   },
-  // Custom styles for FAQ table
-  faqTable: {
+  accordion: {
     width: "100%",
-    border: `1px solid ${theme.palette.grey[300]}`,
-    borderRadius: theme.shape.borderRadius,
-    padding: theme.spacing(2),
+    marginBottom: theme.spacing(1),
   },
   faqQuestion: {
-    marginBottom: theme.spacing(2),
+    width: "100%",
+  },
+  faqTable: {
+    border: "1px solid #ccc",
+    padding: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -64,19 +63,12 @@ function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your logic for handling the form submission here
-    // For example, you can send the form data to your backend server or show a success message.
-
-    // For demonstration purposes, let's just log the form data to the console
     console.log("Form Data:", formData);
-
-    // Clear form data after submission
     setFormData({
       name: "",
       email: "",
       message: "",
     });
-
     setSubmitted(true);
   };
 
@@ -89,31 +81,31 @@ function Contact() {
     setSubmitted(false);
   };
 
-  // Sample FAQ data
+  // Sample FAQ Data
   const faqData = [
     {
-      topic: "General",
+      topic: "Topic 1",
       questions: [
         {
-          question: "What are your office hours?",
-          answer: "Our office is open from 9 AM to 5 PM, Monday to Friday.",
+          question: "Question 1",
+          answer: "Answer 1",
         },
         {
-          question: "Where are you located?",
-          answer: "We are located at 123 Main Street, City, Country.",
+          question: "Question 2",
+          answer: "Answer 2",
         },
       ],
     },
     {
-      topic: "Products",
+      topic: "Topic 2",
       questions: [
         {
-          question: "Do you offer free shipping?",
-          answer: "Yes, we offer free shipping on orders over $50.",
+          question: "Question 3",
+          answer: "Answer 3",
         },
         {
-          question: "What is your return policy?",
-          answer: "Our return policy allows for returns within 30 days of purchase.",
+          question: "Question 4",
+          answer: "Answer 4",
         },
       ],
     },
