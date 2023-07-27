@@ -14,6 +14,7 @@ import "./footer.css"; // Import the Footer styles
 import SideBar from "./NavBar/SideBar"; // Import the Sidebar component
 import { inject } from '@vercel/analytics';
 import About from "./About";
+import Contact from "./Contact";
 
 inject();
 
@@ -63,6 +64,9 @@ const App = () => {
                   </Route>
                   <Route exact path="/about">
                     <About />
+                  </Route>
+                  <Route exact path="/contact">
+                    <Contact />
                   </Route>
                 </div>
               </div>
