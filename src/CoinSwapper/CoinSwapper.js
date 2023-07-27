@@ -270,7 +270,7 @@ function CoinSwapper(props) {
   useEffect(() => {
     if (isNaN(parseFloat(field1Value))) {
       setField2Value("");
-    } else if (parseFloat(field1Value) && coin1.address && coin2.address) {
+    } else if (parseFloat(field1Value) && coin1?.address && coin2?.address) {
       getAmountOut(
         coin1.address,
         coin2.address,
@@ -286,7 +286,7 @@ function CoinSwapper(props) {
     } else {
       setField2Value("");
     }
-  }, [field1Value, coin1.address, coin2.address]);
+  }, [field1Value, coin1?.address, coin2?.address]);
 
   // Reference to the chart div element
   const chartRef = useRef(null);
