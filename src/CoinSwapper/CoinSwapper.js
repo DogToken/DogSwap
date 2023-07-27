@@ -270,7 +270,7 @@ function CoinSwapper(props) {
   useEffect(() => {
     if (isNaN(parseFloat(field1Value))) {
       setField2Value("");
-    } else if (parseFloat(field1Value) && coin1?.address && coin2?.address) {
+    } else if (parseFloat(field1Value) && coin1 && coin1.address && coin2 && coin2.address) {
       getAmountOut(
         coin1.address,
         coin2.address,
