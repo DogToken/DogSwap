@@ -3,14 +3,9 @@ import {
   Container,
   Typography,
   makeStyles,
-  Grid,
   TextField,
   Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
 } from "@material-ui/core";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -30,21 +25,6 @@ const useStyles = makeStyles((theme) => ({
   },
   footer: {
     marginTop: "250px",
-  },
-  accordion: {
-    width: "100%",
-    marginBottom: theme.spacing(1),
-  },
-  faqQuestion: {
-    width: "100%",
-  },
-  faqTable: {
-    border: "1px solid #ccc",
-    padding: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  faqTitle: {
-    marginBottom: theme.spacing(3), // Adjust the margin bottom here
   },
 }));
 
@@ -83,36 +63,6 @@ function Contact() {
     });
     setSubmitted(false);
   };
-
-  // Sample FAQ Data
-  const faqData = [
-    {
-      topic: "Topic 1",
-      questions: [
-        {
-          question: "Question 1",
-          answer: "Answer 1",
-        },
-        {
-          question: "Question 2",
-          answer: "Answer 2",
-        },
-      ],
-    },
-    {
-      topic: "Topic 2",
-      questions: [
-        {
-          question: "Question 3",
-          answer: "Answer 3",
-        },
-        {
-          question: "Question 4",
-          answer: "Answer 4",
-        },
-      ],
-    },
-  ];
 
   return (
     <Container maxWidth="md" className={classes.container}>
@@ -176,52 +126,6 @@ function Contact() {
           Thank you for your message! We'll get back to you soon.
         </Typography>
       )}
-
-      {/* FAQ Section */}
-      <Typography variant="h5" className={classes.faqTitle}>
-        Frequently Asked Questions
-      </Typography>
-      <Grid container direction="column" alignItems="center">
-        {faqData.map((faqItem, index) => (
-          <Grid
-            item
-            key={index}
-            xs={12}
-            sm={10}
-            md={8}
-            className={classes.accordion}
-          >
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="h6" gutterBottom>
-                  {faqItem.topic}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Grid container direction="column" alignItems="flex-start">
-                  {faqItem.questions.map((question, qIndex) => (
-                    <Grid
-                      item
-                      key={qIndex}
-                      xs={12}
-                      className={classes.faqQuestion}
-                    >
-                      <div className={classes.faqTable}>
-                        <Typography variant="subtitle1">
-                          {question.question}
-                        </Typography>
-                        <Typography variant="body2">
-                          {question.answer}
-                        </Typography>
-                      </div>
-                    </Grid>
-                  ))}
-                </Grid>
-              </AccordionDetails>
-            </Accordion>
-          </Grid>
-        ))}
-      </Grid>
 
       <Grid
         container
