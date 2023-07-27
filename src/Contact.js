@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
   faqTitle: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(3), // Adjust the margin bottom here
   },
 }));
 
