@@ -3,6 +3,7 @@ import {
   Container,
   Typography,
   makeStyles,
+  Grid,
   TextField,
   Button,
 } from "@material-ui/core";
@@ -22,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
   },
   resetButton: {
     marginRight: theme.spacing(2),
+  },
+  footer: {
+    marginTop: "100px",
   },
 }));
 
@@ -130,6 +134,15 @@ function Contact() {
           Thank you for your message! We'll get back to you soon.
         </Typography>
       )}
+      <Grid
+        container
+        className={classes.footer}
+        direction="row"
+        justifyContent="center"
+        alignItems="flex-end"
+      >
+        {/* Footer content here */}
+      </Grid>
     </Container>
   );
 }
