@@ -34,6 +34,16 @@ const useStyles = makeStyles((theme) => ({
   footer: {
     marginTop: "250px",
   },
+  // Custom styles for FAQ table
+  faqTable: {
+    width: "100%",
+    border: `1px solid ${theme.palette.grey[300]}`,
+    borderRadius: theme.shape.borderRadius,
+    padding: theme.spacing(2),
+  },
+  faqQuestion: {
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 function Contact() {
@@ -115,8 +125,55 @@ function Contact() {
         Contact Us
       </Typography>
       <form onSubmit={handleSubmit}>
-        {/* Form fields */}
-        {/* ... */}
+        <TextField
+          label="Name"
+          variant="outlined"
+          fullWidth
+          className={classes.textField}
+          required
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+        />
+        <TextField
+          label="Email"
+          variant="outlined"
+          fullWidth
+          type="email"
+          className={classes.textField}
+          required
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+        />
+        <TextField
+          label="Message"
+          variant="outlined"
+          fullWidth
+          multiline
+          rows={4}
+          className={classes.textField}
+          required
+          name="message"
+          value={formData.message}
+          onChange={handleInputChange}
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          className={classes.submitButton}
+        >
+          Submit
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          className={classes.resetButton}
+          onClick={handleReset}
+        >
+          Reset
+        </Button>
       </form>
 
       {submitted && (
@@ -145,11 +202,20 @@ function Contact() {
               <AccordionDetails>
                 <Grid container direction="column" alignItems="flex-start">
                   {faqItem.questions.map((question, qIndex) => (
-                    <Grid item key={qIndex} xs={12} className={classes.faqItem}>
-                      <Typography variant="subtitle1" gutterBottom>
-                        {question.question}
-                      </Typography>
-                      <Typography variant="body2">{question.answer}</Typography>
+                    <Grid
+                      item
+                      key={qIndex}
+                      xs={12}
+                      className={classes.faqQuestion}
+                    >
+                      <div className={classes.faqTable}>
+                        <Typography variant="subtitle1">
+                          {question.question}
+                        </Typography>
+                        <Typography variant="body2">
+                          {question.answer}
+                        </Typography>
+                      </div>
                     </Grid>
                   ))}
                 </Grid>
