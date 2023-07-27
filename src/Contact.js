@@ -43,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
+  faqTitle: {
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 function Contact() {
@@ -175,6 +178,9 @@ function Contact() {
       )}
 
       {/* FAQ Section */}
+      <Typography variant="h5" className={classes.faqTitle}>
+        Frequently Asked Questions
+      </Typography>
       <Grid container direction="column" alignItems="center">
         {faqData.map((faqItem, index) => (
           <Grid
