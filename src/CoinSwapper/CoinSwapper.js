@@ -23,6 +23,8 @@ import {
   swapTokens,
   getReserves,
 } from "../ethereumFunctions";
+import { createChart } from "lightweight-charts"; // Import the createChart function from lightweight-charts
+import ChartError from "../Components/ChartError";
 import CoinField from "./CoinField";
 import CoinDialog from "./CoinDialog";
 import LoadingButton from "../Components/LoadingButton";
@@ -253,6 +255,53 @@ function CoinSwapper(props) {
     }
   }, [field1Value, coin1.address, coin2.address]);
 
+  // Reference to the chart div element
+  const chartRef = useRef(null);
+  const [err, setErr] = useState();
+
+  useEffect(() => {
+    const div = chartRef.current;
+    const chart = createChart(div, {
+      width: div.clientWidth,
+      height: div.clientHeight,
+      // The rest of your chart configuration
+    });
+
+    // Add chart series and fetch data here
+    const series = chart.addAreaSeries({
+      topColor: "rgba(0, 120, 255, 0.2)",
+      bottomColor: "rgba(0, 120, 255, 0.0)",
+      lineColor: "rgba(0, 120, 255, 1)",
+      lineWidth: 3,
+      priceFormat: {
+        minMove: 0.0001,
+        precision: 4,
+      },
+    });
+
+    // Fetch price data using your API or backend
+    if (props.coin1.address && props.coin2.address) {
+      fetch(`https://example-api.com/priceData?coin1=${props.coin1.address}&coin2=${props.coin2.address}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const chartData = data.history;
+          series.setData(chartData);
+        })
+        .catch((error) => {
+          console.error("Error fetching price data:", error);
+          setErr("No Data");
+        });
+    } else {
+      setErr("No Data");
+    }
+
+    // Cleanup function to destroy the chart
+    return () => {
+      chart.remove();
+    };
+  }, [props.coin1.address, props.coin2.address]);
+
+
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
   useEffect(() => {
@@ -407,6 +456,21 @@ function CoinSwapper(props) {
             </LoadingButton>
           </Grid>
         </Paper>
+      </Container>
+      <Container maxWidth="sm" sx={{ height: "100%" }}>
+        <Box fullWidth sx={{ height: "100%" }}>
+          <Card sx={{ height: "80%" }}>
+            <CardContent sx={{ height: "100%", textAlign: "center" }}>
+              <Typography variant="h5" className={classes.title}>
+                {(props.coin1.symbol || "--") + "/" + (props.coin2.symbol || "--")}
+              </Typography>
+              <div style={{ width: "100%", height: "256px", position: "relative", textAlign: "center" }}>
+                {err ? <ChartError msg={err} /> : <div />}
+                <div style={{ width: "100%", height: "256px" }} id="chartDiv" ref={chartRef}></div>
+              </div>
+            </CardContent>
+          </Card>
+        </Box>
       </Container>
 
       <Grid
