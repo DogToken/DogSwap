@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Container,
   Grid,
@@ -6,9 +6,6 @@ import {
   makeStyles,
   Paper,
   Typography,
-  Box,
-  Card,
-  CardContent,
 } from "@material-ui/core";
 import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import { useSnackbar } from "notistack";
@@ -26,8 +23,6 @@ import {
   swapTokens,
   getReserves,
 } from "../ethereumFunctions";
-import { createChart } from "lightweight-charts"; // Import the createChart function from lightweight-charts
-import ChartError from "../Components/ChartError";
 import CoinField from "./CoinField";
 import CoinDialog from "./CoinDialog";
 import LoadingButton from "../Components/LoadingButton";
@@ -76,7 +71,7 @@ function CoinSwapper(props) {
   // Stores a record of whether their respective dialog window is open
   const [dialog1Open, setDialog1Open] = React.useState(false);
   const [dialog2Open, setDialog2Open] = React.useState(false);
-  const [wrongNetworkOpen, setWrongNetworkOpen] = React.useState(false);
+  const [wrongNetworkOpen, setwrongNetworkOpen] = React.useState(false);
 
   // Stores data about their respective coin
   const [coin1, setCoin1] = React.useState({
@@ -109,7 +104,7 @@ function CoinSwapper(props) {
     setReserves(reserves.reverse());
   };
 
-  // These functions take an HTML event, pull the data out, and put it into a state variable.
+  // These functions take an HTML event, pull the data out and puts it into a state variable.
   const handleChange = {
     field1: (e) => {
       setField1Value(e.target.value);
@@ -131,6 +126,7 @@ function CoinSwapper(props) {
 
   // Determines whether the button should be enabled or not
   const isButtonEnabled = () => {
+
     // If both coins have been selected, and a valid float has been entered which is less than the user's balance, then return true
     const parsedInput1 = parseFloat(field1Value);
     const parsedInput2 = parseFloat(field2Value);
@@ -156,14 +152,7 @@ function CoinSwapper(props) {
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      getBalanceAndSymbol(
-        props.network.account,
-        address,
-        props.network.provider,
-        props.network.signer,
-        props.network.weth.address,
-        props.network.coins
-      ).then((data) => {
+      getBalanceAndSymbol(props.network.account, address, props.network.provider, props.network.signer, props.network.weth.address, props.network.coins).then((data) => {
         setCoin1({
           address: address,
           symbol: data.symbol,
@@ -185,14 +174,7 @@ function CoinSwapper(props) {
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      getBalanceAndSymbol(
-        props.network.account,
-        address,
-        props.network.provider,
-        props.network.signer,
-        props.network.weth.address,
-        props.network.coins
-      ).then((data) => {
+      getBalanceAndSymbol(props.network.account, address, props.network.provider, props.network.signer, props.network.weth.address, props.network.coins).then((data) => {
         setCoin2({
           address: address,
           symbol: data.symbol,
@@ -202,7 +184,7 @@ function CoinSwapper(props) {
     }
   };
 
-  // Calls the swapTokens Ethereum function to make the swap, then resets necessary state variables
+  // Calls the swapTokens Ethereum function to make the swap, then resets nessicary state variables
   const swap = () => {
     console.log("Attempting to swap tokens...");
     setLoading(true);
@@ -218,7 +200,7 @@ function CoinSwapper(props) {
       .then(() => {
         setLoading(false);
 
-        //If the transaction was successful, we clear the input to make sure the user doesn't accidentally redo the transfer
+        // If the transaction was successful, we clear to input to make sure the user doesn't accidental redo the transfer
         setField1Value("");
         enqueueSnackbar("Transaction Successful", { variant: "success" });
       })
@@ -232,7 +214,7 @@ function CoinSwapper(props) {
   };
 
   // The lambdas within these useEffects will be called when a particular dependency is updated. These dependencies
-  // are defined in the array of variables passed to the function after the lambda expression. If there are no dependencies,
+  // are defined in the array of variables passed to the function after the lambda expression. If there are no dependencies
   // the lambda will only ever be called when the component mounts. These are very useful for calculating new values
   // after a particular state change, for example, calculating the new exchange rate whenever the addresses
   // of the two coins change.
@@ -246,22 +228,11 @@ function CoinSwapper(props) {
     );
 
     if (coin1.address && coin2.address) {
-      getReserves(
-        coin1.address,
-        coin2.address,
-        props.network.factory,
-        props.network.signer,
-        props.network.account
-      ).then((data) => setReserves(data));
+      getReserves(coin1.address, coin2.address, props.network.factory, props.network.signer, props.network.account).then(
+        (data) => setReserves(data)
+      );
     }
-  }, [
-    coin1.address,
-    coin2.address,
-    props.network.account,
-    props.network.factory,
-    props.network.router,
-    props.network.signer,
-  ]);
+  }, [coin1.address, coin2.address, props.network.account, props.network.factory, props.network.router, props.network.signer]);
 
   // This hook is called when either of the state variables `field1Value` `coin1.address` or `coin2.address` change.
   // It attempts to calculate and set the state variable `field2Value`
@@ -270,76 +241,23 @@ function CoinSwapper(props) {
   useEffect(() => {
     if (isNaN(parseFloat(field1Value))) {
       setField2Value("");
-    } else if (parseFloat(field1Value) && coin1 && coin1.address && coin2 && coin2.address) {
-      getAmountOut(
-        coin1.address,
-        coin2.address,
-        field1Value,
-        props.network.router,
-        props.network.signer
-      )
-        .then((amount) => setField2Value(amount.toFixed(7)))
-        .catch((e) => {
-          console.log(e);
-          setField2Value("NA");
-        });
+    } else if (parseFloat(field1Value) && coin1.address && coin2.address) {
+      getAmountOut(coin1.address, coin2.address, field1Value, props.network.router, props.network.signer).then(
+        (amount) => setField2Value(amount.toFixed(7))
+      ).catch(e => {
+        console.log(e);
+        setField2Value("NA");
+      })
     } else {
       setField2Value("");
     }
-  }, [field1Value, coin1?.address, coin2?.address]);
+  }, [field1Value, coin1.address, coin2.address]);
 
-  // Reference to the chart div element
-  const chartRef = useRef(null);
-  const [err, setErr] = useState();
-
-  useEffect(() => {
-    const div = chartRef.current;
-    const chart = createChart(div, {
-      width: div.clientWidth,
-      height: div.clientHeight,
-      // The rest of your chart configuration
-    });
-
-    // Add chart series and fetch data here
-    const series = chart.addAreaSeries({
-      topColor: "rgba(0, 120, 255, 0.2)",
-      bottomColor: "rgba(0, 120, 255, 0.0)",
-      lineColor: "rgba(0, 120, 255, 1)",
-      lineWidth: 3,
-      priceFormat: {
-        minMove: 0.0001,
-        precision: 4,
-      },
-    });
-
-    // Fetch price data using your API or backend
-    if (props.coin1.address && props.coin2.address) {
-      fetch(
-        `https://example-api.com/priceData?coin1=${props.coin1.address}&coin2=${props.coin2.address}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          const chartData = data.history;
-          series.setData(chartData);
-        })
-        .catch((error) => {
-          console.error("Error fetching price data:", error);
-          setErr("No Data");
-        });
-    } else {
-      setErr("No Data");
-    }
-
-    // Cleanup function to destroy the chart
-    return () => {
-      chart.remove();
-    };
-  }, [props.coin1.address, props.coin2.address]);
-
-  // This hook creates a timeout that will run every ~10 seconds, its role is to check if the user's balance has
+  // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
   useEffect(() => {
     const coinTimeout = setTimeout(() => {
+      console.log('props: ', props);
       console.log("Checking balances...");
 
       if (coin1.address && coin2.address && props.network.account) {
@@ -352,7 +270,7 @@ function CoinSwapper(props) {
         ).then((data) => setReserves(data));
       }
 
-      if (coin1.address && props.network.account && !wrongNetworkOpen) {
+      if (coin1.address && props.network.account &&!wrongNetworkOpen) {
         getBalanceAndSymbol(
           props.network.account,
           coin1.address,
@@ -360,14 +278,16 @@ function CoinSwapper(props) {
           props.network.signer,
           props.network.weth.address,
           props.network.coins
-        ).then((data) => {
-          setCoin1({
-            ...coin1,
-            balance: data.balance,
-          });
-        });
+          ).then(
+          (data) => {
+            setCoin1({
+              ...coin1,
+              balance: data.balance,
+            });
+          }
+        );
       }
-      if (coin2.address && props.network.account && !wrongNetworkOpen) {
+      if (coin2.address && props.network.account &&!wrongNetworkOpen) {
         getBalanceAndSymbol(
           props.network.account,
           coin2.address,
@@ -375,12 +295,14 @@ function CoinSwapper(props) {
           props.network.signer,
           props.network.weth.address,
           props.network.coins
-        ).then((data) => {
-          setCoin2({
-            ...coin2,
-            balance: data.balance,
-          });
-        });
+          ).then(
+          (data) => {
+            setCoin2({
+              ...coin2,
+              balance: data.balance,
+            });
+          }
+        );
       }
     }, 10000);
 
@@ -402,7 +324,9 @@ function CoinSwapper(props) {
         coins={props.network.coins}
         signer={props.network.signer}
       />
-      <WrongNetwork open={wrongNetworkOpen} />
+      <WrongNetwork
+        open={wrongNetworkOpen}
+        />
 
       {/* Coin Swapper */}
       <Container maxWidth="xs">
@@ -418,143 +342,83 @@ function CoinSwapper(props) {
                 value={field1Value}
                 onClick={() => setDialog1Open(true)}
                 onChange={handleChange.field1}
-                symbol={
-                  coin1.symbol !== undefined ? coin1.symbol : "Select"
-                }
+                symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
               />
             </Grid>
 
-            <IconButton
-              onClick={switchFields}
-              className={classes.switchButton}
-              >
-                <SwapVerticalCircleIcon fontSize="medium" />
-              </IconButton>
-  
-              <Grid item xs={12} className={classes.fullWidth}>
-                <CoinField
-                  activeField={false}
-                  value={field2Value}
-                  onClick={() => setDialog2Open(true)}
-                  symbol={
-                    coin2.symbol !== undefined ? coin2.symbol : "Select"
-                  }
-                />
-              </Grid>
-  
-              <hr className={classes.hr} />
-  
-              {/* Balance Display */}
-              <Typography variant="h6">Your Balances</Typography>
-              <Grid
-                container
-                direction="row"
-                justifyContent="space-between"
-              >
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    className={classes.balance}
-                  >
-                    {formatBalance(coin1.balance, coin1.symbol)}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    className={classes.balance}
-                  >
-                    {formatBalance(coin2.balance, coin2.symbol)}
-                  </Typography>
-                </Grid>
-              </Grid>
-  
-              <hr className={classes.hr} />
-  
-              {/* Reserves Display */}
-              <Typography variant="h6">Reserves</Typography>
-              <Grid
-                container
-                direction="row"
-                justifyContent="space-between"
-              >
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    className={classes.balance}
-                  >
-                    {formatReserve(reserves[0], coin1.symbol)}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography
-                    variant="body1"
-                    className={classes.balance}
-                  >
-                    {formatReserve(reserves[1], coin2.symbol)}
-                  </Typography>
-                </Grid>
-              </Grid>
-  
-              <hr className={classes.hr} />
-  
-              <LoadingButton
-                loading={loading}
-                valid={isButtonEnabled()}
-                success={false}
-                fail={false}
-                onClick={swap}
-              >
-                <LoopIcon />
-                Swap
-              </LoadingButton>
+            <IconButton onClick={switchFields} className={classes.switchButton}>
+              <SwapVerticalCircleIcon fontSize="medium" />
+            </IconButton>
+
+            <Grid item xs={12} className={classes.fullWidth}>
+              <CoinField
+                activeField={false}
+                value={field2Value}
+                onClick={() => setDialog2Open(true)}
+                symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
+              />
             </Grid>
-          </Paper>
-        </Container>
-        <Container maxWidth="sm" sx={{ height: "100%" }}>
-          <Box fullWidth sx={{ height: "100%" }}>
-            <Card sx={{ height: "80%" }}>
-              <CardContent sx={{ height: "100%", textAlign: "center" }}>
-                <Typography
-                  variant="h5"
-                  className={classes.title}
-                >
-                  {(coin1.symbol || "--") + "/" + (coin2.symbol || "--")}
+
+            <hr className={classes.hr} />
+
+            {/* Balance Display */}
+            <Typography variant="h6">Your Balances</Typography>
+            <Grid container direction="row" justifyContent="space-between">
+              <Grid item xs={6}>
+                <Typography variant="body1" className={classes.balance}>
+                  {formatBalance(coin1.balance, coin1.symbol)}
                 </Typography>
-                <div
-                  style={{
-                    width: "100%",
-                    height: "256px",
-                    position: "relative",
-                    textAlign: "center",
-                  }}
-                >
-                  {err ? (
-                    <ChartError msg={err} />
-                  ) : (
-                    <div />
-                  )}
-                  <div
-                    style={{ width: "100%", height: "256px" }}
-                    id="chartDiv"
-                    ref={chartRef}
-                  ></div>
-                </div>
-              </CardContent>
-            </Card>
-          </Box>
-        </Container>
-  
-        <Grid
-          container
-          className={classes.footer}
-          direction="row"
-          justifyContent="center"
-          alignItems="flex-end"
-        ></Grid>
-      </div>
-    );
-  }
-  
-  export default CoinSwapper;
-  
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body1" className={classes.balance}>
+                  {formatBalance(coin2.balance, coin2.symbol)}
+                </Typography>
+              </Grid>
+            </Grid>
+
+            <hr className={classes.hr} />
+
+            {/* Reserves Display */}
+            <Typography variant="h6">Reserves</Typography>
+            <Grid container direction="row" justifyContent="space-between">
+              <Grid item xs={6}>
+                <Typography variant="body1" className={classes.balance}>
+                  {formatReserve(reserves[0], coin1.symbol)}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="body1" className={classes.balance}>
+                  {formatReserve(reserves[1], coin2.symbol)}
+                </Typography>
+              </Grid>
+            </Grid>
+
+            <hr className={classes.hr} />
+
+            <LoadingButton
+              loading={loading}
+              valid={isButtonEnabled()}
+              success={false}
+              fail={false}
+              onClick={swap}
+            >
+              <LoopIcon />
+              Swap
+            </LoadingButton>
+          </Grid>
+        </Paper>
+      </Container>
+
+      <Grid
+        container
+        className={classes.footer}
+        direction="row"
+        justifyContent="center"
+        alignItems="flex-end"
+      >
+      </Grid>
+    </div>
+  );
+}
+
+export default CoinSwapper;
