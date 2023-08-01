@@ -5,8 +5,10 @@
   padding: 15px; /* Decrease total footer height by 30% */
   text-align: center;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  position: fixed;
   bottom: 0;
+  left: 0;
+  width: 100%;
 }
 
 .footer-content {
