@@ -7,6 +7,9 @@ const STAKING_ADDRESS = "0x38D613a0636Bd10043405D76e52f7540eeE913d0"; // Replace
 
 export async function initializeContracts() {
   try {
+    if (window.ethereum) {
+      await window.ethereum.enable();
+    }
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const TOKEN = new ethers.Contract(TOKEN_ADDRESS, TokenABI, signer);
