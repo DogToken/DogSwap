@@ -1,16 +1,16 @@
 /* NavBar.css */
 
 .Title {
-  background: #f4f4f4;
-  height: 50px;
+  background: #ffdb58; /* Vibrant yellow */
+  height: 70px;
   text-align: left;
-  font-size: 1rem;
+  font-size: 1.5rem;
   padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .NavbarItems {
-  background: #f4f4f4;
+  background: #4287f5; /* Blue */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -20,10 +20,16 @@
 }
 
 .navbar-logo {
-  color: green;
+  color: #fff; /* White */
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: 2rem;
   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+}
+
+.navbar-logo span {
+  margin-right: 10px;
 }
 
 .nav-menu {
@@ -33,16 +39,15 @@
 }
 
 .nav-links {
-  color: rgb(73, 73, 73);
+  color: #fff; /* White */
   text-decoration: none;
   padding: 10px 15px;
   border-radius: 4px;
-  transition: all 0.2s ease-out;
+  transition: background-color 0.2s ease-out;
 }
 
 .nav-links:hover {
-  color: white;
-  background-color: green;
+  background-color: #34a853; /* Green on hover */
 }
 
 /* Adding media query to make the navbar responsive */
