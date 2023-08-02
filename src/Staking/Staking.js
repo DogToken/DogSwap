@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Typography, makeStyles, Paper } from "@material-ui/core";
 import { ethers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
 import { initializeContracts } from "../web3";
 
 const useStyles = makeStyles((theme) => ({
@@ -26,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Staking({ account }) {
-  const { library } = useWeb3React();
   const classes = useStyles();
   const [views, setViews] = useState({});
   const [stake, setStake] = useState("");
@@ -83,25 +81,6 @@ function Staking({ account }) {
     await tx.wait();
   };
 
-  const getStakingViews = useCallback(async (account) => {
-    const signer = window.ethereum ? new ethers.providers.Web3Provider(window.ethereum).getSigner() : null;
-    if (!signer) {
-      console.error("Web3 provider not found. Make sure to connect your wallet.");
-      return {};
-    }
-    const staking = STAKING_CONTRACT.connect(signer);
-    const [staked, reward, totalStaked] = await Promise.all([
-      staking.stakedOf(account),
-      staking.rewardOf(account),
-      staking.totalStaked(),
-    ]);
-    return {
-      staked: ethers.utils.formatEther(staked),
-      reward: ethers.utils.formatEther(reward),
-      totalStaked: ethers.utils.formatEther(totalStaked),
-    };
-  }, []);
-
   useEffect(() => {
     initializeContracts()
       .then((contracts) => {
@@ -115,15 +94,28 @@ function Staking({ account }) {
 
   useEffect(() => {
     if (isLoaded && TOKEN && STAKING_CONTRACT) {
-      // Make sure STAKING_CONTRACT is not null before fetching the staking views
-      getStakingViews(account)
-        .then(setViews)
-        .catch((error) => {
-          console.error("Error fetching staking views:", error);
-          setViews({});
-        });
+      getStakingViews(account); // Fetching views moved to initializeContracts
     }
-  }, [isLoaded, TOKEN, STAKING_CONTRACT, account, getStakingViews]);
+  }, [isLoaded, TOKEN, STAKING_CONTRACT, account]);
+
+  async function getStakingViews(account) {
+    const signer = window.ethereum ? new ethers.providers.Web3Provider(window.ethereum).getSigner() : null;
+    if (!signer) {
+      console.error("Web3 provider not found. Make sure to connect your wallet.");
+      return;
+    }
+    const staking = STAKING_CONTRACT.connect(signer);
+    const [staked, reward, totalStaked] = await Promise.all([
+      staking.stakedOf(account),
+      staking.rewardOf(account),
+      staking.totalStaked(),
+    ]);
+    setViews({
+      staked: ethers.utils.formatEther(staked),
+      reward: ethers.utils.formatEther(reward),
+      totalStaked: ethers.utils.formatEther(totalStaked),
+    });
+  }
 
   if (!isLoaded) {
     return (
