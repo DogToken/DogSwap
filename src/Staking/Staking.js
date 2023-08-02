@@ -85,12 +85,16 @@ function Staking({ account }) {
   }, []);
 
   useEffect(() => {
-    initializeContracts().then((contracts) => {
-      const { TOKEN, STAKING_CONTRACT } = contracts;
-      setToken(TOKEN);
-      setStakingContract(STAKING_CONTRACT);
-      setLoaded(true);
-    });
+    initializeContracts()
+      .then((contracts) => {
+        const { TOKEN, STAKING_CONTRACT } = contracts;
+        setToken(TOKEN);
+        setStakingContract(STAKING_CONTRACT);
+        setLoaded(true);
+      })
+      .catch((error) => {
+        console.error("Error initializing contracts:", error);
+      });
   }, []);
 
   useEffect(() => {
@@ -120,34 +124,34 @@ function Staking({ account }) {
           Staking
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Staked: </strong> {views.staked} $BONE
+          <strong>Staked: </strong> {views.staked} $TREATS
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Reward: </strong> {views.reward} $BONE
+          <strong>Reward: </strong> {views.reward} $TREATS
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Total Staked: </strong> {views.totalStaked} $BONE
+          <strong>Total Staked: </strong> {views.totalStaked} $TREATS
         </Typography>
         <div style={{ display: "flex" }}>
           <form onSubmit={handleStake}>
             <label htmlFor="stake">Stake</label>
             <input
               id="stake"
-              placeholder="0.0 $BONE"
+              placeholder="0.0 $TREATS"
               value={stake}
               onChange={(e) => setStake(e.target.value)}
             />
-            <button type="submit">Stake $BONE</button>
+            <button type="submit">Stake $TREATS</button>
           </form>
           <form onSubmit={handleWithdraw}>
             <label htmlFor="withdraw">Withdraw</label>
             <input
               id="withdraw"
-              placeholder="0.0 $BONE"
+              placeholder="0.0 $TREATS"
               value={withdraw}
               onChange={(e) => setWithdraw(e.target.value)}
             />
-            <button type="submit">Withdraw $BONE</button>
+            <button type="submit">Withdraw $TREATS</button>
           </form>
         </div>
         <button onClick={handleClaimReward}>Claim Reward</button>
