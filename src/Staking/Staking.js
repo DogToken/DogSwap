@@ -113,6 +113,7 @@ function Staking({ account }) {
 
   useEffect(() => {
     if (isLoaded && TOKEN && STAKING_CONTRACT) {
+      // Make sure STAKING_CONTRACT is not null before fetching the staking views
       getStakingViews(account)
         .then(setViews)
         .catch((error) => {
