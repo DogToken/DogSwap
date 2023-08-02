@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Container, Typography, makeStyles, Paper } from "@material-ui/core";
 import { ethers } from "ethers";
-import { provider, initializeContracts } from "../web3";
+import { provider, initializeContracts, TOKEN, STAKING_CONTRACT } from "../web3";
 
 const useStyles = makeStyles((theme) => ({
   root: {
