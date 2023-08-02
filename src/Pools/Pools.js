@@ -31,9 +31,6 @@ const useStyles = makeStyles((theme) => ({
 function Pools() {
   const classes = useStyles();
 
-  return (
-    
-  );
 }
 
 export default Pools;
