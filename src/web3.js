@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
-import TokenABI from "../abi/Token.abi.json";
-import StakingAbi from "../abi/stakingVault.abi.json";
+import TokenABI from "../build/dogToken.abi.json";
+import StakingAbi from "../build/stakingVault.abi.json";
 
 function getWeb3Provider() {
     if (window.ethereum) {
