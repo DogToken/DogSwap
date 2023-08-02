@@ -4,18 +4,23 @@ import "bootstrap/dist/css/bootstrap.css";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { Web3ReactProvider } from "@web3-react/core";
 import { BrowserRouter } from "react-router-dom";
+import { Web3ReactProvider } from "@web3-react/core";
+import { ethers } from "ethers";
+
+function getWeb3Library(provider) {
+  // Return the ethers.js provider here
+  return new ethers.providers.Web3Provider(provider);
+}
 
 ReactDOM.render(
   <BrowserRouter>
-    <React.StrictMode>
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <App />
+    <Web3ReactProvider getLibrary={getWeb3Library}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
     </Web3ReactProvider>
-    </React.StrictMode>
   </BrowserRouter>,
-
   document.getElementById("root")
 );
 
