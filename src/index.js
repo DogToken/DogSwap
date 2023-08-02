@@ -18,7 +18,7 @@ function getLibrary(provider) {
 
 ReactDOM.render(
   <BrowserRouter>
-    <Web3ReactProvider getLibrary={getLibrary}>
+    <Web3ReactProvider getLibrary={(provider) => getLibrary(provider)}>
       <React.StrictMode>
         <App />
       </React.StrictMode>
