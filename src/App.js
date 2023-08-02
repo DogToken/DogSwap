@@ -14,6 +14,7 @@ import { inject } from '@vercel/analytics';
 import About from "./About";
 import Contact from "./Contact";
 import Privacy from "./Privacy";
+import Pools from "./Pools/Pools"
 
 inject();
 
