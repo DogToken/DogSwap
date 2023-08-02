@@ -1,7 +1,7 @@
 /* NavBar.css */
 
 .Title {
-  background: #ffdb58; /* Vibrant yellow */
+  background: #f4f4f4; /* Main BG */
   height: 70px;
   text-align: left;
   font-size: 1.5rem;
@@ -10,7 +10,7 @@
 }
 
 .NavbarItems {
-  background: #4287f5; /* Blue */
+  background: #f4f4f4; /* SubNav Color */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -58,7 +58,7 @@
   }
 
   .nav-menu {
-    margin-top: 20px;
+    margin-top: 30px;
   }
 }
 
