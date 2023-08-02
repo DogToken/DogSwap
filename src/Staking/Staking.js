@@ -15,16 +15,10 @@ const useStyles = makeStyles((theme) => ({
   paragraph: {
     marginBottom: theme.spacing(1),
   },
-  link: {
-    color: theme.palette.primary.main,
-    textDecoration: "none",
-    "&:hover": {
-      textDecoration: "underline",
-    },
-  },
 }));
 
-function Staking({ account }) {
+function Staking() {
+  const { account } = useWeb3React();
   const classes = useStyles();
   const [views, setViews] = useState({});
   const [stake, setStake] = useState("");
@@ -35,11 +29,13 @@ function Staking({ account }) {
 
   const handleStake = async (event) => {
     event.preventDefault();
-    const signer = window.ethereum ? new ethers.providers.Web3Provider(window.ethereum).getSigner() : null;
-    if (!signer) {
+    if (!window.ethereum) {
       console.error("Web3 provider not found. Make sure to connect your wallet.");
       return;
     }
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
     const amount = ethers.utils.parseEther(stake);
 
     const Token = TOKEN.connect(signer);
@@ -57,24 +53,28 @@ function Staking({ account }) {
 
   const handleWithdraw = async (event) => {
     event.preventDefault();
-    const signer = window.ethereum ? new ethers.providers.Web3Provider(window.ethereum).getSigner() : null;
-    if (!signer) {
+    if (!window.ethereum) {
       console.error("Web3 provider not found. Make sure to connect your wallet.");
       return;
     }
-    const staking = STAKING_CONTRACT.connect(signer);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
 
     const amount = ethers.utils.parseEther(withdraw);
+    const staking = STAKING_CONTRACT.connect(signer);
+
     const tx = await staking.withdraw(amount);
     await tx.wait();
   };
 
   const handleClaimReward = async () => {
-    const signer = window.ethereum ? new ethers.providers.Web3Provider(window.ethereum).getSigner() : null;
-    if (!signer) {
+    if (!window.ethereum) {
       console.error("Web3 provider not found. Make sure to connect your wallet.");
       return;
     }
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
     const staking = STAKING_CONTRACT.connect(signer);
 
     const tx = await staking.claimReward();
@@ -94,17 +94,19 @@ function Staking({ account }) {
 
   useEffect(() => {
     if (isLoaded && TOKEN && STAKING_CONTRACT) {
-      getStakingViews(account); // Fetching views moved to initializeContracts
+      getStakingViews(account);
     }
   }, [isLoaded, TOKEN, STAKING_CONTRACT, account]);
 
   async function getStakingViews(account) {
-    const signer = window.ethereum ? new ethers.providers.Web3Provider(window.ethereum).getSigner() : null;
-    if (!signer) {
+    if (!window.ethereum) {
       console.error("Web3 provider not found. Make sure to connect your wallet.");
       return;
     }
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
     const staking = STAKING_CONTRACT.connect(signer);
+
     const [staked, reward, totalStaked] = await Promise.all([
       staking.stakedOf(account),
       staking.rewardOf(account),
