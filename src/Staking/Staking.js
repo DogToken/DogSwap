@@ -18,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Staking() {
-  const { account } = useWeb3React();
   const classes = useStyles();
   const [views, setViews] = useState({});
   const [stake, setStake] = useState("");
@@ -96,7 +95,7 @@ function Staking() {
     if (isLoaded && TOKEN && STAKING_CONTRACT) {
       getStakingViews(account);
     }
-  }, [isLoaded, TOKEN, STAKING_CONTRACT, account]);
+  }, [isLoaded, TOKEN, STAKING_CONTRACT]);
 
   async function getStakingViews(account) {
     if (!window.ethereum) {
