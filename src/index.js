@@ -5,7 +5,6 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { Web3ReactProvider } from "@web3-react/core";
 import { ethers } from "ethers";
 
 function getLibrary(provider) {
@@ -16,13 +15,14 @@ function getLibrary(provider) {
   }
 }
 
+// Replace the Web3ReactProvider with direct Web3Provider
+const provider = getLibrary(window.ethereum);
+
 ReactDOM.render(
   <BrowserRouter>
-    <Web3ReactProvider getLibrary={(provider) => getLibrary(provider)}>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    </Web3ReactProvider>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
   </BrowserRouter>,
   document.getElementById("root")
 );
