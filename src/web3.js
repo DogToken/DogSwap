@@ -11,14 +11,9 @@ function getWeb3Provider() {
 
 export const provider = getWeb3Provider();
 
-export const TOKEN_ADDRESS = import.meta.env.TOKEN_ADDRESS;
-export const TOKEN = new ethers.Contract(
-    TOKEN_ADDRESS,
-    TokenABI
-);
-
-export const STAKING_ADDRESS = import.meta.env.STAKING_ADDRESS;
-export const STAKING_CONTRACT = new ethers.Contract(
-    STAKING_ADDRESS,
-    StakingAbi
-);
+export function getContracts(TOKEN_ADDRESS, STAKING_ADDRESS) {
+    const TOKEN = new ethers.Contract(TOKEN_ADDRESS, TokenABI);
+    const STAKING_CONTRACT = new ethers.Contract(STAKING_ADDRESS, StakingAbi);
+  
+    return { TOKEN, STAKING_CONTRACT };
+  }
