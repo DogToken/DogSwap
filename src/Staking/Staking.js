@@ -87,7 +87,10 @@ function Staking({ account }) {
   useEffect(() => {
     initializeContracts()
       .then((contracts) => {
+        console.log("Contracts initialized:", contracts);
         const { TOKEN, STAKING_CONTRACT } = contracts;
+        console.log("TOKEN contract:", TOKEN);
+        console.log("STAKING_CONTRACT:", STAKING_CONTRACT);
         setToken(TOKEN);
         setStakingContract(STAKING_CONTRACT);
         setLoaded(true);
