@@ -1,12 +1,7 @@
-import React, { useEffect, useCallback, useState } from "react";
-import { Container, Typography, makeStyles, Paper, Link } from "@material-ui/core";
+import React, { useEffect, useState, useCallback } from "react";
+import { Container, Typography, makeStyles, Paper } from "@material-ui/core";
 import { ethers } from "ethers";
-import { provider, getContracts } from "../web3";
-
-const TOKEN_ADDRESS = "0x38924b27e5A43A6D9AD1377eC828C056120f06a0"; // Replace with the actual token address
-const STAKING_ADDRESS = "0x38D613a0636Bd10043405D76e52f7540eeE913d0"; // Replace with the actual staking address
-
-const { TOKEN, STAKING_CONTRACT } = getContracts(TOKEN_ADDRESS, STAKING_ADDRESS);
+import { provider, initializeContracts } from "../web3";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,6 +29,9 @@ function Staking({ account }) {
   const [views, setViews] = useState({});
   const [stake, setStake] = useState("");
   const [withdraw, setWithdraw] = useState("");
+  const [isLoaded, setLoaded] = useState(false);
+  const [TOKEN, setToken] = useState(null);
+  const [STAKING_CONTRACT, setStakingContract] = useState(null);
 
   const handleStake = async (event) => {
     event.preventDefault();
@@ -87,10 +85,26 @@ function Staking({ account }) {
   }, []);
 
   useEffect(() => {
-    getStakingViews(account).then(setViews).catch(console.error);
-  }, [account, getStakingViews]);
+    initializeContracts().then((contracts) => {
+      const { TOKEN, STAKING_CONTRACT } = contracts;
+      setToken(TOKEN);
+      setStakingContract(STAKING_CONTRACT);
+      setLoaded(true);
+    });
+  }, []);
 
-  if (!views.staked) {
+  useEffect(() => {
+    if (isLoaded && TOKEN && STAKING_CONTRACT) {
+      getStakingViews(account)
+        .then(setViews)
+        .catch((error) => {
+          console.error("Error fetching staking views:", error);
+          setViews({});
+        });
+    }
+  }, [isLoaded, TOKEN, STAKING_CONTRACT, account, getStakingViews]);
+
+  if (!isLoaded) {
     return (
       <div>
         <h2>Staking</h2>
