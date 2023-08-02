@@ -3,8 +3,8 @@ import { Container, Typography, makeStyles, Paper, Link } from "@material-ui/cor
 import { ethers } from "ethers";
 import { provider, getContracts } from "../web3";
 
-const TOKEN_ADDRESS = "0x1628160C66e0330090248a163A34Ba5B5A82D4f7"; // Replace with the actual token address
-const STAKING_ADDRESS = "0x1628160C66e0330090248a163A34Ba5B5A82D4f7"; // Replace with the actual staking address
+const TOKEN_ADDRESS = "0x38924b27e5A43A6D9AD1377eC828C056120f06a0"; // Replace with the actual token address
+const STAKING_ADDRESS = "0x38D613a0636Bd10043405D76e52f7540eeE913d0"; // Replace with the actual staking address
 
 const { TOKEN, STAKING_CONTRACT } = getContracts(TOKEN_ADDRESS, STAKING_ADDRESS);
 
