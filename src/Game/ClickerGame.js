@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import ScoreDisplay from './ScoreDisplay';
 import Bank from './Bank';
 import Shop from './Shop';
 import './styles/game.css';
@@ -41,39 +40,43 @@ const ClickerGame = () => {
 
   return (
     <div className="container">
-      <div className="top-right">
-        <div className="currency">
-          <FaCoins className="currency-icon" /> Smoll Tokens: {state.smollTokens}
+      <div className="clicker-paper">
+        <h1>DogMiner - Incremental Clicker Game</h1>
+        <div className="center">
+          <button className="click-button" onClick={handleClick}>
+            <FaDog /> Click Me
+          </button>
+          <div className="currency-container">
+            <div className="currency">
+              <FaCoins className="currency-icon" /> Smoll Tokens: {state.smollTokens}
+            </div>
+          </div>
         </div>
-        <div className="currency">
-          <FaEthereum className="currency-icon" /> Ether: {state.ether}
-        </div>
-      </div>
-      <h1>DogMiner - Incremental Clicker Game</h1>
-      <div className="center">
-        <button className="click-button" onClick={handleClick}>
-          <FaDog /> Click Me
-        </button>
-        <ScoreDisplay score={state.smollTokens} />
       </div>
       {/* Side Menu */}
       <div className="side-menu">
-        <Shop
-          smollTokens={state.smollTokens}
-          setSmollTokens={(newTokens) => setState((prevState) => ({ ...prevState, smollTokens: newTokens }))}
-          ether={state.ether}
-          setEther={(newEther) => setState((prevState) => ({ ...prevState, ether: newEther }))}
-          clickMultiplier={state.clickMultiplier}
-          setClickMultiplier={(newMultiplier) => setState((prevState) => ({ ...prevState, clickMultiplier: newMultiplier }))}
-          autoClicker={state.autoClicker}
-          setAutoClicker={(newAutoClicker) => setState((prevState) => ({ ...prevState, autoClicker: newAutoClicker }))}
-        />
-        <Bank
-          smollTokens={state.smollTokens}
-          setSmollTokens={(newTokens) => setState((prevState) => ({ ...prevState, smollTokens: newTokens }))}
-          ether={state.ether}
-          setEther={(newEther) => setState((prevState) => ({ ...prevState, ether: newEther }))}
-        />
+        <div className="paper">
+          <h2>Shop</h2>
+          <Shop
+            smollTokens={state.smollTokens}
+            setSmollTokens={(newTokens) => setState((prevState) => ({ ...prevState, smollTokens: newTokens }))}
+            ether={state.ether}
+            setEther={(newEther) => setState((prevState) => ({ ...prevState, ether: newEther }))}
+            clickMultiplier={state.clickMultiplier}
+            setClickMultiplier={(newMultiplier) => setState((prevState) => ({ ...prevState, clickMultiplier: newMultiplier }))}
+            autoClicker={state.autoClicker}
+            setAutoClicker={(newAutoClicker) => setState((prevState) => ({ ...prevState, autoClicker: newAutoClicker }))}
+          />
+        </div>
+        <div className="paper">
+          <h2>Bank</h2>
+          <Bank
+            smollTokens={state.smollTokens}
+            setSmollTokens={(newTokens) => setState((prevState) => ({ ...prevState, smollTokens: newTokens }))}
+            ether={state.ether}
+            setEther={(newEther) => setState((prevState) => ({ ...prevState, ether: newEther }))}
+          />
+        </div>
       </div>
     </div>
   );
