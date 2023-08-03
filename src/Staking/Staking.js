@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Typography, makeStyles, Paper } from "@material-ui/core";
+import {
+  Container,
+  Typography,
+  makeStyles,
+  Paper,
+  TextField,
+  Button,
+  Box,
+} from "@material-ui/core";
 import { ethers } from "ethers";
 import { initializeContracts } from "../web3";
 
@@ -14,6 +22,18 @@ const useStyles = makeStyles((theme) => ({
   },
   paragraph: {
     marginBottom: theme.spacing(1),
+  },
+  formContainer: {
+    display: "flex",
+    alignItems: "center",
+  },
+  form: {
+    display: "flex",
+    alignItems: "center",
+    marginRight: theme.spacing(2),
+    "& > *": {
+      marginRight: theme.spacing(1),
+    },
   },
 }));
 
@@ -133,7 +153,7 @@ function Staking({ account }) {
   }
 
   return (
-    <Container>
+      <Container>
       <Paper className={classes.root}>
         <Typography variant="h4" className={classes.title}>
           Staking
@@ -147,29 +167,37 @@ function Staking({ account }) {
         <Typography variant="body1" className={classes.paragraph}>
           <strong>Total Staked: </strong> {views.totalStaked} $TREATS
         </Typography>
-        <div style={{ display: "flex" }}>
-          <form onSubmit={handleStake}>
-            <label htmlFor="stake">Stake</label>
-            <input
-              id="stake"
-              placeholder="0.0 $TREATS"
+        <Box mt={3} className={classes.formContainer}>
+          <form className={classes.form} onSubmit={handleStake}>
+            <TextField
+              label="Stake"
+              variant="outlined"
+              size="small"
+              type="number"
               value={stake}
               onChange={(e) => setStake(e.target.value)}
             />
-            <button type="submit">Stake $TREATS</button>
+            <Button type="submit" variant="contained" color="primary">
+              Stake $TREATS
+            </Button>
           </form>
-          <form onSubmit={handleWithdraw}>
-            <label htmlFor="withdraw">Withdraw</label>
-            <input
-              id="withdraw"
-              placeholder="0.0 $TREATS"
+          <form className={classes.form} onSubmit={handleWithdraw}>
+            <TextField
+              label="Withdraw"
+              variant="outlined"
+              size="small"
+              type="number"
               value={withdraw}
               onChange={(e) => setWithdraw(e.target.value)}
             />
-            <button type="submit">Withdraw $TREATS</button>
+            <Button type="submit" variant="contained" color="primary">
+              Withdraw $TREATS
+            </Button>
           </form>
-        </div>
-        <button onClick={handleClaimReward}>Claim Reward</button>
+          <Button variant="contained" color="secondary" onClick={handleClaimReward}>
+            Claim Reward
+          </Button>
+        </Box>
       </Paper>
     </Container>
   );
