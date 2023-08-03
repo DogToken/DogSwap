@@ -1,0 +1,55 @@
+/* Styling for the game elements */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .paper {
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .currency-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .currency {
+    display: flex;
+    align-items: center;
+  }
+  
+  .currency-icon {
+    margin-right: 8px;
+  }
+  
+  .progress-bar {
+    height: 10px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    position: relative;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    border-radius: 5px;
+  }
+  
+  .slider-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .slider {
+    flex: 1;
+  }
+  
+  .shop-bank-button {
+    margin: 10px 0;
+  }
+  
