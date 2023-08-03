@@ -90,7 +90,8 @@ function Staking({ account }) {
   }
 
   useEffect(() => {
-    initializeContracts(provider)
+    // Pass provider instead of account to initializeContracts
+    initializeContracts(provider) 
       .then((contracts) => {
         const { TOKEN, STAKING_CONTRACT } = contracts;
         setToken(TOKEN);
