@@ -12,7 +12,7 @@ const ClickerGame = () => {
     smollTokens: 0,
     ether: 0,
     clickMultiplier: 1,
-    autoClicker: false,
+    autoClicker: 0,
   };
 
   const [state, setState] = useState(() => {
@@ -40,6 +40,10 @@ const ClickerGame = () => {
     }));
   }, [state.smollTokens]);
 
+  // Show/hide shop and bank
+  const [showShop, setShowShop] = useState(false);
+  const [showBank, setShowBank] = useState(false);
+
   return (
     <div className="container">
       <h1>DogMiner - Incremental Clicker Game</h1>
@@ -51,17 +55,13 @@ const ClickerGame = () => {
           <div className="currency">
             <FaCoins className="currency-icon" /> Smoll Tokens: {state.smollTokens}
           </div>
-          <div className="progress-bar">
-            {/* Add progress bar for Smoll Tokens here if desired */}
-          </div>
+          {/* Add progress bar for Smoll Tokens here if desired */}
         </div>
         <div className="currency-container">
           <div className="currency">
             <FaEthereum className="currency-icon" /> Ether: {state.ether}
           </div>
-          <div className="progress-bar">
-            {/* Add progress bar for Ether here if desired */}
-          </div>
+          {/* Add progress bar for Ether here if desired */}
         </div>
       </div>
       {/* Shop */}
@@ -74,6 +74,8 @@ const ClickerGame = () => {
         </button>
         {showShop && (
           <Shop
+            smollTokens={state.smollTokens}
+            setSmollTokens={(newTokens) => setState((prevState) => ({ ...prevState, smollTokens: newTokens }))}
             ether={state.ether}
             setEther={(newEther) => setState((prevState) => ({ ...prevState, ether: newEther }))}
             clickMultiplier={state.clickMultiplier}
