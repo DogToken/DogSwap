@@ -1,26 +1,19 @@
 .container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     height: 100vh;
     background-color: #f0f0f0;
     font-family: Arial, sans-serif;
   }
   
-  .top-right {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-  
-  .center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .clicker-paper,
+  .side-menu {
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    margin: 10px;
+    background-color: white;
   }
   
   .click-button {
@@ -34,12 +27,6 @@
     cursor: pointer;
   }
   
-  .side-menu {
-    position: absolute;
-    top: 100px;
-    right: 20px;
-  }
-  
   .currency-container {
     display: flex;
     align-items: center;
@@ -49,25 +36,17 @@
     margin-right: 5px;
   }
   
-  .slider-container {
+  .paper {
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    margin: 10px;
+    background-color: white;
+  }
+  
+  .side-menu {
     display: flex;
-    align-items: center;
-    margin-top: 10px;
-  }
-  
-  .slider {
-    margin-right: 20px;
-    width: 100px;
-  }
-  
-  .shop-bank-button {
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 10px;
+    flex-direction: column;
+    align-items: flex-end;
   }
   
