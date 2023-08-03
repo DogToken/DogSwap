@@ -17,8 +17,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const provider = new ethers.providers.JsonRpcProvider("https://node1.mintme.com");
-
 function Staking({ account }) {
   const classes = useStyles();
   const [views, setViews] = useState({});
@@ -27,6 +25,7 @@ function Staking({ account }) {
   const [isLoaded, setLoaded] = useState(false);
   const [TOKEN, setToken] = useState(null);
   const [STAKING_CONTRACT, setStakingContract] = useState(null);
+  const provider = new ethers.providers.JsonRpcProvider("https://node1.mintme.com");
 
   const handleStake = async (event) => {
     event.preventDefault();
@@ -76,23 +75,6 @@ function Staking({ account }) {
     await tx.wait();
   };
 
-  useEffect(() => {
-    initializeContracts(provider)
-      .then((contracts) => {
-        const { TOKEN, STAKING_CONTRACT } = contracts;
-        setToken(TOKEN);
-        setStakingContract(STAKING_CONTRACT);
-        setLoaded(true);
-      })
-      .catch((error) => console.error("Error initializing contracts:", error));
-  }, []);
-
-  useEffect(() => {
-    if (isLoaded && TOKEN && STAKING_CONTRACT) {
-      getStakingViews(account);
-    }
-  }, [isLoaded, TOKEN, STAKING_CONTRACT, account]);
-
   async function getStakingViews(account) {
     const staking = STAKING_CONTRACT.connect(provider.getSigner());
     const [staked, reward, totalStaked] = await Promise.all([
@@ -105,6 +87,32 @@ function Staking({ account }) {
       reward: ethers.utils.formatEther(reward),
       totalStaked: ethers.utils.formatEther(totalStaked),
     });
+  }
+
+  useEffect(() => {
+    initializeContracts(provider)
+      .then((contracts) => {
+        const { TOKEN, STAKING_CONTRACT } = contracts;
+        setToken(TOKEN);
+        setStakingContract(STAKING_CONTRACT);
+        setLoaded(true);
+      })
+      .catch((error) => console.error("Error initializing contracts:", error));
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded && TOKEN && STAKING_CONTRACT && account) {
+      getStakingViews(account);
+    }
+  }, [isLoaded, TOKEN, STAKING_CONTRACT, account]);
+
+  if (!isLoaded) {
+    return (
+      <div>
+        <h2>Staking</h2>
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   if (!isLoaded) {
