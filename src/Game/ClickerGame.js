@@ -46,17 +46,11 @@ const ClickerGame = () => {
           <button className="click-button" onClick={handleClick}>
             <FaDog /> Click Me
           </button>
-          <div className="currency-container">
-            <div className="currency">
-              <FaCoins className="currency-icon" /> Smoll Tokens: {state.smollTokens}
-            </div>
-          </div>
         </div>
       </div>
       {/* Side Menu */}
       <div className="side-menu">
         <div className="paper">
-          <h2>Shop</h2>
           <Shop
             smollTokens={state.smollTokens}
             setSmollTokens={(newTokens) => setState((prevState) => ({ ...prevState, smollTokens: newTokens }))}
@@ -69,7 +63,6 @@ const ClickerGame = () => {
           />
         </div>
         <div className="paper">
-          <h2>Bank</h2>
           <Bank
             smollTokens={state.smollTokens}
             setSmollTokens={(newTokens) => setState((prevState) => ({ ...prevState, smollTokens: newTokens }))}

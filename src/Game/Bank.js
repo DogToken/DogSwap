@@ -18,7 +18,6 @@ const Bank = ({ smollTokens, setSmollTokens, ether, setEther }) => {
 
   return (
     <div>
-      <h2>Bank</h2>
       <div className="currency-container">
         <div className="currency">
           <FaCoins className="currency-icon" /> Smoll Tokens: {smollTokens}
