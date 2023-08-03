@@ -9,6 +9,7 @@ const ClickerGame = () => {
   const initialState = {
     smollTokens: 0,
     ether: 0,
+    clicks: 0,
     clickMultiplier: 1,
     autoClicker: 0,
   };
@@ -26,7 +27,8 @@ const ClickerGame = () => {
   const handleClick = () => {
     setState((prevState) => ({
       ...prevState,
-      smollTokens: prevState.smollTokens + 1,
+      smollTokens: prevState.smollTokens + prevState.clickMultiplier,
+      clicks: prevState.clicks + 1,
     }));
   };
 
@@ -38,8 +40,26 @@ const ClickerGame = () => {
     }));
   }, [state.smollTokens]);
 
+  // Calculate user level based on clicks
+  const calculateUserLevel = () => {
+    return Math.floor(100 * Math.pow(1.1, state.clicks / 10));
+  };
+
   return (
     <div className="container">
+      {/* Stats Box */}
+      <div className="stats-box">
+        <h2>Stats</h2>
+        <div className="stat-item">
+          <FaCoins className="currency-icon" /> Smoll Tokens: {state.smollTokens}
+        </div>
+        <div className="stat-item">
+          <FaEthereum className="currency-icon" /> Ether: {state.ether}
+        </div>
+        <div className="stat-item">User Level: {calculateUserLevel()}</div>
+        <div className="stat-item">Awards: (Coming Soon)</div>
+        <div className="stat-item">Profile Picture: (Coming Soon)</div>
+      </div>
       <div className="clicker-paper">
         <h1>DogMiner - Incremental Clicker Game</h1>
         <div className="center">
