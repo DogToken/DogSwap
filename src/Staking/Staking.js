@@ -90,15 +90,19 @@ function Staking({ account }) {
   }
 
   useEffect(() => {
-    // Pass provider instead of account to initializeContracts
-    initializeContracts(provider) 
-      .then((contracts) => {
+    const initialize = async () => {
+      try {
+        const contracts = await initializeContracts(provider);
         const { TOKEN, STAKING_CONTRACT } = contracts;
         setToken(TOKEN);
         setStakingContract(STAKING_CONTRACT);
         setLoaded(true);
-      })
-      .catch((error) => console.error("Error initializing contracts:", error));
+      } catch (error) {
+        console.error("Error initializing contracts:", error);
+      }
+    };
+
+    initialize();
   }, []);
 
   useEffect(() => {
