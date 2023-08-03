@@ -17,6 +17,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const provider = new ethers.providers.JsonRpcProvider("https://node1.mintme.com");
+
 function Staking({ account }) {
   const classes = useStyles();
   const [views, setViews] = useState({});
@@ -75,7 +77,7 @@ function Staking({ account }) {
   };
 
   useEffect(() => {
-    initializeContracts()
+    initializeContracts(provider)
       .then((contracts) => {
         const { TOKEN, STAKING_CONTRACT } = contracts;
         setToken(TOKEN);
@@ -87,17 +89,12 @@ function Staking({ account }) {
 
   useEffect(() => {
     if (isLoaded && TOKEN && STAKING_CONTRACT) {
-      getStakingViews(account); // Fetching views moved to initializeContracts
+      getStakingViews(account);
     }
   }, [isLoaded, TOKEN, STAKING_CONTRACT, account]);
 
   async function getStakingViews(account) {
-    const signer = window.ethereum ? window.ethereum.getSigner() : null;
-    if (!signer) {
-      console.error("Web3 provider not found. Make sure to connect your wallet.");
-      return;
-    }
-    const staking = STAKING_CONTRACT.connect(signer);
+    const staking = STAKING_CONTRACT.connect(provider.getSigner());
     const [staked, reward, totalStaked] = await Promise.all([
       staking.stakedOf(account),
       staking.rewardOf(account),
