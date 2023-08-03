@@ -15,7 +15,8 @@ import About from "./About";
 import Contact from "./Contact";
 import Privacy from "./Privacy";
 import Pools from "./Pools/Pools";
-import Staking from "./Staking/Staking"
+import Staking from "./Staking/Staking";
+import Game from "./Game/ClickerGame";
 
 inject();
 
