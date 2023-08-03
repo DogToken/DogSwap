@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Staking() {
+function Staking({ account }) {
   const classes = useStyles();
   const [views, setViews] = useState({});
   const [stake, setStake] = useState("");
