@@ -76,17 +76,21 @@ function Staking({ account }) {
   };
 
   async function getStakingViews(account) {
-    const staking = STAKING_CONTRACT.connect(provider.getSigner());
-    const [staked, reward, totalStaked] = await Promise.all([
-      staking.stakedOf(account),
-      staking.rewardOf(account),
-      staking.totalStaked(),
-    ]);
-    setViews({
-      staked: ethers.utils.formatEther(staked),
-      reward: ethers.utils.formatEther(reward),
-      totalStaked: ethers.utils.formatEther(totalStaked),
-    });
+    try {
+      const staking = STAKING_CONTRACT.connect(provider.getSigner());
+      const [staked, reward, totalStaked] = await Promise.all([
+        staking.stakedOf(account),
+        staking.rewardOf(account),
+        staking.totalStaked(),
+      ]);
+      setViews({
+        staked: ethers.utils.formatEther(staked),
+        reward: ethers.utils.formatEther(reward),
+        totalStaked: ethers.utils.formatEther(totalStaked),
+      });
+    } catch (error) {
+      console.error("Error fetching staking views:", error);
+    }
   }
 
   useEffect(() => {
