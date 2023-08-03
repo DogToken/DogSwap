@@ -7,6 +7,22 @@
     font-family: Arial, sans-serif;
   }
   
+  .stats-box {
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    margin: 10px;
+    background-color: white;
+  }
+  
+  .stats {
+    text-align: center;
+  }
+  
+  .stat-item {
+    margin: 5px;
+  }
+  
   .clicker-paper,
   .side-menu {
     padding: 20px;
