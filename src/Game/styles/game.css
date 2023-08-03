@@ -1,35 +1,37 @@
 .container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     height: 100vh;
     background-color: #f0f0f0;
     font-family: Arial, sans-serif;
+    padding: 20px;
   }
   
   .stats-box {
     padding: 20px;
     border: 2px solid #ccc;
     border-radius: 10px;
-    margin: 10px;
     background-color: white;
+    width: 250px;
   }
   
   .stats {
     text-align: center;
+    margin-bottom: 10px;
   }
   
   .stat-item {
     margin: 5px;
   }
   
-  .clicker-paper,
-  .side-menu {
+  .clicker-paper {
     padding: 20px;
     border: 2px solid #ccc;
     border-radius: 10px;
-    margin: 10px;
     background-color: white;
+    width: 400px;
+    text-align: center;
   }
   
   .click-button {
@@ -56,13 +58,20 @@
     padding: 20px;
     border: 2px solid #ccc;
     border-radius: 10px;
-    margin: 10px;
     background-color: white;
+    width: 400px;
   }
   
   .side-menu {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+  }
+  
+  .modal-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
   
