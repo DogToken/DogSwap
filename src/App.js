@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import "./App.css";
+import React from "react";
 import { ethers } from "ethers";
 import Web3Provider from "./network";
 import NavBar from "./NavBar/NavBar";
@@ -11,11 +10,12 @@ import Farms from "./Farms/Farms";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./footer"; // Import the Footer component
 import "./footer.css"; // Import the Footer styles
-import SideBar from "./NavBar/SideBar"; // Import the Sidebar component
 import { inject } from '@vercel/analytics';
 import About from "./About";
 import Contact from "./Contact";
-import Game from "./Game/ClickerGame";
+import Privacy from "./Privacy";
+import Pools from "./Pools/Pools";
+import Staking from "./Staking/Staking"
 
 inject();
 
@@ -34,14 +34,6 @@ const theme = createTheme({
 });
 
 const App = () => {
-  // State to control the visibility of the sidebar
-  const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-
-  // Function to toggle the sidebar
-  const toggleSideBar = () => {
-    setIsSideBarOpen(!isSideBarOpen);
-  };
-
   return (
     <div className="App">
       <SnackbarProvider maxSnack={3}>
@@ -49,10 +41,8 @@ const App = () => {
           <Web3Provider
             render={(network) => (
               <div>
-                {/* Include the NavBar component with the toggleSidebar prop */}
-                <NavBar toggleSideBar={toggleSideBar} />
-                {/* Include the Sidebar component with isOpen and toggleSidebar props */}
-                <SideBar isOpen={isSideBarOpen} toggleSideBar={toggleSideBar} />
+                {/* Include the NavBar component */}
+                <NavBar />
                 <div className="NavbarContainer">
                   <Route exact path="/">
                     <CoinSwapper network={network} />
@@ -63,6 +53,12 @@ const App = () => {
                   <Route exact path="/farms">
                     <Farms network={network} />
                   </Route>
+                  <Route exact path="/pools">
+                    <Pools network={network} />
+                  </Route>
+                  <Route exact path="/stake">
+                    <Staking network={network} />
+                  </Route>
                   <Route exact path="/about">
                     <About />
                   </Route>
@@ -71,6 +67,9 @@ const App = () => {
                   </Route>
                   <Route exact path="/game">
                     <Game />
+                  </Route>
+                  <Route exact path="/privacy">
+                    <Privacy />
                   </Route>
                 </div>
               </div>

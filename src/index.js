@@ -5,6 +5,18 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+import { ethers } from "ethers";
+
+function getLibrary(provider) {
+  if (provider && provider.isMetaMask) {
+    return new ethers.providers.Web3Provider(provider);
+  } else {
+    return new ethers.providers.JsonRpcProvider("https://node1.mintme.com");
+  }
+}
+
+// Replace the Web3ReactProvider with direct Web3Provider
+const provider = getLibrary(window.ethereum);
 
 ReactDOM.render(
   <BrowserRouter>
@@ -12,11 +24,7 @@ ReactDOM.render(
       <App />
     </React.StrictMode>
   </BrowserRouter>,
-
   document.getElementById("root")
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

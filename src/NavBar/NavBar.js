@@ -8,7 +8,10 @@ const NavBar = () => {
     <nav>
       <div className="Title">
         <h1 className="navbar-logo">
-          🐶 DogSwap
+          <span role="img" aria-label="dog">
+            🐶
+          </span>{" "}
+          DogSwap
         </h1>
       </div>
 
