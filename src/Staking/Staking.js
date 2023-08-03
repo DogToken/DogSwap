@@ -29,50 +29,58 @@ function Staking({ account }) {
 
   const handleStake = async (event) => {
     event.preventDefault();
-    const signer = window.ethereum ? window.ethereum.getSigner() : null;
-    if (!signer) {
-      console.error("Web3 provider not found. Make sure to connect your wallet.");
-      return;
-    }
-    const amount = ethers.utils.parseEther(stake);
+    try {
+      const signer = window.ethereum?.getSigner();
+      if (!signer) {
+        throw new Error("Web3 provider not found. Make sure to connect your wallet.");
+      }
+      const amount = ethers.utils.parseEther(stake);
 
-    const Token = TOKEN.connect(signer);
-    const allowance = await Token.allowance(account, STAKING_CONTRACT.address);
-    if (allowance.lt(amount)) {
-      const tx = await Token.approve(STAKING_CONTRACT.address, amount);
+      const Token = TOKEN.connect(signer);
+      const allowance = await Token.allowance(account, STAKING_CONTRACT.address);
+      if (allowance.lt(amount)) {
+        const tx = await Token.approve(STAKING_CONTRACT.address, amount);
+        await tx.wait();
+      }
+
+      const staking = STAKING_CONTRACT.connect(signer);
+      const tx = await staking.stake(amount);
       await tx.wait();
+    } catch (error) {
+      console.error("Error handling stake:", error.message);
     }
-
-    const staking = STAKING_CONTRACT.connect(signer);
-
-    const tx = await staking.stake(amount);
-    await tx.wait();
   };
 
   const handleWithdraw = async (event) => {
     event.preventDefault();
-    const signer = window.ethereum ? window.ethereum.getSigner() : null;
-    if (!signer) {
-      console.error("Web3 provider not found. Make sure to connect your wallet.");
-      return;
-    }
-    const staking = STAKING_CONTRACT.connect(signer);
+    try {
+      const signer = window.ethereum?.getSigner();
+      if (!signer) {
+        throw new Error("Web3 provider not found. Make sure to connect your wallet.");
+      }
+      const staking = STAKING_CONTRACT.connect(signer);
 
-    const amount = ethers.utils.parseEther(withdraw);
-    const tx = await staking.withdraw(amount);
-    await tx.wait();
+      const amount = ethers.utils.parseEther(withdraw);
+      const tx = await staking.withdraw(amount);
+      await tx.wait();
+    } catch (error) {
+      console.error("Error handling withdraw:", error.message);
+    }
   };
 
   const handleClaimReward = async () => {
-    const signer = window.ethereum ? window.ethereum.getSigner() : null;
-    if (!signer) {
-      console.error("Web3 provider not found. Make sure to connect your wallet.");
-      return;
-    }
-    const staking = STAKING_CONTRACT.connect(signer);
+    try {
+      const signer = window.ethereum?.getSigner();
+      if (!signer) {
+        throw new Error("Web3 provider not found. Make sure to connect your wallet.");
+      }
+      const staking = STAKING_CONTRACT.connect(signer);
 
-    const tx = await staking.claimReward();
-    await tx.wait();
+      const tx = await staking.claimReward();
+      await tx.wait();
+    } catch (error) {
+      console.error("Error handling claim reward:", error.message);
+    }
   };
 
   async function getStakingViews(account) {
@@ -89,7 +97,7 @@ function Staking({ account }) {
         totalStaked: ethers.utils.formatEther(totalStaked),
       });
     } catch (error) {
-      console.error("Error fetching staking views:", error);
+      console.error("Error fetching staking views:", error.message);
     }
   }
 
@@ -102,7 +110,7 @@ function Staking({ account }) {
         setStakingContract(STAKING_CONTRACT);
         setLoaded(true);
       } catch (error) {
-        console.error("Error initializing contracts:", error);
+        console.error("Error initializing contracts:", error.message);
       }
     };
 
@@ -114,15 +122,6 @@ function Staking({ account }) {
       getStakingViews(account);
     }
   }, [isLoaded, TOKEN, STAKING_CONTRACT, account]);
-
-  if (!isLoaded) {
-    return (
-      <div>
-        <h2>Staking</h2>
-        <p>Loading...</p>
-      </div>
-    );
-  }
 
   if (!isLoaded) {
     return (
