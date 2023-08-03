@@ -15,6 +15,7 @@ import SideBar from "./NavBar/SideBar"; // Import the Sidebar component
 import { inject } from '@vercel/analytics';
 import About from "./About";
 import Contact from "./Contact";
+import Game from "./Game/ClickerGame";
 
 inject();
 
@@ -67,6 +68,9 @@ const App = () => {
                   </Route>
                   <Route exact path="/contact">
                     <Contact />
+                  </Route>
+                  <Route exact path="/game">
+                    <Game />
                   </Route>
                 </div>
               </div>
