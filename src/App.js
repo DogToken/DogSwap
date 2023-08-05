@@ -16,7 +16,6 @@ import Contact from "./Contact";
 import Privacy from "./Privacy";
 import Pools from "./Pools/Pools";
 import Staking from "./Staking/Staking";
-import Game from "./Game/ClickerGame";
 
 inject();
 
@@ -65,9 +64,6 @@ const App = () => {
                   </Route>
                   <Route exact path="/contact">
                     <Contact />
-                  </Route>
-                  <Route exact path="/game">
-                    <Game />
                   </Route>
                   <Route exact path="/privacy">
                     <Privacy />
