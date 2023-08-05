@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import StakingContract from './contracts/StakingContract.json'; // Update the path to your compiled contract JSON
+import StakingContract from './build/stakingVault.abi.json'; // Update the path to your compiled contract JSON
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
 const networks = [24734];
@@ -10,7 +10,7 @@ export const ChainId = {
 };
 
 export const routerAddress = new Map();
-routerAddress.set(ChainId.MINTME, "0xa6c72da53025c5291d326fadc5a1277aa21fef2c");
+routerAddress.set(ChainId.MINTME, "0x38D613a0636Bd10043405D76e52f7540eeE913d0");
 
 const useStyles = makeStyles((theme) => ({
   root: {
