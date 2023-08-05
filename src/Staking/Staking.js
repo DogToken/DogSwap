@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import StakingContract from './build/stakingVault.abi.json'; // Update the path to your compiled contract JSON
+import StakingContract from '../build/stakingVault.abi.json'; // Update the path to your compiled contract JSON
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
 const networks = [24734];
