@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 import Web3 from 'web3';
 import DaiToken from './abis/DogToken.json';
@@ -33,17 +33,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-class App extends Component {
-  async componentDidMount() {
-    await this.loadWeb3();
-    await this.loadBlockchainData();
-  }
+function App() {
+  const classes = useStyles();
 
-  async loadBlockchainData() {
+  const [account, setAccount] = useState('0x0');
+  const [daiToken, setDaiToken] = useState({});
+  const [dappToken, setDappToken] = useState({});
+  const [tokenFarm, setTokenFarm] = useState({});
+  const [daiTokenBalance, setDaiTokenBalance] = useState('0');
+  const [dappTokenBalance, setDappTokenBalance] = useState('0');
+  const [stakingBalance, setStakingBalance] = useState('0');
+  const [loading, setLoading] = useState(true);
+  const [stakeAmount, setStakeAmount] = useState('');
+  const [unstakeAmount, setUnstakeAmount] = useState('');
+
+  useEffect(() => {
+    loadWeb3();
+    loadBlockchainData();
+  }, []);
+
+  async function loadBlockchainData() {
     const web3 = window.web3;
 
     const accounts = await web3.eth.getAccounts();
-    this.setState({ account: accounts[0] });
+    setAccount(accounts[0]);
 
     const networkId = 37480; // Use the custom network ID (replace with your network ID)
 
@@ -51,9 +64,9 @@ class App extends Component {
     const daiTokenData = DaiToken.networks[networkId];
     if (daiTokenData) {
       const daiToken = new web3.eth.Contract(DaiToken.abi, daiTokenData.address);
-      this.setState({ daiToken });
-      let daiTokenBalance = await daiToken.methods.balanceOf(this.state.account).call();
-      this.setState({ daiTokenBalance: daiTokenBalance.toString() });
+      setDaiToken(daiToken);
+      let daiTokenBalance = await daiToken.methods.balanceOf(account).call();
+      setDaiTokenBalance(daiTokenBalance.toString());
     } else {
       window.alert('DaiToken contract not deployed to detected network.');
     }
@@ -62,9 +75,9 @@ class App extends Component {
     const dappTokenData = DappToken.networks[networkId];
     if (dappTokenData) {
       const dappToken = new web3.eth.Contract(DappToken.abi, dappTokenData.address);
-      this.setState({ dappToken });
-      let dappTokenBalance = await dappToken.methods.balanceOf(this.state.account).call();
-      this.setState({ dappTokenBalance: dappTokenBalance.toString() });
+      setDappToken(dappToken);
+      let dappTokenBalance = await dappToken.methods.balanceOf(account).call();
+      setDappTokenBalance(dappTokenBalance.toString());
     } else {
       window.alert('DappToken contract not deployed to detected network.');
     }
@@ -73,17 +86,17 @@ class App extends Component {
     const tokenFarmData = TokenFarm.networks[networkId];
     if (tokenFarmData) {
       const tokenFarm = new web3.eth.Contract(TokenFarm.abi, tokenFarmData.address);
-      this.setState({ tokenFarm });
-      let stakingBalance = await tokenFarm.methods.stakingBalance(this.state.account).call();
-      this.setState({ stakingBalance: stakingBalance.toString() });
+      setTokenFarm(tokenFarm);
+      let stakingBalance = await tokenFarm.methods.stakingBalance(account).call();
+      setStakingBalance(stakingBalance.toString());
     } else {
       window.alert('TokenFarm contract not deployed to detected network.');
     }
 
-    this.setState({ loading: false });
+    setLoading(false);
   }
 
-  async loadWeb3() {
+  async function loadWeb3() {
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum);
       await window.ethereum.enable();
@@ -94,97 +107,79 @@ class App extends Component {
     }
   }
 
-  stakeTokens = (amount) => {
-    this.setState({ loading: true });
-    this.state.daiToken.methods.approve(this.state.tokenFarm._address, amount).send({ from: this.state.account }).on('transactionHash', (hash) => {
-      this.state.tokenFarm.methods.stakeTokens(amount).send({ from: this.state.account }).on('transactionHash', (hash) => {
-        this.setState({ loading: false });
+  function stakeTokens(amount) {
+    setLoading(true);
+    daiToken.methods.approve(tokenFarm._address, amount).send({ from: account }).on('transactionHash', (hash) => {
+      tokenFarm.methods.stakeTokens(amount).send({ from: account }).on('transactionHash', (hash) => {
+        setLoading(false);
       });
     });
   }
 
-  unstakeTokens = (amount) => {
-    this.setState({ loading: true });
-    this.state.tokenFarm.methods.unstakeTokens().send({ from: this.state.account }).on('transactionHash', (hash) => {
-      this.setState({ loading: false });
+  function unstakeTokens(amount) {
+    setLoading(true);
+    tokenFarm.methods.unstakeTokens().send({ from: account }).on('transactionHash', (hash) => {
+      setLoading(false);
     });
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      account: '0x0',
-      daiToken: {},
-      dappToken: {},
-      tokenFarm: {},
-      daiTokenBalance: '0',
-      dappTokenBalance: '0',
-      stakingBalance: '0',
-      loading: true
-    };
+  let content;
+  if (loading) {
+    content = <p id="loader" className="text-center">Loading...</p>;
+  } else {
+    content = <Main
+      daiTokenBalance={daiTokenBalance}
+      dappTokenBalance={dappTokenBalance}
+      stakingBalance={stakingBalance}
+      stakeTokens={stakeTokens}
+      unstakeTokens={unstakeTokens}
+    />;
   }
 
-  render() {
-    const classes = useStyles();
-
-    let content;
-    if (this.state.loading) {
-      content = <p id="loader" className="text-center">Loading...</p>;
-    } else {
-      content = <Main
-        daiTokenBalance={this.state.daiTokenBalance}
-        dappTokenBalance={this.state.dappTokenBalance}
-        stakingBalance={this.state.stakingBalance}
-        stakeTokens={this.stakeTokens}
-        unstakeTokens={this.unstakeTokens}
-      />;
-    }
-
-    return (
-      <div>
-        <Container className={classes.root} maxWidth="sm">
-          <Typography variant="h4" className={classes.title}>
-            Stake Tokens
+  return (
+    <div>
+      <Container className={classes.root} maxWidth="sm">
+        <Typography variant="h4" className={classes.title}>
+          Stake Tokens
+        </Typography>
+        <Paper elevation={3} className={classes.formContainer}>
+          <Typography variant="h6" className={classes.paragraph}>
+            Your Account: {account}
           </Typography>
-          <Paper elevation={3} className={classes.formContainer}>
-            <Typography variant="h6" className={classes.paragraph}>
-              Your Account: {this.state.account}
-            </Typography>
-            <Typography variant="body1" className={classes.paragraph}>
-              Dai Token Balance: {this.state.daiTokenBalance}
-            </Typography>
-            <Typography variant="body1" className={classes.paragraph}>
-              Dapp Token Balance: {this.state.dappTokenBalance}
-            </Typography>
-            <Typography variant="body1" className={classes.paragraph}>
-              Staking Balance: {this.state.stakingBalance}
-            </Typography>
-            <div className={classes.form}>
-              <TextField
-                label="Stake Amount"
-                variant="outlined"
-                onChange={(e) => this.setState({ stakeAmount: e.target.value })}
-              />
-              <Button variant="contained" color="primary" onClick={() => this.stakeTokens(this.state.stakeAmount)}>
-                Stake Tokens
-              </Button>
-            </div>
-            <div className={classes.form}>
-              <TextField
-                label="Unstake Amount"
-                variant="outlined"
-                onChange={(e) => this.setState({ unstakeAmount: e.target.value })}
-              />
-              <Button variant="contained" color="secondary" onClick={() => this.unstakeTokens(this.state.unstakeAmount)}>
-                Unstake Tokens
-              </Button>
-            </div>
-            {content}
-          </Paper>
-        </Container>
-      </div>
-    );
-  }
+          <Typography variant="body1" className={classes.paragraph}>
+            Dai Token Balance: {daiTokenBalance}
+          </Typography>
+          <Typography variant="body1" className={classes.paragraph}>
+            Dapp Token Balance: {dappTokenBalance}
+          </Typography>
+          <Typography variant="body1" className={classes.paragraph}>
+            Staking Balance: {stakingBalance}
+          </Typography>
+          <div className={classes.form}>
+            <TextField
+              label="Stake Amount"
+              variant="outlined"
+              onChange={(e) => setStakeAmount(e.target.value)}
+            />
+            <Button variant="contained" color="primary" onClick={() => stakeTokens(stakeAmount)}>
+              Stake Tokens
+            </Button>
+          </div>
+          <div className={classes.form}>
+            <TextField
+              label="Unstake Amount"
+              variant="outlined"
+              onChange={(e) => setUnstakeAmount(e.target.value)}
+            />
+            <Button variant="contained" color="secondary" onClick={() => unstakeTokens(unstakeAmount)}>
+              Unstake Tokens
+            </Button>
+          </div>
+          {content}
+        </Paper>
+      </Container>
+    </div>
+  );
 }
 
 export default App;
