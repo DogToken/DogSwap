@@ -5427,11 +5427,11 @@
       "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
     },
     "networks": {
-      "5777": {
+      "24734": {
         "events": {},
         "links": {},
-        "address": "0x34009eE476662AB9A6Ed7667B84a0c78A5FC9716",
-        "transactionHash": "0x5008b411043250fd40ea9e8717729f6147ba9f95c208a37554ac5df40dd02071"
+        "address": "0x4931d29DD114c0DA429a5eeB488c04ff98264dA5",
+        "transactionHash": "0x9e4554ffdd5c505194dbc839e3e311bc71e9c485678d556ff8a6f0d0d1d35dde"
       }
     },
     "schemaVersion": "3.3.3",
