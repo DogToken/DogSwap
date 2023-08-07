@@ -1,11 +1,37 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect, Component } from 'react';
+import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 import Web3 from 'web3'
 import DaiToken from './abis/DogToken.json'
 import DappToken from './abis/BoneToken.json'
 import TokenFarm from './abis/TokenFarm.json'
-import Navbar from '../NavBar/NavBar'
 import Main from './Main'
 import './Stake.css'
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+      padding: theme.spacing(4),
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    title: {
+      marginBottom: theme.spacing(3),
+    },
+    paragraph: {
+      marginBottom: theme.spacing(1),
+    },
+    formContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      marginTop: theme.spacing(3),
+    },
+    form: {
+      display: 'flex',
+      alignItems: 'center',
+      marginBottom: theme.spacing(2),
+    },
+  }));
 
 class App extends Component {
 
@@ -117,7 +143,6 @@ class App extends Component {
 
     return (
       <div>
-        <Navbar account={this.state.account} />
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '600px' }}>
