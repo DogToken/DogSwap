@@ -60,7 +60,7 @@ function App() {
       setAccount(accounts[0]);
       const networkId = 37480; // Use the custom network ID (replace with your network ID)
 
-      // Load DaiToken
+      // Load DogSwap
       const daiTokenData = DaiToken.networks[networkId];
       if (daiTokenData) {
         const daiToken = new web3.eth.Contract(DaiToken.abi, daiTokenData.address);
@@ -68,10 +68,10 @@ function App() {
         let daiTokenBalance = await daiToken.methods.balanceOf(account).call();
         setDaiTokenBalance(daiTokenBalance.toString());
       } else {
-        window.alert('DaiToken contract not deployed to detected network.');
+        window.alert('DogSwap contract not deployed to detected network.');
       }
 
-      // Load DappToken
+      // Load BoneToken
       const dappTokenData = DappToken.networks[networkId];
       if (dappTokenData) {
         const dappToken = new web3.eth.Contract(DappToken.abi, dappTokenData.address);
@@ -79,7 +79,7 @@ function App() {
         let dappTokenBalance = await dappToken.methods.balanceOf(account).call();
         setDappTokenBalance(dappTokenBalance.toString());
       } else {
-        window.alert('DappToken contract not deployed to detected network.');
+        window.alert('Bone Token contract not deployed to detected network.');
       }
 
       // Load TokenFarm
@@ -95,6 +95,7 @@ function App() {
 
       setLoading(false);
     } else {
+      setAccount(null); // If no accounts found, set account to null
       window.alert('Please connect your wallet to access the blockchain data.');
       setLoading(false);
     }
@@ -128,7 +129,7 @@ function App() {
   }
 
   let content;
-  if (loading) {
+  if (loading || account === null) { // Check if account is null to avoid the error
     content = <p id="loader" className="text-center">Loading...</p>;
   } else {
     content = <Main
@@ -144,17 +145,17 @@ function App() {
     <div>
       <Container className={classes.root} maxWidth="sm">
         <Typography variant="h4" className={classes.title}>
-          Stake Tokens
+          Stake DogSwap - Earn $BONE
         </Typography>
         <Paper elevation={3} className={classes.formContainer}>
           <Typography variant="h6" className={classes.paragraph}>
             Your Account: {account}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
-            Dai Token Balance: {daiTokenBalance}
+            DogSwap Balance: {daiTokenBalance}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
-            Dapp Token Balance: {dappTokenBalance}
+            $BONE Balance: {dappTokenBalance}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
             Staking Balance: {stakingBalance}
