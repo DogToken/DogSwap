@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Paper, Typography, TextField, Button, makeStyles } from '@material-ui/core';
 import Web3 from 'web3';
-import DaiToken from './abis/DogToken.json';
-import DappToken from './abis/BoneToken.json';
+import DogToken from './abis/DogToken.json';
+import BoneToken from './abis/BoneToken.json';
 import TokenFarm from './abis/TokenFarm.json';
 import Main from './Main';
 import './Stake.css';
@@ -37,11 +37,11 @@ function App() {
   const classes = useStyles();
 
   const [account, setAccount] = useState(null);
-  const [daiToken, setDaiToken] = useState({});
-  const [dappToken, setDappToken] = useState({});
+  const [dogToken, setDogToken] = useState({});
+  const [boneToken, setBoneToken] = useState({});
   const [tokenFarm, setTokenFarm] = useState({});
-  const [daiTokenBalance, setDaiTokenBalance] = useState('0');
-  const [dappTokenBalance, setDappTokenBalance] = useState('0');
+  const [dogTokenBalance, setDogTokenBalance] = useState('0');
+  const [boneTokenBalance, setBoneTokenBalance] = useState('0');
   const [stakingBalance, setStakingBalance] = useState('0');
   const [loadingWeb3, setLoadingWeb3] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
@@ -73,26 +73,26 @@ function App() {
     const web3 = window.web3;
     const networkId = 37480; // Use the custom network ID (replace with your network ID)
 
-    // Load DogSwap
-    const daiTokenData = DaiToken.networks[networkId];
-    if (daiTokenData) {
-      const daiToken = new web3.eth.Contract(DaiToken.abi, daiTokenData.address);
-      setDaiToken(daiToken);
-      let daiTokenBalance = await daiToken.methods.balanceOf(account).call();
-      setDaiTokenBalance(daiTokenBalance.toString());
+    // Load DogToken
+    const dogTokenData = DogToken.networks[networkId];
+    if (dogTokenData) {
+      const dogToken = new web3.eth.Contract(DogToken.abi, dogTokenData.address);
+      setDogToken(dogToken);
+      let dogTokenBalance = await dogToken.methods.balanceOf(account).call();
+      setDogTokenBalance(dogTokenBalance.toString());
     } else {
-      window.alert('DogSwap contract not deployed to detected network.');
+      window.alert('DogToken contract not deployed to detected network.');
     }
 
     // Load BoneToken
-    const dappTokenData = DappToken.networks[networkId];
-    if (dappTokenData) {
-      const dappToken = new web3.eth.Contract(DappToken.abi, dappTokenData.address);
-      setDappToken(dappToken);
-      let dappTokenBalance = await dappToken.methods.balanceOf(account).call();
-      setDappTokenBalance(dappTokenBalance.toString());
+    const boneTokenData = BoneToken.networks[networkId];
+    if (boneTokenData) {
+      const boneToken = new web3.eth.Contract(BoneToken.abi, boneTokenData.address);
+      setBoneToken(boneToken);
+      let boneTokenBalance = await boneToken.methods.balanceOf(account).call();
+      setBoneTokenBalance(boneTokenBalance.toString());
     } else {
-      window.alert('Bone Token contract not deployed to detected network.');
+      window.alert('BoneToken contract not deployed to detected network.');
     }
 
     // Load TokenFarm
@@ -111,7 +111,7 @@ function App() {
 
   function stakeTokens(amount) {
     setLoadingData(true);
-    daiToken.methods.approve(tokenFarm._address, amount).send({ from: account }).on('transactionHash', (hash) => {
+    dogToken.methods.approve(tokenFarm._address, amount).send({ from: account }).on('transactionHash', (hash) => {
       tokenFarm.methods.stakeTokens(amount).send({ from: account }).on('transactionHash', (hash) => {
         setLoadingData(false);
       });
@@ -132,8 +132,8 @@ function App() {
     content = <p id="loader" className="text-center">Loading Data...</p>;
   } else {
     content = <Main
-      daiTokenBalance={daiTokenBalance}
-      dappTokenBalance={dappTokenBalance}
+      dogTokenBalance={dogTokenBalance}
+      boneTokenBalance={boneTokenBalance}
       stakingBalance={stakingBalance}
       stakeTokens={stakeTokens}
       unstakeTokens={unstakeTokens}
@@ -151,10 +151,10 @@ function App() {
             Your Account: {account}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
-            DogSwap Balance: {daiTokenBalance}
+            DogSwap Balance: {dogTokenBalance}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
-            $BONE Balance: {dappTokenBalance}
+            $BONE Balance: {boneTokenBalance}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
             Staking Balance: {stakingBalance}
