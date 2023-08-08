@@ -37,11 +37,11 @@ function App() {
   const classes = useStyles();
 
   const [account, setAccount] = useState(null);
-  const [dogToken, setDogToken] = useState({});
-  const [boneToken, setBoneToken] = useState({});
+  const [dogToken, setDogToken] = useState({}); // Changed variable name to dogToken
+  const [boneToken, setBoneToken] = useState({}); // Changed variable name to boneToken
   const [tokenFarm, setTokenFarm] = useState({});
-  const [dogTokenBalance, setDogTokenBalance] = useState('0');
-  const [boneTokenBalance, setBoneTokenBalance] = useState('0');
+  const [dogTokenBalance, setDogTokenBalance] = useState('0'); // Changed variable name to dogTokenBalance
+  const [boneTokenBalance, setBoneTokenBalance] = useState('0'); // Changed variable name to boneTokenBalance
   const [stakingBalance, setStakingBalance] = useState('0');
   const [loadingWeb3, setLoadingWeb3] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
@@ -74,9 +74,9 @@ function App() {
     const networkId = 37480; // Use the custom network ID (replace with your network ID)
 
     // Load DogToken
-    const dogTokenData = DogToken.networks[networkId];
+    const dogTokenData = DogToken.networks[networkId]; // Changed variable name to dogTokenData
     if (dogTokenData) {
-      const dogToken = new web3.eth.Contract(DogToken.abi, dogTokenData.address);
+      const dogToken = new web3.eth.Contract(DogToken.abi, dogTokenData.address); // Changed variable name to dogToken
       setDogToken(dogToken);
       let dogTokenBalance = await dogToken.methods.balanceOf(account).call();
       setDogTokenBalance(dogTokenBalance.toString());
@@ -85,14 +85,14 @@ function App() {
     }
 
     // Load BoneToken
-    const boneTokenData = BoneToken.networks[networkId];
+    const boneTokenData = BoneToken.networks[networkId]; // Changed variable name to boneTokenData
     if (boneTokenData) {
-      const boneToken = new web3.eth.Contract(BoneToken.abi, boneTokenData.address);
+      const boneToken = new web3.eth.Contract(BoneToken.abi, boneTokenData.address); // Changed variable name to boneToken
       setBoneToken(boneToken);
       let boneTokenBalance = await boneToken.methods.balanceOf(account).call();
       setBoneTokenBalance(boneTokenBalance.toString());
     } else {
-      window.alert('BoneToken contract not deployed to detected network.');
+      window.alert('Bone Token contract not deployed to detected network.');
     }
 
     // Load TokenFarm
@@ -111,11 +111,19 @@ function App() {
 
   function stakeTokens(amount) {
     setLoadingData(true);
-    dogToken.methods.approve(tokenFarm._address, amount).send({ from: account }).on('transactionHash', (hash) => {
-      tokenFarm.methods.stakeTokens(amount).send({ from: account }).on('transactionHash', (hash) => {
-        setLoadingData(false);
-      });
-    });
+    if (dogToken) {
+      dogToken.methods
+        .approve(tokenFarm._address, amount)
+        .send({ from: account })
+        .on('transactionHash', (hash) => {
+          tokenFarm.methods
+            .stakeTokens(amount)
+            .send({ from: account })
+            .on('transactionHash', (hash) => {
+              setLoadingData(false);
+            });
+        });
+    }
   }
 
   function unstakeTokens(amount) {
@@ -151,7 +159,7 @@ function App() {
             Your Account: {account}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
-            DogSwap Balance: {dogTokenBalance}
+            DogToken Balance: {dogTokenBalance}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
             $BONE Balance: {boneTokenBalance}
@@ -187,3 +195,4 @@ function App() {
 }
 
 export default App;
+

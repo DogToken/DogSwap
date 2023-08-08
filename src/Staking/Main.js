@@ -3,6 +3,10 @@ import dai from './images/dai.png';
 
 class Main extends Component {
   render() {
+    const dogTokenBalance = this.props.dogTokenBalance || '0';
+    const boneTokenBalance = this.props.boneTokenBalance || '0';
+    const stakingBalance = this.props.stakingBalance || '0';
+
     return (
       <div id="content" className="mt-3">
         <div className="card mb-4">
@@ -17,19 +21,15 @@ class Main extends Component {
               }}
             >
               <div>
-                <label className="float-left">
-                  <b>Stake Tokens</b>
-                </label>
+                <label className="float-left"><b>Stake Tokens</b></label>
                 <span className="float-right text-muted">
-                  Balance: {window.web3.utils.fromWei(this.props.dogTokenBalance, 'ether')}
+                  Balance: {window.web3.utils.fromWei(dogTokenBalance, 'ether')} DogToken
                 </span>
               </div>
               <div className="input-group mb-4">
                 <input
                   type="text"
-                  ref={(input) => {
-                    this.input = input;
-                  }}
+                  ref={(input) => { this.input = input; }}
                   className="form-control form-control-lg"
                   placeholder="0"
                   required
@@ -41,9 +41,7 @@ class Main extends Component {
                   </div>
                 </div>
               </div>
-              <button type="submit" className="btn btn-danger btn-block btn-lg">
-                STAKE!
-              </button>
+              <button type="submit" className="btn btn-danger btn-block btn-lg">STAKE!</button>
             </form>
             <button
               type="submit"
@@ -67,11 +65,12 @@ class Main extends Component {
           </thead>
           <tbody>
             <tr>
-              <td>{window.web3.utils.fromWei(this.props.stakingBalance, 'ether')} DogSwap</td>
-              <td>{window.web3.utils.fromWei(this.props.boneTokenBalance, 'ether')} $BONE</td>
+              <td>{window.web3.utils.fromWei(stakingBalance, 'ether')} DogSwap</td>
+              <td>{window.web3.utils.fromWei(boneTokenBalance, 'ether')} $BONE</td>
             </tr>
           </tbody>
         </table>
+
       </div>
     );
   }
