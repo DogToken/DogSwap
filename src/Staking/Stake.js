@@ -95,7 +95,6 @@ function App() {
 
       setLoading(false);
     } else {
-      setAccount(null); // If no accounts found, set account to null
       window.alert('Please connect your wallet to access the blockchain data.');
       setLoading(false);
     }
@@ -129,9 +128,9 @@ function App() {
   }
 
   let content;
-  if (loading || account === null) { // Check if account is null to avoid the error
+  if (loading) {
     content = <p id="loader" className="text-center">Loading...</p>;
-  } else {
+  } else if (account) { // Check if account is not null before rendering Main component
     content = <Main
       daiTokenBalance={daiTokenBalance}
       dappTokenBalance={dappTokenBalance}
@@ -139,6 +138,8 @@ function App() {
       stakeTokens={stakeTokens}
       unstakeTokens={unstakeTokens}
     />;
+  } else {
+    content = null; // If account is null, don't render anything initially
   }
 
   return (
@@ -149,7 +150,7 @@ function App() {
         </Typography>
         <Paper elevation={3} className={classes.formContainer}>
           <Typography variant="h6" className={classes.paragraph}>
-            Your Account: {account}
+            Your Account: {account || 'Not connected'} {/* Display "Not connected" if account is null */}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
             DogSwap Balance: {daiTokenBalance}
