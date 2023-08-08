@@ -20,7 +20,7 @@ class Main extends Component {
               <div>
                 <label className="float-left"><b>Stake Tokens</b></label>
                 <span className="float-right text-muted">
-                  Balance: {window.web3.utils.fromWei(this.props.daiTokenBalance, 'MintMe')}
+                  Balance: {window.web3.utils.fromWei(this.props.daiTokenBalance, 'ether')}
                 </span>
               </div>
               <div className="input-group mb-4">
@@ -60,8 +60,8 @@ class Main extends Component {
           </thead>
           <tbody>
             <tr>
-              <td>{window.web3.utils.fromWei(this.props.stakingBalance, 'MintMe')} mDAI</td>
-              <td>{window.web3.utils.fromWei(this.props.dappTokenBalance, 'MintMe')} DAPP</td>
+              <td>{window.web3.utils.fromWei(this.props.stakingBalance, 'ether')} mDAI</td>
+              <td>{window.web3.utils.fromWei(this.props.dappTokenBalance, 'ether')} DAPP</td>
             </tr>
           </tbody>
         </table>
