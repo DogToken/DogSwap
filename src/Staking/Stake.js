@@ -34,23 +34,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function App() {
-  const classes = useStyles();
-
-  const [account, setAccount] = useState(null);
-  const [dogToken, setDogToken] = useState({}); // Changed variable name to dogToken
-  const [boneToken, setBoneToken] = useState({}); // Changed variable name to boneToken
-  const [tokenFarm, setTokenFarm] = useState({});
-  const [dogTokenBalance, setDogTokenBalance] = useState('0'); // Changed variable name to dogTokenBalance
-  const [boneTokenBalance, setBoneTokenBalance] = useState('0'); // Changed variable name to boneTokenBalance
-  const [stakingBalance, setStakingBalance] = useState('0');
-  const [loadingWeb3, setLoadingWeb3] = useState(true);
-  const [loadingData, setLoadingData] = useState(false);
-  const [stakeAmount, setStakeAmount] = useState('');
-  const [unstakeAmount, setUnstakeAmount] = useState('');
-
-  useEffect(() => {
-    initializeWeb3();
-  }, []);
+    const classes = useStyles();
+  
+    const [account, setAccount] = useState(null);
+    const [dogToken, setDogToken] = useState({});
+    const [boneToken, setBoneToken] = useState({});
+    const [tokenFarm, setTokenFarm] = useState({});
+    const [dogTokenBalance, setDogTokenBalance] = useState('0');
+    const [boneTokenBalance, setBoneTokenBalance] = useState('0');
+    const [stakingBalance, setStakingBalance] = useState('0');
+    const [loadingWeb3, setLoadingWeb3] = useState(true);
+    const [loadingData, setLoadingData] = useState(false);
+    const [stakeAmount, setStakeAmount] = useState('');
+    const [unstakeAmount, setUnstakeAmount] = useState('');
+  
+    useEffect(() => {
+      initializeWeb3();
+    }, []);
 
   async function initializeWeb3() {
     if (window.ethereum) {
