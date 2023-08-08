@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
+import { Container, Paper, Typography, TextField, Button, makeStyles } from '@material-ui/core';
 import Web3 from 'web3';
 import DaiToken from './abis/DogToken.json';
 import DappToken from './abis/BoneToken.json';
@@ -43,94 +43,94 @@ function App() {
   const [daiTokenBalance, setDaiTokenBalance] = useState('0');
   const [dappTokenBalance, setDappTokenBalance] = useState('0');
   const [stakingBalance, setStakingBalance] = useState('0');
-  const [loading, setLoading] = useState(true);
+  const [loadingWeb3, setLoadingWeb3] = useState(true);
+  const [loadingData, setLoadingData] = useState(false);
   const [stakeAmount, setStakeAmount] = useState('');
   const [unstakeAmount, setUnstakeAmount] = useState('');
 
   useEffect(() => {
-    loadWeb3();
-    loadBlockchainData();
+    initializeWeb3();
   }, []);
 
-  async function loadBlockchainData() {
-    const web3 = window.web3;
-
-    const accounts = await web3.eth.getAccounts();
-    if (accounts.length > 0) {
-      setAccount(accounts[0]);
-      const networkId = 37480; // Use the custom network ID (replace with your network ID)
-
-      // Load DogSwap
-      const daiTokenData = DaiToken.networks[networkId];
-      if (daiTokenData) {
-        const daiToken = new web3.eth.Contract(DaiToken.abi, daiTokenData.address);
-        setDaiToken(daiToken);
-        let daiTokenBalance = await daiToken.methods.balanceOf(account).call();
-        setDaiTokenBalance(daiTokenBalance.toString());
-      } else {
-        window.alert('DogSwap contract not deployed to detected network.');
-      }
-
-      // Load BoneToken
-      const dappTokenData = DappToken.networks[networkId];
-      if (dappTokenData) {
-        const dappToken = new web3.eth.Contract(DappToken.abi, dappTokenData.address);
-        setDappToken(dappToken);
-        let dappTokenBalance = await dappToken.methods.balanceOf(account).call();
-        setDappTokenBalance(dappTokenBalance.toString());
-      } else {
-        window.alert('Bone Token contract not deployed to detected network.');
-      }
-
-      // Load TokenFarm
-      const tokenFarmData = TokenFarm.networks[networkId];
-      if (tokenFarmData) {
-        const tokenFarm = new web3.eth.Contract(TokenFarm.abi, tokenFarmData.address);
-        setTokenFarm(tokenFarm);
-        let stakingBalance = await tokenFarm.methods.stakingBalance(account).call();
-        setStakingBalance(stakingBalance.toString());
-      } else {
-        window.alert('TokenFarm contract not deployed to detected network.');
-      }
-
-      setLoading(false);
-    } else {
-      window.alert('Please connect your wallet to access the blockchain data.');
-      setLoading(false);
-    }
-  }
-
-  async function loadWeb3() {
+  async function initializeWeb3() {
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum);
       await window.ethereum.enable();
+      setAccount(window.web3.eth.accounts[0]);
+      setLoadingWeb3(false);
     } else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider);
+      setAccount(window.web3.eth.accounts[0]);
+      setLoadingWeb3(false);
     } else {
       window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
+      setLoadingWeb3(false);
     }
   }
 
+  async function loadBlockchainData() {
+    setLoadingData(true);
+    const web3 = window.web3;
+    const networkId = 37480; // Use the custom network ID (replace with your network ID)
+
+    // Load DogSwap
+    const daiTokenData = DaiToken.networks[networkId];
+    if (daiTokenData) {
+      const daiToken = new web3.eth.Contract(DaiToken.abi, daiTokenData.address);
+      setDaiToken(daiToken);
+      let daiTokenBalance = await daiToken.methods.balanceOf(account).call();
+      setDaiTokenBalance(daiTokenBalance.toString());
+    } else {
+      window.alert('DogSwap contract not deployed to detected network.');
+    }
+
+    // Load BoneToken
+    const dappTokenData = DappToken.networks[networkId];
+    if (dappTokenData) {
+      const dappToken = new web3.eth.Contract(DappToken.abi, dappTokenData.address);
+      setDappToken(dappToken);
+      let dappTokenBalance = await dappToken.methods.balanceOf(account).call();
+      setDappTokenBalance(dappTokenBalance.toString());
+    } else {
+      window.alert('Bone Token contract not deployed to detected network.');
+    }
+
+    // Load TokenFarm
+    const tokenFarmData = TokenFarm.networks[networkId];
+    if (tokenFarmData) {
+      const tokenFarm = new web3.eth.Contract(TokenFarm.abi, tokenFarmData.address);
+      setTokenFarm(tokenFarm);
+      let stakingBalance = await tokenFarm.methods.stakingBalance(account).call();
+      setStakingBalance(stakingBalance.toString());
+    } else {
+      window.alert('TokenFarm contract not deployed to detected network.');
+    }
+
+    setLoadingData(false);
+  }
+
   function stakeTokens(amount) {
-    setLoading(true);
+    setLoadingData(true);
     daiToken.methods.approve(tokenFarm._address, amount).send({ from: account }).on('transactionHash', (hash) => {
       tokenFarm.methods.stakeTokens(amount).send({ from: account }).on('transactionHash', (hash) => {
-        setLoading(false);
+        setLoadingData(false);
       });
     });
   }
 
   function unstakeTokens(amount) {
-    setLoading(true);
+    setLoadingData(true);
     tokenFarm.methods.unstakeTokens().send({ from: account }).on('transactionHash', (hash) => {
-      setLoading(false);
+      setLoadingData(false);
     });
   }
 
   let content;
-  if (loading) {
-    content = <p id="loader" className="text-center">Loading...</p>;
-  } else if (account) { // Check if account is not null before rendering Main component
+  if (loadingWeb3) {
+    content = <p id="loader" className="text-center">Loading Web3...</p>;
+  } else if (loadingData) {
+    content = <p id="loader" className="text-center">Loading Data...</p>;
+  } else {
     content = <Main
       daiTokenBalance={daiTokenBalance}
       dappTokenBalance={dappTokenBalance}
@@ -138,8 +138,6 @@ function App() {
       stakeTokens={stakeTokens}
       unstakeTokens={unstakeTokens}
     />;
-  } else {
-    content = null; // If account is null, don't render anything initially
   }
 
   return (
@@ -150,7 +148,7 @@ function App() {
         </Typography>
         <Paper elevation={3} className={classes.formContainer}>
           <Typography variant="h6" className={classes.paragraph}>
-            Your Account: {account || 'Not connected'} {/* Display "Not connected" if account is null */}
+            Your Account: {account}
           </Typography>
           <Typography variant="body1" className={classes.paragraph}>
             DogSwap Balance: {daiTokenBalance}
