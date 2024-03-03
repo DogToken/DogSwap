@@ -88,6 +88,11 @@ const MINTMECoins = [
     abbr: "VXE",
     address: "0x54DAa721aaF6938cdc3c6c455A9C5400e9A9462e",
   },
+  {
+    name: "Zenny",
+    abbr: "ZENNY",
+    address: "0xe7D8B46047d55902982CeD9D37eE85A63B991a1a",
+  },
 ]
 
 const COINS = new Map();
