@@ -68,15 +68,20 @@ const StakingDapp = () => {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const network = await provider.getNetwork();
-
+  
         // Check if the connected network is supported
         if (network && networks.includes(network.chainId)) {
           const signer = provider.getSigner();
           setAccount(await signer.getAddress());
-
-          const contract = new ethers.Contract(routerAddress.get(network.chainId), StakingContract.abi, signer);
-          setContract(contract);
-
+  
+          // Initialize Staking contract
+          const stakingContract = new ethers.Contract(
+            routerAddress.get(network.chainId),
+            StakingContract.abi,
+            signer
+          );
+          setContract(stakingContract);
+  
           // Setup MasterChef contract
           const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
           // Now you can use the masterChefContract to interact with MasterChef functions
@@ -92,7 +97,7 @@ const StakingDapp = () => {
       console.error('Error connecting to Ethereum:', error);
     }
   };
-
+  
   // Function to fetch the user's staking details and update the views
   const fetchStakingDetails = async () => {
     try {
