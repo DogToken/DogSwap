@@ -22,7 +22,9 @@ const useStyles = makeStyles((theme) => ({
   },
   coinLogo: {
     position: "absolute",
+    top: "50%", // Adjust the top position to center vertically
     left: "20%", // Adjust the left position
+    transform: "translateY(-50%)", // Adjust for vertical centering
     width: 48, // Double the width
     height: 48, // Double the height
   },
