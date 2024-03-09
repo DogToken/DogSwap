@@ -8,14 +8,13 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
     "&:hover, &$focusVisible": {
       backgroundColor: COLORS.grey[200],
     },
   },
   coinName: {
     opacity: 0.6,
+    textAlign: "center", // Center align the text
   },
   coinLogo: {
     marginRight: theme.spacing(1), // Adjust margin as needed
@@ -38,7 +37,7 @@ export default function CoinButton(props) {
 
   return (
     <ButtonBase focusRipple className={classes.button} onClick={onClick}>
-      <Grid container alignItems="center">
+      <Grid container alignItems="center" justifyContent="center"> {/* Center align the content */}
         {logoUrl && (
           <Grid item>
             <img src={logoUrl} alt={`${coinAbbr} Logo`} className={classes.coinLogo} />
