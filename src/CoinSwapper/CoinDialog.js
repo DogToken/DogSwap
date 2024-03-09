@@ -159,13 +159,13 @@ export default function CoinDialog(props) {
 
   return (
     <Dialog
-      open={open}
-      onClose={() => exit(undefined)}
-      fullWidth
-      maxWidth="sm"
-      sx={{zIndex:500000}}
-      classes={{ paper: classes.dialogContainer }}
-    >
+  open={open}
+  onClose={() => exit(undefined)}
+  fullWidth
+  maxWidth="sm" // Change the maxWidth here
+  sx={{ zIndex: 500000 }}
+  classes={{ paper: classes.dialogContainer }}
+>
       <DialogTitle onClose={() => exit(undefined)}>Select Coin</DialogTitle>
 
       <hr className={classes.hr} />
