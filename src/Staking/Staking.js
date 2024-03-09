@@ -146,13 +146,13 @@ const StakingDapp = () => {
           Staking
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Staked: </strong> {views.staked} $TREATS
+          <strong>Staked: </strong> {views.staked} $DOGSWAP
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Reward: </strong> {views.reward} $TREATS
+          <strong>Reward: </strong> {views.reward} $BONE
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Total Staked: </strong> {views.totalStaked} $TREATS
+          <strong>Total Staked: </strong> {views.totalStaked} $DOGSWAP
         </Typography>
         <Box mt={3} className={classes.formContainer}>
           <form className={classes.form} onSubmit={handleStake}>
@@ -165,7 +165,7 @@ const StakingDapp = () => {
               onChange={(e) => setStake(e.target.value)}
             />
             <Button type="submit" variant="contained" color="primary">
-              Stake $TREATS
+              Stake $DOGSWAP
             </Button>
           </form>
           <form className={classes.form} onSubmit={handleWithdraw}>
