@@ -7,7 +7,7 @@ import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from
 // Other code remains the same
 
 // MasterChef contract address
-const masterChefAddress = '0x9d8dd79f2d4ba9e1c3820d7659a5f5d2fa1c22ef';
+const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
 
 const networks = [24734];
 
@@ -175,7 +175,7 @@ const StakingDapp = () => {
               onChange={(e) => setStake(e.target.value)}
             />
             <Button type="submit" variant="contained" color="primary">
-              Stake $DOGSWAP
+              Stake
             </Button>
           </form>
           <form className={classes.form} onSubmit={handleWithdraw}>
@@ -188,7 +188,7 @@ const StakingDapp = () => {
               onChange={(e) => setWithdraw(e.target.value)}
             />
             <Button type="submit" variant="contained" color="primary">
-              Withdraw $TREATS
+              Withdraw
             </Button>
           </form>
           <Button variant="contained" color="secondary" onClick={handleClaimReward}>
