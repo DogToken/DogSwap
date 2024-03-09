@@ -1,41 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import StakingContract from '../build/stakingVault.abi.json'; // Update the path to your compiled contract JSON
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
-
-const networks = [24734];
-
-export const ChainId = {
-  MINTME: 24734,
-};
-
-export const routerAddress = new Map();
-routerAddress.set(ChainId.MINTME, "0x38D613a0636Bd10043405D76e52f7540eeE913d0");
+import MasterChefABI from './abis/MasterChef.json'; // Import the MasterChef contract ABI
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  title: {
-    marginBottom: theme.spacing(3),
-  },
-  paragraph: {
-    marginBottom: theme.spacing(1),
-  },
-  formContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginTop: theme.spacing(3),
-  },
-  form: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: theme.spacing(2),
-  },
+  // Your styling classes
 }));
 
 const StakingDapp = () => {
@@ -50,12 +19,10 @@ const StakingDapp = () => {
     totalStaked: 0,
   });
 
-  // Connect to the Ethereum network on component mount
   useEffect(() => {
     connectToEthereum();
   }, []);
 
-  // Function to connect to the Ethereum network and set up the contract
   const connectToEthereum = async () => {
     try {
       if (typeof window.ethereum !== 'undefined') {
@@ -63,13 +30,14 @@ const StakingDapp = () => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const network = await provider.getNetwork();
 
-        // Check if the connected network is supported
-        if (networks.includes(network.chainId)) {
+        if (network.chainId === 24734) { // Assuming MINTME chain ID is 24734
           const signer = provider.getSigner();
           setAccount(await signer.getAddress());
 
-          const contract = new ethers.Contract(routerAddress.get(network.chainId), StakingContract.abi, signer);
-          setContract(contract);
+          // Instantiate the MasterChef contract using the ABI and provider
+          const masterChefAddress = '0x9d8dd79f2d4ba9e1c3820d7659a5f5d2fa1c22ef'; // Replace with your actual MasterChef contract address
+          const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
+          setContract(masterChefContract);
 
           fetchStakingDetails(); // Fetch the user's staking details
         } else {
@@ -83,60 +51,35 @@ const StakingDapp = () => {
     }
   };
 
-  // Function to fetch the user's staking details and update the views
   const fetchStakingDetails = async () => {
     try {
-      const stakingBalance = await contract.stakingBalanceOf(account);
-      const stakingReward = await contract.stakingRewardOf(account);
-      const totalStakedBalance = await contract.totalStakedBalance();
+      // Call functions from the MasterChef contract to fetch staking details
+      const userInfo = await contract.userInfo(account);
+      const totalAllocPoint = await contract.totalAllocPoint();
+      const bonePerBlock = await contract.bonePerBlock();
 
+      // Update the views state with fetched data
       setViews({
-        staked: ethers.utils.formatUnits(stakingBalance, 18),
-        reward: ethers.utils.formatUnits(stakingReward, 18),
-        totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
+        staked: userInfo.amount.toString(), // Assuming userInfo.amount represents staked amount
+        reward: userInfo.rewardDebt.toString(), // Assuming userInfo.rewardDebt represents staking reward
+        totalStaked: totalAllocPoint.toString(), // Assuming totalAllocPoint represents total staked
+        bonePerBlock: bonePerBlock.toString() // Assuming bonePerBlock represents BONE per block
       });
     } catch (error) {
       console.error('Error fetching staking details:', error);
     }
   };
 
-  // Function to handle stake submission
   const handleStake = async (event) => {
-    event.preventDefault();
-    try {
-      const amount = ethers.utils.parseUnits(stake.toString(), 18);
-      const tx = await contract.stakeTokens(amount);
-      await tx.wait();
-      setStake('');
-      fetchStakingDetails();
-    } catch (error) {
-      console.error('Error staking tokens:', error);
-    }
+    // Implement stake function if needed
   };
 
-  // Function to handle withdraw submission
   const handleWithdraw = async (event) => {
-    event.preventDefault();
-    try {
-      const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
-      const tx = await contract.unstakeTokens(amount);
-      await tx.wait();
-      setWithdraw('');
-      fetchStakingDetails();
-    } catch (error) {
-      console.error('Error withdrawing tokens:', error);
-    }
+    // Implement withdraw function if needed
   };
 
-  // Function to handle claiming reward
   const handleClaimReward = async () => {
-    try {
-      const tx = await contract.claimReward();
-      await tx.wait();
-      fetchStakingDetails();
-    } catch (error) {
-      console.error('Error claiming reward:', error);
-    }
+    // Implement claim reward function if needed
   };
 
   return (
@@ -146,13 +89,16 @@ const StakingDapp = () => {
           Staking
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Staked: </strong> {views.staked} $DOGSWAP
+          <strong>Staked: </strong> {views.staked} // Assuming views.staked represents staked amount
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Reward: </strong> {views.reward} $BONE
+          <strong>Reward: </strong> {views.reward} // Assuming views.reward represents staking reward
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Total Staked: </strong> {views.totalStaked} $DOGSWAP
+          <strong>Total Staked: </strong> {views.totalStaked} // Assuming views.totalStaked represents total staked
+        </Typography>
+        <Typography variant="body1" className={classes.paragraph}>
+          <strong>BONE per Block: </strong> {views.bonePerBlock} // Assuming views.bonePerBlock represents BONE per block
         </Typography>
         <Box mt={3} className={classes.formContainer}>
           <form className={classes.form} onSubmit={handleStake}>
@@ -165,7 +111,7 @@ const StakingDapp = () => {
               onChange={(e) => setStake(e.target.value)}
             />
             <Button type="submit" variant="contained" color="primary">
-              Stake $DOGSWAP
+              Stake
             </Button>
           </form>
           <form className={classes.form} onSubmit={handleWithdraw}>
@@ -178,7 +124,7 @@ const StakingDapp = () => {
               onChange={(e) => setWithdraw(e.target.value)}
             />
             <Button type="submit" variant="contained" color="primary">
-              Withdraw $TREATS
+              Withdraw
             </Button>
           </form>
           <Button variant="contained" color="secondary" onClick={handleClaimReward}>
