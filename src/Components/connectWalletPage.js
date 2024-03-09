@@ -60,7 +60,7 @@ function ConnectWalletPage() {
             className={classes.title}
             color="common.white"
           >
-            Please connect an Ethereum wallet to your browser to use the
+            Please connect an Ethereum wallet to your browser and make sure you are connected to the MintMe network to use the
             application
           </Typography>
         </Paper>
