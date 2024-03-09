@@ -38,11 +38,11 @@ export default function CoinButton(props) {
   return (
     <ButtonBase focusRipple className={classes.button} onClick={onClick}>
       <Grid container alignItems="center" justifyContent="center"> {/* Center align the content */}
-        {logoUrl && (
-          <Grid item>
+        <Grid item>
+          {logoUrl && (
             <img src={logoUrl} alt={`${coinAbbr} Logo`} className={classes.coinLogo} />
-          </Grid>
-        )}
+          )}
+        </Grid>
         <Grid item>
           <Typography variant="h6">{coinAbbr}</Typography>
           <Typography variant="body2" className={classes.coinName}>
