@@ -6,8 +6,10 @@ import * as COLORS from "@material-ui/core/colors";
 const useStyles = makeStyles((theme) => ({
   button: {
     width: "100%",
-    paddingTop: theme.spacing(0.5),
-    paddingBottom: theme.spacing(0.5),
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
     "&:hover, &$focusVisible": {
       backgroundColor: COLORS.grey[200],
     },
@@ -17,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
   },
   coinLogo: {
     marginRight: theme.spacing(1), // Adjust margin as needed
+    marginLeft: theme.spacing(1), // Adjust margin as needed
     width: 24, // Adjust size as needed
     height: 24, // Adjust size as needed
   },
