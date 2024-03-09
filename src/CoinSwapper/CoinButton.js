@@ -23,8 +23,8 @@ const useStyles = makeStyles((theme) => ({
   coinLogo: {
     position: "absolute",
     left: "20%", // Adjust the left position
-    width: 24, // Adjust size as needed
-    height: 24, // Adjust size as needed
+    width: 48, // Double the width
+    height: 48, // Double the height
   },
 }));
 
