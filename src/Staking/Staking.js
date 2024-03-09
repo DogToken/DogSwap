@@ -70,7 +70,7 @@ const StakingDapp = () => {
         const network = await provider.getNetwork();
 
         // Check if the connected network is supported
-        if (networks.includes(network.chainId)) {
+        if (network && networks.includes(network.chainId)) {
           const signer = provider.getSigner();
           setAccount(await signer.getAddress());
 
