@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 import { ethers } from 'ethers';
-import { getSigner, fetchBoneTokenBalance } from '../ethereumFunctions'; // Import necessary functions
-import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
-import BoneTokenABI from './abis/BoneToken.json'; // Import BoneToken ABI
-import * as chains from "../constants/chains";
+import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
+
+const MasterChefABI = require('./abis/MasterChef.json'); // Import MasterChef ABI
+const BoneTokenABI = require('./abis/BoneToken.json'); // Import BoneToken ABI
+import { doesTokenExist, getSigner } from "../ethereumFunctions"; // Import doesTokenExist and getSigner
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,17 +63,12 @@ const StakingDapp = () => {
         const accountAddress = await signer.getAddress();
         setAccount(accountAddress);
 
-        const networkId = await provider.getNetwork();
-        if (chains.networks.includes(networkId)) {
-          const masterChefAddress = chains.routerAddress.get(networkId);
-          const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
-          setContract(masterChefContract);
+        const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
+        const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
+        setContract(masterChefContract);
 
-          if (masterChefContract) {
-            fetchStakingDetails();
-          }
-        } else {
-          console.log('Please connect to the correct network.');
+        if (masterChefContract) {
+          fetchStakingDetails();
         }
       } else {
         console.log('Please install MetaMask to use this dApp.');
@@ -96,7 +91,7 @@ const StakingDapp = () => {
           contract.stakingBalanceOf(pid, account),
           contract.stakingRewardOf(pid, account),
           contract.totalStakedBalance(pid),
-          fetchBoneTokenBalance(account),
+          fetchBoneTokenBalance(account, contract), // Corrected function call
         ]);
 
         setViews({
@@ -132,7 +127,7 @@ const StakingDapp = () => {
     event.preventDefault();
     try {
       const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
-      const pid = 3; // Assuming you want to withdraw from the first pool (pool
+      const pid = 3; // Assuming you want to withdraw from the first pool (pool id 0)
       const withdrawTx = await contract.withdraw(pid, amount, {
         gasLimit: 300000, // Set a reasonable gas limit for withdrawing
       });
@@ -157,18 +152,7 @@ const StakingDapp = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchBalance = async () => {
-      const balance = await fetchBoneTokenBalance(account);
-      console.log('Formatted balance:', ethers.utils.formatUnits(balance, 18)); // Add this line for debugging
-      setViews(prevState => ({
-        ...prevState,
-        boneBalance: ethers.utils.formatUnits(balance, 18),
-      }));
-    };
-
-    fetchBalance();
-  }, [contract, account]);
+  // Your existing code continues here...
 
   return (
     <Container>
