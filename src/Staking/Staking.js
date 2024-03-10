@@ -80,7 +80,10 @@ const connectToEthereum = async () => {
         // Now you can use the masterChefContract to interact with MasterChef functions
         setContract(masterChefContract); // Set the contract state
         
-        fetchStakingDetails(); // Fetch the user's staking details
+        // Call fetchStakingDetails only if contract is not null
+        if (masterChefContract) {
+          fetchStakingDetails(); // Fetch the user's staking details
+        }
       } else {
         console.log('Unsupported network. Please switch to the correct network.');
       }
@@ -91,7 +94,6 @@ const connectToEthereum = async () => {
     console.error('Error connecting to Ethereum:', error);
   }
 };
-
 
   // Function to fetch the user's staking details and update the views
   const fetchStakingDetails = async () => {
