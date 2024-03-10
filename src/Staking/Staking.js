@@ -105,11 +105,13 @@ const StakingDapp = () => {
         const stakingBalance = await contract.stakingBalanceOf(account);
         const stakingReward = await contract.stakingRewardOf(account);
         const totalStakedBalance = await contract.totalStakedBalance();
+        const boneTokenBalance = await fetchBoneTokenBalance();
 
         setViews({
           staked: ethers.utils.formatUnits(stakingBalance, 18),
           reward: ethers.utils.formatUnits(stakingReward, 18),
           totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
+          boneBalance: boneTokenBalance,
         });
       }
     } catch (error) {
@@ -213,10 +215,7 @@ const StakingDapp = () => {
         const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
         const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
         const balance = await tokenContract.balanceOf(account);
-        setViews(prevState => ({
-          ...prevState,
-          boneBalance: ethers.utils.formatUnits(balance, 18)
-        }));
+        return ethers.utils.formatUnits(balance, 18);
       }
     } catch (error) {
       console.error('Error fetching Bone token balance:', error);
