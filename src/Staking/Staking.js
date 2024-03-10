@@ -143,7 +143,19 @@ const handleStake = async (event) => {
 
     // Now deposit (stake) the tokens
     const pid = 0; // Assuming you want to stake in the first pool (pool id 0)
-    const depositTx = await contract.deposit(pid, amount); // Correct order of arguments
+    const poolInfo = await contract.poolInfo(pid);
+    const depositFeeBP = poolInfo.depositFeeBP;
+
+    if (depositFeeBP > 0) {
+      const depositFee = amount.mul(depositFeeBP).div(10000);
+      const userStakedAmount = await contract.userInfo(pid, account);
+      if (userStakedAmount.amount.lt(depositFee)) {
+        console.error('Deposit fee is greater than the user\'s staked amount');
+        return;
+      }
+    }
+
+    const depositTx = await contract.deposit(pid, amount);
     await depositTx.wait();
     setStake('');
     fetchStakingDetails();
