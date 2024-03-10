@@ -26,7 +26,6 @@ const Faucet = () => {
   const [cookieBalance, setCookieBalance] = useState(0);
   const [contractBalance, setContractBalance] = useState(0);
   const [waitingTime, setWaitingTime] = useState(0);
-  const [boneTokenBalance, setBoneTokenBalance] = useState(0); // Add state for Bone token balance
   const [faucetContract, setFaucetContract] = useState(null);
 
   useEffect(() => {
@@ -108,9 +107,6 @@ const Faucet = () => {
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
           <strong>Waiting Time:</strong> {waitingTime / 60} minutes
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Bone Token Balance:</strong> {boneTokenBalance} $BONE
         </Typography>
         <Button
           variant="contained"
