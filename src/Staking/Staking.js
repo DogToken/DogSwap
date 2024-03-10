@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
-const MasterChefABI = require('./abis/MasterChef.json'); // Import MasterChef ABI
 const BoneTokenABI = require('./abis/BoneToken.json'); // Import BoneToken ABI
+const MasterChefABI = require('./abis/MasterChef.json'); // Import MasterChef ABI
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   button: {
-    width: '100px', // Adjust the width as needed
+    width: '100px',
     margin: theme.spacing(1),
   }
 }));
@@ -45,7 +45,7 @@ const StakingDapp = () => {
     staked: 'Loading...',
     reward: 'Loading...',
     totalStaked: 'Loading...',
-    boneBalance: 'Loading...',
+    boneBalance: 'Loading...', // Changed ebenBalance to boneBalance
     poolBalance: 'Loading...', // Added pool balance
   });
 
@@ -97,7 +97,7 @@ const StakingDapp = () => {
           staked: ethers.utils.formatUnits(stakingBalance, 18),
           reward: ethers.utils.formatUnits(stakingReward, 18),
           totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
-          boneBalance: ethers.utils.formatUnits(boneTokenBalance, 18),
+          boneBalance: ethers.utils.formatUnits(boneTokenBalance, 18), // Changed ebenBalance to boneBalance
           poolBalance: ethers.utils.formatUnits(stakingBalance, 18) // Use staking balance as pool balance
         });
       }
@@ -153,14 +153,10 @@ const StakingDapp = () => {
 
   const fetchBoneTokenBalance = async (userAccount) => {
     try {
-      if (contract) {
-        const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
-        const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
-        const balance = await tokenContract.balanceOf(userAccount);
-        return balance;
-      } else {
-        console.error('Contract not initialized.');
-      }
+      const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
+      const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
+      const balance = await tokenContract.balanceOf(userAccount);
+      return balance;
     } catch (error) {
       console.error('Error fetching Bone token balance:', error);
     }
@@ -172,7 +168,7 @@ const StakingDapp = () => {
       console.log('Formatted balance:', ethers.utils.formatUnits(balance, 18)); // Add this line for debugging
       setViews(prevState => ({
         ...prevState,
-        boneBalance: ethers.utils.formatUnits(balance, 18),
+        boneBalance: ethers.utils.formatUnits(balance, 18), // Changed ebenBalance to boneBalance
       }));
     };
 
@@ -197,37 +193,38 @@ const StakingDapp = () => {
         <Typography variant="body1" className={classes.paragraph}>
           <strong>Bone Token Balance: </strong> {views.boneBalance} $BONE
         </Typography>
-        <Box mt={3} className={classes.formContainer}>
-          <form className={classes.form} onSubmit={handleStake}>
-            <TextField
-              label="Stake"
-              variant="outlined"
-              size="small"
-              type="number"
-              value={stake}
-              onChange={(e) => setStake(e.target.value)}
-            />
-            <Button type="submit" variant="contained" color="primary" className={classes.button}>
-              Stake
-            </Button>
-          </form>
-          <form className={classes.form} onSubmit={handleWithdraw}>
-            <TextField
-              label="Withdraw"
-              variant="outlined"
-              size="small"
-              type="number"
-              value={withdraw}
-              onChange={(e) => setWithdraw(e.target.value)}
-            />
-            <Button type="submit" variant="contained" color="primary" className={classes.button}>
-              Withdraw
-            </Button>
-          </form>
-          <Button variant="contained" color="secondary" onClick={handleClaimReward} className={classes.button}>
-            Claim
+        <Typography variant="body1" className={classes.paragraph}>
+          <strong>Pool Balance: </strong> {views.poolBalance} $BONE
+        </Typography>
+        <form className={classes.formContainer} onSubmit={handleStake}>
+          <TextField
+            label="Stake Amount"
+            variant="outlined"
+            type="number"
+            value={stake}
+            onChange={(e) => setStake(e.target.value)}
+            required
+          />
+          <Button type="submit" variant="contained" color="primary" className={classes.button}>
+            Stake
           </Button>
-        </Box>
+        </form>
+        <form className={classes.formContainer} onSubmit={handleWithdraw}>
+          <TextField
+            label="Withdraw Amount"
+            variant="outlined"
+            type="number"
+            value={withdraw}
+            onChange={(e) => setWithdraw(e.target.value)}
+            required
+          />
+          <Button type="submit" variant="contained" color="primary" className={classes.button}>
+            Withdraw
+          </Button>
+        </form>
+        <Button onClick={handleClaimReward} variant="contained" color="primary" className={classes.button}>
+          Claim Reward
+        </Button>
       </Paper>
     </Container>
   );
