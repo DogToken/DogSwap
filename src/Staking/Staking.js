@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
-const MasterChefABI = require('./abis/MasterChef.json'); // Import MasterChef ABI
 const BoneTokenABI = require('./abis/BoneToken.json'); // Import BoneToken ABI
+const MasterChefABI = require('./abis/MasterChef.json'); // Import MasterChef ABI
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,6 +46,7 @@ const StakingDapp = () => {
     reward: 'Loading...',
     totalStaked: 'Loading...',
     boneBalance: 'Loading...', // Changed ebenBalance to boneBalance
+    poolBalance: 'Loading...', // Added pool balance
   });
 
   useEffect(() => {
@@ -81,31 +82,27 @@ const StakingDapp = () => {
       if (contract && account) {
         const pid = 3; // Assuming pool ID is 3
         const [
+          stakingBalance,
+          stakingReward,
           totalStakedBalance,
           boneTokenBalance,
         ] = await Promise.all([
-          contract.totalStakedBalance(pid), // Fetch total staked balance
+          contract.stakingBalanceOf(pid, account),
+          contract.stakingRewardOf(pid, account),
+          contract.totalStakedBalance(pid),
           fetchBoneTokenBalance(account),
         ]);
 
         setViews({
-          totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18), // Set total staked balance
+          staked: ethers.utils.formatUnits(stakingBalance, 18),
+          reward: ethers.utils.formatUnits(stakingReward, 18),
+          totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
           boneBalance: ethers.utils.formatUnits(boneTokenBalance, 18), // Changed ebenBalance to boneBalance
+          poolBalance: ethers.utils.formatUnits(stakingBalance, 18) // Use staking balance as pool balance
         });
       }
     } catch (error) {
       console.error('Error fetching staking details:', error);
-    }
-  };
-
-  const fetchBoneTokenBalance = async (userAccount) => {
-    try {
-      const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
-      const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
-      const balance = await tokenContract.balanceOf(userAccount);
-      return balance;
-    } catch (error) {
-      console.error('Error fetching Bone token balance:', error);
     }
   };
 
@@ -154,6 +151,17 @@ const StakingDapp = () => {
     }
   };
 
+  const fetchBoneTokenBalance = async (userAccount) => {
+    try {
+      const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
+      const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
+      const balance = await tokenContract.balanceOf(userAccount);
+      return balance;
+    } catch (error) {
+      console.error('Error fetching Bone token balance:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchBalance = async () => {
       const balance = await fetchBoneTokenBalance(account);
@@ -174,10 +182,19 @@ const StakingDapp = () => {
           Staking
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
+          <strong>Staked: </strong> {views.staked} $BONE
+        </Typography>
+        <Typography variant="body1" className={classes.paragraph}>
+          <strong>Reward: </strong> {views.reward} $BONE
+        </Typography>
+        <Typography variant="body1" className={classes.paragraph}>
           <strong>Total Staked: </strong> {views.totalStaked} $BONE
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
           <strong>Bone Token Balance: </strong> {views.boneBalance} $BONE
+        </Typography>
+        <Typography variant="body1" className={classes.paragraph}>
+          <strong>Pool Balance: </strong> {views.poolBalance} $BONE
         </Typography>
         <form className={classes.formContainer} onSubmit={handleStake}>
           <TextField
