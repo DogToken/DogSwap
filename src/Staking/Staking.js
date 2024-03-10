@@ -99,25 +99,28 @@
     };
 
     // Function to fetch the user's staking details and update the views
-    const fetchStakingDetails = async () => {
-      try {
-        if (contract) { // Check if contract is not null
-          const stakingBalance = await contract.stakingBalanceOf(account);
-          const stakingReward = await contract.stakingRewardOf(account);
-          const totalStakedBalance = await contract.totalStakedBalance();
-          const boneTokenBalance = await fetchBoneTokenBalance();
+    // Function to fetch the user's staking details and update the views
+const fetchStakingDetails = async () => {
+  try {
+    if (contract) { // Check if contract is not null
+      const pid = 3; // Assuming pool ID is 3
+      const stakingBalance = await contract.stakingBalanceOf(pid, account);
+      const stakingReward = await contract.stakingRewardOf(pid, account);
+      const totalStakedBalance = await contract.totalStakedBalance(pid);
+      const boneTokenBalance = await fetchBoneTokenBalance();
 
-          setViews({
-            staked: ethers.utils.formatUnits(stakingBalance, 18),
-            reward: ethers.utils.formatUnits(stakingReward, 18),
-            totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
-            boneBalance: boneTokenBalance,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching staking details:', error);
-      }
-    };
+      setViews({
+        staked: ethers.utils.formatUnits(stakingBalance, 18),
+        reward: ethers.utils.formatUnits(stakingReward, 18),
+        totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
+        boneBalance: boneTokenBalance,
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching staking details:', error);
+  }
+};
+
 
     // Function to handle stake submission
     const handleStake = async (event) => {
