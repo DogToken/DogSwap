@@ -101,26 +101,21 @@ const StakingDapp = () => {
           stakingReward,
           totalStakedBalance,
           boneTokenBalance,
-          poolBalance // Add this line to fetch the pool balance
+          lpTokenBalance // Change this line to fetch LP token balance directly from the token contract
         ] = await Promise.all([
           contract.stakingBalanceOf(pid, account),
           contract.stakingRewardOf(pid, account),
           contract.totalStakedBalance(pid),
           fetchBoneTokenBalance(account),
-          contract.poolInfo(pid).then(info => {
-            console.log('Pool balance:', info.lpToken.balanceOf(masterChefAddress).toString());
-            return info.lpToken.balanceOf(masterChefAddress);
-          }) // Fetch pool balance
+          fetchBoneTokenBalance(masterChefAddress) // Fetch LP token balance directly from the token contract
         ]);
-  
-        console.log('Formatted balance:', ethers.utils.formatUnits(poolBalance, 18));
   
         setViews({
           staked: ethers.utils.formatUnits(stakingBalance, 18),
           reward: ethers.utils.formatUnits(stakingReward, 18),
           totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
           boneBalance: ethers.utils.formatUnits(boneTokenBalance, 18),
-          poolBalance: ethers.utils.formatUnits(poolBalance, 18) // Update pool balance state
+          poolBalance: ethers.utils.formatUnits(lpTokenBalance, 18) // Update pool balance state
         });
       }
     } catch (error) {
