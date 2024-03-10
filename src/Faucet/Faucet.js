@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import FaucetABI from './abis/faucet.json'; // Update with correct file path
-import ERC20ABI from './abis/erc20.json'; // Update with correct file path
 import { Container, Paper, Typography, Button, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -12,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   paragraph: {
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
   button: {
     width: '200px',
@@ -23,12 +22,10 @@ const useStyles = makeStyles((theme) => ({
 const Faucet = () => {
   const classes = useStyles();
   const [account, setAccount] = useState('');
-  const [balanceETH, setBalanceETH] = useState(0);
-  const [balanceToken, setBalanceToken] = useState(0);
-  const [faucetContract, setFaucetContract] = useState(null);
-  const [tokenContract, setTokenContract] = useState(null);
-  const [tokenAmount, setTokenAmount] = useState(0);
+  const [cookieBalance, setCookieBalance] = useState(0);
+  const [contractBalance, setContractBalance] = useState(0);
   const [waitingTime, setWaitingTime] = useState(0);
+  const [faucetContract, setFaucetContract] = useState(null);
 
   useEffect(() => {
     initialize();
@@ -44,9 +41,7 @@ const Faucet = () => {
         const networkId = await provider.eth.net.getId();
         if (networkId === 12345) { // Update with your network ID
           const faucetContractInstance = new provider.eth.Contract(FaucetABI, '0x0000000000000000000000000000000000000000'); // Update with faucet address
-          const tokenContractInstance = new provider.eth.Contract(ERC20ABI, '0x0000000000000000000000000000000000000000'); // Update with token address
           setFaucetContract(faucetContractInstance);
-          setTokenContract(tokenContractInstance);
           fetchAccountDetails();
         } else {
           console.log('Please connect to the correct network.');
@@ -61,62 +56,34 @@ const Faucet = () => {
 
   const fetchAccountDetails = async () => {
     try {
-      const balance = await tokenContract.methods.balanceOf(account).call();
-      setBalanceToken(balance);
-      const ethBalance = await window.ethereum.request({ method: 'eth_getBalance', params: [account, 'latest'] });
-      setBalanceETH(Web3.utils.fromWei(ethBalance, 'ether'));
-      checkFaucet();
+      const cookieBalanceResult = await faucetContract.methods.balanceOf(account).call();
+      const contractBalanceResult = await faucetContract.methods.balanceOf('0x0000000000000000000000000000000000000000').call(); // Update with faucet address
+      const waitTime = await faucetContract.methods.waitTime().call();
+      setCookieBalance(cookieBalanceResult);
+      setContractBalance(contractBalanceResult);
+      setWaitingTime(waitTime);
     } catch (error) {
       console.error('Error fetching account details:', error);
     }
   };
 
-  const checkFaucet = async () => {
+  const getCookieTokens = async () => {
     try {
-      const tokenAmountResult = await faucetContract.methods.tokenAmount().call();
-      setTokenAmount(tokenAmountResult);
-      const faucetBalance = await tokenContract.methods.balanceOf('0x0000000000000000000000000000000000000000').call(); // Update with faucet address
-      if (faucetBalance < tokenAmountResult) {
-        console.log('Sorry - the faucet is out of tokens! But don\'t worry, we\'re on it!');
-      } else {
-        const allowedToWithdraw = await faucetContract.methods.allowedToWithdraw(account).call();
-        if (allowedToWithdraw && balanceToken < tokenAmountResult * 1000) {
-          console.log('You can request tokens.');
-        } else {
-          const waitTime = await faucetContract.methods.waitTime().call();
-          console.log('Sorry - you can only request tokens every ' + (waitTime / 60) + ' minutes. Please wait!');
-          setWaitingTime(waitTime);
-        }
-      }
+      await faucetContract.methods.requestTokens().send({ from: account });
     } catch (error) {
-      console.error('Error checking faucet:', error);
-    }
-  };
-
-  const getTestTokens = async () => {
-    try {
-      const nonce = await window.ethereum.request({ method: 'eth_getTransactionCount', params: [account, 'latest'] });
-      await faucetContract.methods.requestTokens().send({ from: account, nonce });
-    } catch (error) {
-      console.error('Error getting test tokens:', error);
+      console.error('Error getting cookie tokens:', error);
     }
   };
 
   return (
     <Container>
       <Paper className={classes.root}>
-        <Typography variant="h4">Faucet</Typography>
+        <Typography variant="h4">Cookie Faucet</Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Address:</strong> {account}
+          <strong>Your Cookie Balance:</strong> {cookieBalance} Cookies
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>ETH Balance:</strong> {balanceETH} ETH
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Token Balance:</strong> {balanceToken} Tokens
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Token Amount:</strong> {tokenAmount} Test Tokens
+          <strong>Contract Balance:</strong> {contractBalance} Cookies
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
           <strong>Waiting Time:</strong> {waitingTime / 60} minutes
@@ -125,9 +92,9 @@ const Faucet = () => {
           variant="contained"
           color="primary"
           className={classes.button}
-          onClick={getTestTokens}
+          onClick={getCookieTokens}
         >
-          Request Tokens
+          Request Cookies
         </Button>
       </Paper>
     </Container>
