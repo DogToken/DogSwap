@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
-
-const MasterChefABI = require('./abis/MasterChef.json'); // Import MasterChef ABI
-const BoneTokenABI = require('./abis/BoneToken.json'); // Import BoneToken ABI
+import { ethers } from 'ethers';
+import { getSigner, fetchBoneTokenBalance } from '../ethereumFunctions'; // Import necessary functions
+import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
+import BoneTokenABI from './abis/BoneToken.json'; // Import BoneToken ABI
+import * as chains from "../constants/chains";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,7 +47,7 @@ const StakingDapp = () => {
     reward: 'Loading...',
     totalStaked: 'Loading...',
     boneBalance: 'Loading...',
-    poolBalance: 'Loading...', // Added pool balance
+    poolBalance: 'Loading...',
   });
 
   useEffect(() => {
@@ -62,12 +63,17 @@ const StakingDapp = () => {
         const accountAddress = await signer.getAddress();
         setAccount(accountAddress);
 
-        const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
-        const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
-        setContract(masterChefContract);
+        const networkId = await provider.getNetwork();
+        if (chains.networks.includes(networkId)) {
+          const masterChefAddress = chains.routerAddress.get(networkId);
+          const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
+          setContract(masterChefContract);
 
-        if (masterChefContract) {
-          fetchStakingDetails();
+          if (masterChefContract) {
+            fetchStakingDetails();
+          }
+        } else {
+          console.log('Please connect to the correct network.');
         }
       } else {
         console.log('Please install MetaMask to use this dApp.');
@@ -126,7 +132,7 @@ const StakingDapp = () => {
     event.preventDefault();
     try {
       const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
-      const pid = 3; // Assuming you want to withdraw from the first pool (pool id 0)
+      const pid = 3; // Assuming you want to withdraw from the first pool (pool
       const withdrawTx = await contract.withdraw(pid, amount, {
         gasLimit: 300000, // Set a reasonable gas limit for withdrawing
       });
@@ -148,21 +154,6 @@ const StakingDapp = () => {
       fetchStakingDetails();
     } catch (error) {
       console.error('Error claiming reward:', error);
-    }
-  };
-
-  const fetchBoneTokenBalance = async (userAccount) => {
-    try {
-      if (contract) {
-        const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
-        const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
-        const balance = await tokenContract.balanceOf(userAccount);
-        return balance;
-      } else {
-        console.error('Contract not initialized.');
-      }
-    } catch (error) {
-      console.error('Error fetching Bone token balance:', error);
     }
   };
 
