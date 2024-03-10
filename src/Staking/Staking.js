@@ -107,8 +107,13 @@ const StakingDapp = () => {
           contract.stakingRewardOf(pid, account),
           contract.totalStakedBalance(pid),
           fetchBoneTokenBalance(account),
-          contract.poolInfo(pid).then(info => info.lpToken.balanceOf(masterChefAddress)) // Fetch pool balance
+          contract.poolInfo(pid).then(info => {
+            console.log('Pool balance:', info.lpToken.balanceOf(masterChefAddress).toString());
+            return info.lpToken.balanceOf(masterChefAddress);
+          }) // Fetch pool balance
         ]);
+  
+        console.log('Formatted balance:', ethers.utils.formatUnits(poolBalance, 18));
   
         setViews({
           staked: ethers.utils.formatUnits(stakingBalance, 18),
@@ -121,10 +126,8 @@ const StakingDapp = () => {
     } catch (error) {
       console.error('Error fetching staking details:', error);
     }
-  };
+  };  
   
-  
-
   const handleStake = async (event) => {
     event.preventDefault();
     try {
