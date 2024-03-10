@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
+import BoneTokenABI from './abis/BoneToken.json'; // Import BoneToken ABI
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
+
 
 // MasterChef contract address
 const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
@@ -115,16 +117,19 @@ const StakingDapp = () => {
   };
 
 // Function to handle stake submission
+
 const handleStake = async (event) => {
   event.preventDefault();
   try {
     const amount = ethers.utils.parseUnits(stake.toString(), 18);
+    const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
 
     // First, check if the contract is approved to spend the user's tokens
-    const approvedAmount = await contract.allowance(account, masterChefAddress);
+    const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
+    const approvedAmount = await tokenContract.allowance(account, masterChefAddress);
     if (approvedAmount.lt(amount)) {
       // If not approved, approve the contract to spend tokens
-      const approveTx = await contract.approve(masterChefAddress, ethers.constants.MaxUint256);
+      const approveTx = await tokenContract.approve(masterChefAddress, ethers.constants.MaxUint256);
       await approveTx.wait();
     }
 
@@ -137,8 +142,6 @@ const handleStake = async (event) => {
     console.error('Error staking tokens:', error);
   }
 };
-
-
 
 // Function to handle withdraw submission
 const handleWithdraw = async (event) => {
@@ -173,13 +176,13 @@ const handleWithdraw = async (event) => {
           Staking
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Staked: </strong> {views.staked} $DOGSWAP
+          <strong>Staked: </strong> {views.staked} $BONE
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
           <strong>Reward: </strong> {views.reward} $BONE
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Total Staked: </strong> {views.totalStaked} $DOGSWAP
+          <strong>Total Staked: </strong> {views.totalStaked} $BONE
         </Typography>
         <Box mt={3} className={classes.formContainer}>
           <form className={classes.form} onSubmit={handleStake}>
