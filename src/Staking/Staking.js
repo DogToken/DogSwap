@@ -155,6 +155,12 @@ const handleStake = async (event) => {
       }
     }
 
+    // Check if the lpSupply is not 0 before calling updatePool
+    const lpSupply = await poolInfo.lpToken.balanceOf(masterChefAddress);
+    if (lpSupply.gt(0)) {
+      await contract.updatePool(pid);
+    }
+
     const depositTx = await contract.deposit(pid, amount);
     await depositTx.wait();
     setStake('');
