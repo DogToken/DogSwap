@@ -33,22 +33,30 @@ const Faucet = () => {
 
   const initialize = async () => {
     try {
-      const signer = await getSigner();
-      const accountAddress = await signer.getAddress();
-      setAccount(accountAddress);
-
-      const networkId = await getNetwork();
-      if (chains.networks.includes(networkId)) {
-        const faucetContractInstance = new ethers.Contract(chains.routerAddress.get(networkId), FaucetABI, signer);
-        setFaucetContract(faucetContractInstance);
-        fetchAccountDetails();
+      if (typeof window.ethereum !== 'undefined') {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const accountAddress = await signer.getAddress();
+        setAccount(accountAddress);
+  
+        const faucetContractAddress = '0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0'; // Update with correct address
+        const faucetContract = new ethers.Contract(faucetContractAddress, FaucetABI, signer);
+        setFaucetContract(faucetContract);
+  
+        if (faucetContract) {
+          fetchAccountDetails();
+        } else {
+          console.error('Faucet contract initialization failed.');
+        }
       } else {
-        console.log('Please connect to the correct network.');
+        console.log('Please install MetaMask to use this dApp.');
       }
     } catch (error) {
       console.error('Error initializing:', error);
     }
   };
+  
 
   const fetchAccountDetails = async () => {
     try {
