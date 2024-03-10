@@ -119,14 +119,26 @@ const handleStake = async (event) => {
   event.preventDefault();
   try {
     const amount = ethers.utils.parseUnits(stake.toString(), 18);
-    const tx = await contract.deposit(0, amount); // Assuming pool id is 0
-    await tx.wait();
+
+    // First, check if the contract is approved to spend the user's tokens
+    const approvedAmount = await contract.allowance(account, masterChefAddress);
+    if (approvedAmount.lt(amount)) {
+      // If not approved, approve the contract to spend tokens
+      const approveTx = await contract.approve(masterChefAddress, ethers.constants.MaxUint256);
+      await approveTx.wait();
+    }
+
+    // Now stake the tokens
+    const stakeTx = await contract.stakeTokens(amount);
+    await stakeTx.wait();
     setStake('');
     fetchStakingDetails();
   } catch (error) {
     console.error('Error staking tokens:', error);
   }
 };
+
+
 
 // Function to handle withdraw submission
 const handleWithdraw = async (event) => {
