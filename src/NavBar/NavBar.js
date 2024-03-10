@@ -1,16 +1,33 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { MenuItems } from "./MenuItems";
-import "./NavBar.css";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { MenuItems } from './MenuItems';
+import './NavBar.css';
+import { ethers } from 'ethers';
 
-const NavBar = ({ isConnected, walletAddress }) => {
+const NavBar = () => {
+  const [isConnected, setIsConnected] = useState(false);
+  const [walletAddress, setWalletAddress] = useState('');
+  
+  const connectWithMetaMask = async () => {
+    try {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      setIsConnected(true);
+      setWalletAddress(address);
+    } catch (error) {
+      console.error('Error connecting with MetaMask:', error);
+    }
+  };
+
   return (
     <nav>
       <div className="Title">
         <h1 className="navbar-logo">
           <span role="img" aria-label="dog">
             🐶
-          </span>{" "}
+          </span>{' '}
           DogSwap
         </h1>
       </div>
@@ -20,26 +37,22 @@ const NavBar = ({ isConnected, walletAddress }) => {
           {MenuItems.map((item, index) => {
             return (
               <li key={index}>
-                <Link className={"nav-links"} to={item.url}>
+                <Link className={'nav-links'} to={item.url}>
                   {item.title}
                 </Link>
               </li>
             );
           })}
         </ul>
+        <button className="connect-button" onClick={connectWithMetaMask}>
+          Connect with MetaMask
+        </button>
+        {isConnected && (
+          <div className="wallet-info">
+            <span>{walletAddress}</span>
+          </div>
+        )}
       </div>
-
-      {isConnected ? (
-        <div className="ConnectionInfo">
-          <p>Connected: {walletAddress}</p>
-        </div>
-      ) : (
-        <div className="ConnectionInfo">
-          <Link className={"nav-links"} to="/connect-metamask">
-            Connect with MetaMask
-          </Link>
-        </div>
-      )}
     </nav>
   );
 };
