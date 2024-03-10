@@ -73,14 +73,6 @@ const StakingDapp = () => {
         const signer = provider.getSigner();
         setAccount(await signer.getAddress());
 
-        // Initialize Staking contract
-        const stakingContract = new ethers.Contract(
-          routerAddress.get(network.chainId),
-          StakingContract.abi,
-          signer
-        );
-        setContract(stakingContract);
-
         // Setup MasterChef contract
         const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
         // Now you can use the masterChefContract to interact with MasterChef functions
