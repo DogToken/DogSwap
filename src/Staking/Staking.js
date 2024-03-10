@@ -197,7 +197,7 @@ const StakingDapp = () => {
 
   const fetchBoneTokenBalance = async (userAccount) => {
     try {
-      if (contract && userAccount) {
+      if (contract && userAccount) { // Check if userAccount is defined
         const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
         const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
         const balance = await tokenContract.balanceOf(userAccount);
@@ -205,15 +205,14 @@ const StakingDapp = () => {
       }
     } catch (error) {
       console.error('Error fetching Bone token balance:', error);
-      throw error; // Throw the error to handle it in the calling function
     }
   };
   
   
-
   useEffect(() => {
     const fetchBalance = async () => {
       const balance = await fetchBoneTokenBalance(account);
+      console.log('Formatted balance:', ethers.utils.formatUnits(balance, 18)); // Add this line for debugging
       setViews(prevState => ({
         ...prevState,
         boneBalance: ethers.utils.formatUnits(balance, 18),
