@@ -4,18 +4,17 @@ import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
 import BoneTokenABI from './abis/BoneToken.json'; // Import BoneToken ABI
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
-
 // MasterChef contract address
 const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
+
+// BoneToken contract address
+const boneTokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF';
 
 const networks = [24734];
 
 export const ChainId = {
   MINTME: 24734,
 };
-
-export const routerAddress = new Map();
-routerAddress.set(ChainId.MINTME, "0x38D613a0636Bd10043405D76e52f7540eeE913d0");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,9 +78,8 @@ const StakingDapp = () => {
 
           // Setup MasterChef contract
           const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
-          // Now you can use the masterChefContract to interact with MasterChef functions
           setContract(masterChefContract); // Set the contract state
-          
+
           // Call fetchStakingDetails only if contract is not null
           if (masterChefContract) {
             fetchStakingDetails(); // Fetch the user's staking details
@@ -116,74 +114,54 @@ const StakingDapp = () => {
     }
   };
 
-// Function to handle stake submission 0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF
-const handleStake = async (event) => {
-  event.preventDefault();
-  try {
-    const amount = ethers.utils.parseUnits(stake.toString(), 18);
-    const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
+  // Function to handle stake submission
+  const handleStake = async (event) => {
+    event.preventDefault();
+    try {
+      const amount = ethers.utils.parseUnits(stake.toString(), 18);
 
-    // Get the token contract instance
-    const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
+      // Get the token contract instance
+      const tokenContract = new ethers.Contract(boneTokenAddress, BoneTokenABI, contract.signer);
 
-    // Check if the user has enough balance
-    const userBalance = await tokenContract.balanceOf(account);
-    if (userBalance.lt(amount)) {
-      console.error('Insufficient balance');
-      return;
-    }
-
-    // First, check if the contract is approved to spend the user's tokens
-    const approvedAmount = await tokenContract.allowance(account, masterChefAddress);
-    if (approvedAmount.lt(amount)) {
-      // If not approved, approve the contract to spend tokens
-      const approveTx = await tokenContract.approve(masterChefAddress, ethers.constants.MaxUint256);
-      await approveTx.wait();
-    }
-
-    // Now deposit (stake) the tokens
-    const pid = 0; // Assuming you want to stake in the first pool (pool id 0)
-    const poolInfo = await contract.poolInfo(pid);
-    const depositFeeBP = poolInfo.depositFeeBP;
-
-    if (depositFeeBP > 0) {
-      const depositFee = amount.mul(depositFeeBP).div(10000);
-      const userStakedAmount = await contract.userInfo(pid, account);
-      if (userStakedAmount.amount.lt(depositFee)) {
-        console.error('Deposit fee is greater than the user\'s staked amount');
+      // Check if the user has enough balance
+      const userBalance = await tokenContract.balanceOf(account);
+      if (userBalance.lt(amount)) {
+        console.error('Insufficient balance');
         return;
       }
+
+      // First, check if the contract is approved to spend the user's tokens
+      const approvedAmount = await tokenContract.allowance(account, masterChefAddress);
+      if (approvedAmount.lt(amount)) {
+        // If not approved, approve the contract to spend tokens
+        const approveTx = await tokenContract.approve(masterChefAddress, ethers.constants.MaxUint256);
+        await approveTx.wait();
+      }
+
+      // Now deposit (stake) the tokens
+      const pid = 0; // Assuming you want to stake in the first pool (pool id 0)
+      const depositTx = await contract.deposit(pid, amount);
+      await depositTx.wait();
+      setStake('');
+      fetchStakingDetails();
+    } catch (error) {
+      console.error('Error staking tokens:', error);
     }
+  };
 
-    // Check if the lpSupply is not 0 before calling updatePool
-    const lpSupply = await poolInfo.lpToken.balanceOf(masterChefAddress);
-    if (lpSupply.gt(0)) {
-      await contract.updatePool(pid);
+  // Function to handle withdraw submission
+  const handleWithdraw = async (event) => {
+    event.preventDefault();
+    try {
+      const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
+      const tx = await contract.withdraw(0, amount); // Assuming pool id is 0
+      await tx.wait();
+      setWithdraw('');
+      fetchStakingDetails();
+    } catch (error) {
+      console.error('Error withdrawing tokens:', error);
     }
-
-    const depositTx = await contract.deposit(pid, amount);
-    await depositTx.wait();
-    setStake('');
-    fetchStakingDetails();
-  } catch (error) {
-    console.error('Error staking tokens:', error);
-  }
-};
-
-// Function to handle withdraw submission
-const handleWithdraw = async (event) => {
-  event.preventDefault();
-  try {
-    const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
-    const tx = await contract.withdraw(0, amount); // Assuming pool id is 0
-    await tx.wait();
-    setWithdraw('');
-    fetchStakingDetails();
-  } catch (error) {
-    console.error('Error withdrawing tokens:', error);
-  }
-};
-
+  };
 
   // Function to handle claiming reward
   const handleClaimReward = async () => {
