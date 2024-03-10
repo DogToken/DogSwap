@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import StakingContract from '../build/stakingVault.abi.json'; // Update the path to your compiled contract JSON
-import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
-// Other code remains the same
+// Import MasterChef ABI
+import MasterChefABI from './abis/MasterChef.json';
 
 // MasterChef contract address
 const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
 
+// Define supported networks
 const networks = [24734];
 
+// Map of router addresses by chain ID
 export const ChainId = {
   MINTME: 24734,
 };
@@ -68,24 +69,16 @@ const StakingDapp = () => {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const network = await provider.getNetwork();
-  
+
         // Check if the connected network is supported
         if (network && networks.includes(network.chainId)) {
           const signer = provider.getSigner();
           setAccount(await signer.getAddress());
-  
-          // Initialize Staking contract
-          const stakingContract = new ethers.Contract(
-            routerAddress.get(network.chainId),
-            StakingContract.abi,
-            signer
-          );
-          setContract(stakingContract);
-  
+
           // Setup MasterChef contract
           const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
           // Now you can use the masterChefContract to interact with MasterChef functions
-          
+          setContract(masterChefContract);
           fetchStakingDetails(); // Fetch the user's staking details
         } else {
           console.log('Unsupported network. Please switch to the correct network.');
