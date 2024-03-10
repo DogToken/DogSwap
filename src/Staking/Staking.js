@@ -143,7 +143,7 @@ const handleStake = async (event) => {
 
     // Now deposit (stake) the tokens
     const pid = 0; // Assuming you want to stake in the first pool (pool id 0)
-    const depositTx = await contract.deposit(pid, amount);
+    const depositTx = await contract.deposit(pid, amount); // Correct order of arguments
     await depositTx.wait();
     setStake('');
     fetchStakingDetails();
