@@ -14,4 +14,9 @@ export const MenuItems = [
     url: "/stake",
     cName: "nav-links",
   },
+  {
+    title: "Faucet",
+    url: "/faucet",
+    cName: "nav-links",
+  },
 ];

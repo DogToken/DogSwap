@@ -15,6 +15,7 @@ import About from "./About";
 import Contact from "./Contact";
 import Privacy from "./Privacy";
 import Staking from "./Staking/Staking";
+import Faucet from "./Faucet/Faucet";
 
 inject();
 
@@ -54,6 +55,9 @@ const App = () => {
                   </Route>
                   <Route exact path="/stake">
                     <Staking network={network} />
+                  </Route>
+                  <Route exact path="/faucet">
+                    <Faucet network={network} />
                   </Route>
                   <Route exact path="/about">
                     <About />
