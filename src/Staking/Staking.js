@@ -114,33 +114,34 @@ const StakingDapp = () => {
     }
   };
 
-  // Function to handle stake submission
-  const handleStake = async (event) => {
-    event.preventDefault();
-    try {
-      const amount = ethers.utils.parseUnits(stake.toString(), 18);
-      const tx = await contract.stakeTokens(amount);
-      await tx.wait();
-      setStake('');
-      fetchStakingDetails();
-    } catch (error) {
-      console.error('Error staking tokens:', error);
-    }
-  };
+// Function to handle stake submission
+const handleStake = async (event) => {
+  event.preventDefault();
+  try {
+    const amount = ethers.utils.parseUnits(stake.toString(), 18);
+    const tx = await contract.deposit(0, amount); // Assuming pool id is 0
+    await tx.wait();
+    setStake('');
+    fetchStakingDetails();
+  } catch (error) {
+    console.error('Error staking tokens:', error);
+  }
+};
 
-  // Function to handle withdraw submission
-  const handleWithdraw = async (event) => {
-    event.preventDefault();
-    try {
-      const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
-      const tx = await contract.unstakeTokens(amount);
-      await tx.wait();
-      setWithdraw('');
-      fetchStakingDetails();
-    } catch (error) {
-      console.error('Error withdrawing tokens:', error);
-    }
-  };
+// Function to handle withdraw submission
+const handleWithdraw = async (event) => {
+  event.preventDefault();
+  try {
+    const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
+    const tx = await contract.withdraw(0, amount); // Assuming pool id is 0
+    await tx.wait();
+    setWithdraw('');
+    fetchStakingDetails();
+  } catch (error) {
+    console.error('Error withdrawing tokens:', error);
+  }
+};
+
 
   // Function to handle claiming reward
   const handleClaimReward = async () => {
