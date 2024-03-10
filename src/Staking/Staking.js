@@ -210,8 +210,17 @@ const StakingDapp = () => {
   
 
   useEffect(() => {
-    fetchBoneTokenBalance(account);
+    const fetchBalance = async () => {
+      const balance = await fetchBoneTokenBalance(account);
+      setViews(prevState => ({
+        ...prevState,
+        boneBalance: ethers.utils.formatUnits(balance, 18),
+      }));
+    };
+  
+    fetchBalance();
   }, [contract, account]);
+  
 
   return (
     <Container>
