@@ -100,9 +100,9 @@ const StakingDapp = () => {
           contract.stakingBalanceOf(pid, account),
           contract.stakingRewardOf(pid, account),
           contract.totalStakedBalance(pid),
-          fetchBoneTokenBalance(account),
+          fetchBoneTokenBalance(account), // Ensure you await the result here
         ]);
-
+  
         setViews({
           staked: ethers.utils.formatUnits(stakingBalance, 18),
           reward: ethers.utils.formatUnits(stakingReward, 18),
@@ -114,6 +114,7 @@ const StakingDapp = () => {
       console.error('Error fetching staking details:', error);
     }
   };
+  
 
   const handleStake = async (event) => {
     event.preventDefault();
@@ -206,6 +207,7 @@ const StakingDapp = () => {
       console.error('Error fetching Bone token balance:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchBoneTokenBalance(account);
