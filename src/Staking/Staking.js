@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
 import BoneTokenABI from './abis/BoneToken.json'; // Import BoneToken ABI
-import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
-
 
 // MasterChef contract address
 const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
@@ -48,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const StakingDapp = () => {
-  const classes = useStyles();
   const [account, setAccount] = useState('');
   const [contract, setContract] = useState(null);
   const [stake, setStake] = useState('');
@@ -57,6 +54,7 @@ const StakingDapp = () => {
     staked: 0,
     reward: 0,
     totalStaked: 0,
+    currentBalance: 0, // New state for current Bone token balance
   });
 
   // Connect to the Ethereum network on component mount
@@ -85,6 +83,7 @@ const StakingDapp = () => {
           // Call fetchStakingDetails only if contract is not null
           if (masterChefContract) {
             fetchStakingDetails(); // Fetch the user's staking details
+            fetchBoneTokenBalance(); // Fetch the user's Bone token balance
           }
         } else {
           console.log('Unsupported network. Please switch to the correct network.');
@@ -105,14 +104,32 @@ const StakingDapp = () => {
         const stakingReward = await contract.stakingRewardOf(account);
         const totalStakedBalance = await contract.totalStakedBalance();
 
-        setViews({
+        setViews((prevViews) => ({
+          ...prevViews,
           staked: ethers.utils.formatUnits(stakingBalance, 18),
           reward: ethers.utils.formatUnits(stakingReward, 18),
           totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
-        });
+        }));
       }
     } catch (error) {
       console.error('Error fetching staking details:', error);
+    }
+  };
+
+  // Function to fetch the user's Bone token balance
+  const fetchBoneTokenBalance = async () => {
+    try {
+      if (contract) {
+        const boneTokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
+        const boneTokenContract = new ethers.Contract(boneTokenAddress, BoneTokenABI, contract.signer); // Use contract signer
+        const balance = await boneTokenContract.balanceOf(account);
+        setViews((prevViews) => ({
+          ...prevViews,
+          currentBalance: ethers.utils.formatUnits(balance, 18),
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching Bone token balance:', error);
     }
   };
 
@@ -133,13 +150,23 @@ const StakingDapp = () => {
         return;
       }
 
+      // Estimate gas for stake transaction
+      const gasEstimate = await contract.estimateGas.deposit(0, amount);
+      const gasLimit = gasEstimate.mul(ethers.BigNumber.from('110')).div(ethers.BigNumber.from('100')); // Add 10% buffer
+      const gasPrice = await contract.provider.getGasPrice();
+      const gasFee = gasPrice.mul(gasLimit);
+
+      // Prompt user to confirm transaction
+      if (!window.confirm(`Stake ${stake} BONE tokens with gas fee of ${ethers.utils.formatEther(gasFee)} ETH?`)) {
+        console.log('Transaction cancelled by user.');
+        return;
+      }
+
       // First, check if the contract is approved to spend the user's tokens
       const approvedAmount = await tokenContract.allowance(account, masterChefAddress);
       if (approvedAmount.lt(amount)) {
         // If not approved, approve the contract to spend tokens
-        const approveTx = await tokenContract.approve(masterChefAddress, ethers.constants.MaxUint256, {
-          gasLimit: 200000, // Set a reasonable gas limit for approval
-        });
+        const approveTx = await tokenContract.approve(masterChefAddress, ethers.constants.MaxUint256);
         await approveTx.wait();
       }
 
@@ -160,14 +187,10 @@ const StakingDapp = () => {
       // Check if the lpSupply is not 0 before calling updatePool
       const lpSupply = await poolInfo.lpToken.balanceOf(masterChefAddress);
       if (lpSupply.gt(0)) {
-        await contract.updatePool(pid, {
-          gasLimit: 500000, // Set a reasonable gas limit for updating the pool
-        });
+        await contract.updatePool(pid);
       }
 
-      const depositTx = await contract.deposit(pid, amount, {
-        gasLimit: 500000, // Set a reasonable gas limit for depositing
-      });
+      const depositTx = await contract.deposit(pid, amount, { gasPrice, gasLimit });
       await depositTx.wait();
       setStake('');
       fetchStakingDetails();
@@ -181,9 +204,7 @@ const StakingDapp = () => {
     event.preventDefault();
     try {
       const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
-      const tx = await contract.withdraw(0, amount, {
-        gasLimit: 300000, // Set a reasonable gas limit for withdrawing
-      }); // Assuming pool id is 0
+      const tx = await contract.withdraw(0, amount); // Assuming pool id is 0
       await tx.wait();
       setWithdraw('');
       fetchStakingDetails();
@@ -193,11 +214,10 @@ const StakingDapp = () => {
   };
 
   // Function to handle claiming reward
-  const handleClaimReward = async () => {
+  const handleClaimReward = async (event) => {
+    event.preventDefault();
     try {
-      const tx = await contract.claimReward({
-        gasLimit: 300000, // Set a reasonable gas limit for claiming reward
-      });
+      const tx = await contract.claim(0); // Assuming pool id is 0
       await tx.wait();
       fetchStakingDetails();
     } catch (error) {
@@ -205,69 +225,38 @@ const StakingDapp = () => {
     }
   };
 
-  // Function to fetch user's Bone token balance
-  const fetchBoneTokenBalance = async () => {
-    try {
-      const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
-      const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
-      const balance = await tokenContract.balanceOf(account);
-      console.log('Bone Token Balance:', ethers.utils.formatUnits(balance, 18));
-    } catch (error) {
-      console.error('Error fetching Bone token balance:', error);
-    }
-  };
-
   return (
-    <Container>
-      <Paper className={classes.root}>
-        <Typography variant="h4" className={classes.title}>
-          Staking
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Staked: </strong> {views.staked} $BONE
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Reward: </strong> {views.reward} $BONE
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Total Staked: </strong> {views.totalStaked} $BONE
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Bone Token Balance: </strong> {fetchBoneTokenBalance()} $BONE
-        </Typography>
-        <Box mt={3} className={classes.formContainer}>
-          <form className={classes.form} onSubmit={handleStake}>
-            <TextField
-              label="Stake"
-              variant="outlined"
-              size="small"
-              type="number"
-              value={stake}
-              onChange={(e) => setStake(e.target.value)}
-            />
-            <Button type="submit" variant="contained" color="primary" className={classes.button}>
-              Stake
-            </Button>
-          </form>
-          <form className={classes.form} onSubmit={handleWithdraw}>
-            <TextField
-              label="Withdraw"
-              variant="outlined"
-              size="small"
-              type="number"
-              value={withdraw}
-              onChange={(e) => setWithdraw(e.target.value)}
-            />
-            <Button type="submit" variant="contained" color="primary" className={classes.button}>
-              Withdraw
-            </Button>
-          </form>
-          <Button variant="contained" color="secondary" onClick={handleClaimReward} className={classes.button}>
-            Claim
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
+    <div>
+      <h1>Staking Dapp</h1>
+      <p>Connected Account: {account}</p>
+      <p>Current Bone Balance: {views.currentBalance}</p>
+      <h2>Stake</h2>
+      <form onSubmit={handleStake}>
+        <input
+          type="text"
+          value={stake}
+          onChange={(e) => setStake(e.target.value)}
+          placeholder="Enter amount to stake"
+        />
+        <button type="submit">Stake</button>
+      </form>
+      <h2>Withdraw</h2>
+      <form onSubmit={handleWithdraw}>
+        <input
+          type="text"
+          value={withdraw}
+          onChange={(e) => setWithdraw(e.target.value)}
+          placeholder="Enter amount to withdraw"
+        />
+        <button type="submit">Withdraw</button>
+      </form>
+      <h2>Reward</h2>
+      <button onClick={handleClaimReward}>Claim Reward</button>
+      <h2>Staking Details</h2>
+      <p>Staked: {views.staked}</p>
+      <p>Reward: {views.reward}</p>
+      <p>Total Staked: {views.totalStaked}</p>
+    </div>
   );
 };
 
