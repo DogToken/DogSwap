@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import FaucetABI from './abis/faucet.json'; // Update with correct file path
-import BoneTokenABI from './abis/BoneToken.json'; // Update with correct file path
 import { Container, Paper, Typography, Button, makeStyles } from '@material-ui/core';
+import { getProvider, getAccount, getSigner, getNetwork, doesTokenExist } from "../ethereumFunctions"; // Import necessary functions
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,12 +36,13 @@ const Faucet = () => {
     try {
       if (typeof window.ethereum !== 'undefined') {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = new Web3(window.ethereum);
-        const accounts = await provider.eth.getAccounts();
-        setAccount(accounts[0]);
-        const networkId = await provider.eth.net.getId();
+        const provider = getProvider();
+        const signer = getSigner(provider);
+        const accountAddress = await getAccount();
+        setAccount(accountAddress);
+        const networkId = await getNetwork(provider);
         if (networkId === 24734) { // Update with your network ID
-          const faucetContractInstance = new provider.eth.Contract(FaucetABI, '0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0'); // Update with faucet address
+          const faucetContractInstance = getFaucetContract(signer); // Update to use getFaucetContract function
           setFaucetContract(faucetContractInstance);
           fetchAccountDetails();
         } else {
@@ -60,13 +61,9 @@ const Faucet = () => {
       const cookieBalanceResult = await faucetContract.methods.balanceOf(account).call();
       const contractBalanceResult = await faucetContract.methods.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830').call(); // Update with faucet address
       const waitTime = await faucetContract.methods.waitTime().call();
-      // Use the local fetchBoneTokenBalance function to fetch Bone token balance
-      const boneTokenBalance = await fetchBoneTokenBalance(account, faucetContract);
       setCookieBalance(cookieBalanceResult);
       setContractBalance(contractBalanceResult);
       setWaitingTime(waitTime);
-      // Set the fetched Bone token balance in the state
-      setBoneTokenBalance(boneTokenBalance);
     } catch (error) {
       console.error('Error fetching account details:', error);
     }
@@ -80,19 +77,9 @@ const Faucet = () => {
     }
   };
 
-  const fetchBoneTokenBalance = async (userAccount, contract) => {
-    try {
-      if (contract) {
-        const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
-        const tokenContract = new contract.eth.Contract(BoneTokenABI, tokenAddress);
-        const balance = await tokenContract.methods.balanceOf(userAccount).call();
-        return balance;
-      } else {
-        console.error('Contract not initialized.');
-      }
-    } catch (error) {
-      console.error('Error fetching Bone token balance:', error);
-    }
+  const getFaucetContract = (signer) => {
+    const faucetAddress = '0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0'; // Update with faucet address
+    return new signer.Contract(FaucetABI, faucetAddress);
   };
 
   return (
