@@ -16,7 +16,6 @@ import Contact from "./Contact";
 import Privacy from "./Privacy";
 import Pools from "./Pools/Pools";
 import Staking from "./Staking/Staking";
-import Stake from "./Staking/Stake";
 
 inject();
 
@@ -68,9 +67,6 @@ const App = () => {
                   </Route>
                   <Route exact path="/privacy">
                     <Privacy />
-                  </Route>
-                  <Route exact path="/stake-test">
-                    <Stake network={network} />
                   </Route>
                 </div>
               </div>

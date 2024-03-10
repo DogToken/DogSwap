@@ -3,8 +3,6 @@ import { ethers } from 'ethers';
 import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
-// Other code remains the same
-
 // MasterChef contract address
 const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
 
@@ -41,6 +39,10 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     marginBottom: theme.spacing(2),
   },
+  button: {
+    width: '100px', // Adjust the width as needed
+    margin: theme.spacing(1),
+  }
 }));
 
 const StakingDapp = () => {
@@ -62,32 +64,33 @@ const StakingDapp = () => {
 
   // Function to connect to the Ethereum network and set up the contract
   const connectToEthereum = async () => {
-  try {
-    if (typeof window.ethereum !== 'undefined') {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const network = await provider.getNetwork();
+    try {
+      if (typeof window.ethereum !== 'undefined') {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const network = await provider.getNetwork();
 
-      // Check if the connected network is supported
-      if (network && networks.includes(network.chainId)) {
-        const signer = provider.getSigner();
-        setAccount(await signer.getAddress());
+        // Check if the connected network is supported
+        if (network && networks.includes(network.chainId)) {
+          const signer = provider.getSigner();
+          setAccount(await signer.getAddress());
 
-        // Setup MasterChef contract
-        const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
-        // Now you can use the masterChefContract to interact with MasterChef functions
-        
-        fetchStakingDetails(); // Fetch the user's staking details
+          // Setup MasterChef contract
+          const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
+          // Now you can use the masterChefContract to interact with MasterChef functions
+          setContract(masterChefContract); // Set the contract state
+
+          fetchStakingDetails(); // Fetch the user's staking details
+        } else {
+          console.log('Unsupported network. Please switch to the correct network.');
+        }
       } else {
-        console.log('Unsupported network. Please switch to the correct network.');
+        console.log('Please install MetaMask to use this dApp.');
       }
-    } else {
-      console.log('Please install MetaMask to use this dApp.');
+    } catch (error) {
+      console.error('Error connecting to Ethereum:', error);
     }
-  } catch (error) {
-    console.error('Error connecting to Ethereum:', error);
-  }
-};
+  };
 
   // Function to fetch the user's staking details and update the views
   const fetchStakingDetails = async () => {
@@ -170,7 +173,7 @@ const StakingDapp = () => {
               value={stake}
               onChange={(e) => setStake(e.target.value)}
             />
-            <Button type="submit" variant="contained" color="primary">
+            <Button type="submit" variant="contained" color="primary" className={classes.button}>
               Stake
             </Button>
           </form>
@@ -183,11 +186,11 @@ const StakingDapp = () => {
               value={withdraw}
               onChange={(e) => setWithdraw(e.target.value)}
             />
-            <Button type="submit" variant="contained" color="primary">
+            <Button type="submit" variant="contained" color="primary" className={classes.button}>
               Withdraw
             </Button>
           </form>
-          <Button variant="contained" color="secondary" onClick={handleClaimReward}>
+          <Button variant="contained" color="secondary" onClick={handleClaimReward} className={classes.button}>
             Claim Reward
           </Button>
         </Box>
