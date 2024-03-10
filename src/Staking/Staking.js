@@ -96,11 +96,18 @@ const StakingDapp = () => {
     try {
       if (contract && account) {
         const pid = 3; // Assuming pool ID is 3
-        const [stakingBalance, stakingReward, totalStakedBalance, boneTokenBalance] = await Promise.all([
+        const [
+          stakingBalance,
+          stakingReward,
+          totalStakedBalance,
+          boneTokenBalance,
+          poolBalance // Add this line to fetch the pool balance
+        ] = await Promise.all([
           contract.stakingBalanceOf(pid, account),
           contract.stakingRewardOf(pid, account),
           contract.totalStakedBalance(pid),
-          fetchBoneTokenBalance(account), // Ensure you await the result here
+          fetchBoneTokenBalance(account),
+          contract.poolInfo(pid).then(info => info.lpToken.balanceOf(masterChefAddress)) // Fetch pool balance
         ]);
   
         setViews({
@@ -108,12 +115,14 @@ const StakingDapp = () => {
           reward: ethers.utils.formatUnits(stakingReward, 18),
           totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
           boneBalance: ethers.utils.formatUnits(boneTokenBalance, 18),
+          poolBalance: ethers.utils.formatUnits(poolBalance, 18) // Update pool balance state
         });
       }
     } catch (error) {
       console.error('Error fetching staking details:', error);
     }
   };
+  
   
 
   const handleStake = async (event) => {
