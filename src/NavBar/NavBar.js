@@ -21,6 +21,16 @@ const NavBar = () => {
     }
   };
 
+  const disconnectMetaMask = async () => {
+    try {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      setIsConnected(false);
+      setWalletAddress('');
+    } catch (error) {
+      console.error('Error disconnecting MetaMask:', error);
+    }
+  };
+
   return (
     <nav>
       <div className="Title">
@@ -44,12 +54,14 @@ const NavBar = () => {
             );
           })}
         </ul>
-        <button className="connect-button" onClick={connectWithMetaMask}>
-          Connect with MetaMask
-        </button>
+        {!isConnected && (
+          <button className="connect-button" onClick={connectWithMetaMask}>
+            Connect with MetaMask
+          </button>
+        )}
         {isConnected && (
           <div className="wallet-info">
-            <span>{walletAddress}</span>
+            <span onClick={disconnectMetaMask} className="disconnect-button">{walletAddress}</span>
           </div>
         )}
       </div>
