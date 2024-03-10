@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
-// Import MasterChef ABI
-import MasterChefABI from './abis/MasterChef.json';
+// Other code remains the same
 
 // MasterChef contract address
 const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
 
-// Define supported networks
 const networks = [24734];
 
-// Map of router addresses by chain ID
 export const ChainId = {
   MINTME: 24734,
 };
@@ -64,33 +62,41 @@ const StakingDapp = () => {
 
   // Function to connect to the Ethereum network and set up the contract
   const connectToEthereum = async () => {
-    try {
-      if (typeof window.ethereum !== 'undefined') {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const network = await provider.getNetwork();
+  try {
+    if (typeof window.ethereum !== 'undefined') {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const network = await provider.getNetwork();
 
-        // Check if the connected network is supported
-        if (network && networks.includes(network.chainId)) {
-          const signer = provider.getSigner();
-          setAccount(await signer.getAddress());
+      // Check if the connected network is supported
+      if (network && networks.includes(network.chainId)) {
+        const signer = provider.getSigner();
+        setAccount(await signer.getAddress());
 
-          // Setup MasterChef contract
-          const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
-          // Now you can use the masterChefContract to interact with MasterChef functions
-          setContract(masterChefContract);
-          fetchStakingDetails(); // Fetch the user's staking details
-        } else {
-          console.log('Unsupported network. Please switch to the correct network.');
-        }
+        // Initialize Staking contract
+        const stakingContract = new ethers.Contract(
+          routerAddress.get(network.chainId),
+          StakingContract.abi,
+          signer
+        );
+        setContract(stakingContract);
+
+        // Setup MasterChef contract
+        const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
+        // Now you can use the masterChefContract to interact with MasterChef functions
+        
+        fetchStakingDetails(); // Fetch the user's staking details
       } else {
-        console.log('Please install MetaMask to use this dApp.');
+        console.log('Unsupported network. Please switch to the correct network.');
       }
-    } catch (error) {
-      console.error('Error connecting to Ethereum:', error);
+    } else {
+      console.log('Please install MetaMask to use this dApp.');
     }
-  };
-  
+  } catch (error) {
+    console.error('Error connecting to Ethereum:', error);
+  }
+};
+
   // Function to fetch the user's staking details and update the views
   const fetchStakingDetails = async () => {
     try {
