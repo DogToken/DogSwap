@@ -1,20 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
-import BoneTokenABI from './abis/BoneToken.json'; // Import BoneToken ABI
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
-// MasterChef contract address
-const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
-
-const networks = [24734];
-
-export const ChainId = {
-  MINTME: 24734,
-};
-
-export const routerAddress = new Map();
-routerAddress.set(ChainId.MINTME, "0x38D613a0636Bd10043405D76e52f7540eeE913d0");
+const MasterChefABI = require('./abis/MasterChef.json'); // Import MasterChef ABI
+const BoneTokenABI = require('./abis/BoneToken.json'); // Import BoneToken ABI
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,6 +46,7 @@ const StakingDapp = () => {
     reward: 'Loading...',
     totalStaked: 'Loading...',
     boneBalance: 'Loading...',
+    poolBalance: 'Loading...', // Added pool balance
   });
 
   useEffect(() => {
@@ -68,21 +58,16 @@ const StakingDapp = () => {
       if (typeof window.ethereum !== 'undefined') {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
         const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const network = await provider.getNetwork();
+        const signer = provider.getSigner();
+        const accountAddress = await signer.getAddress();
+        setAccount(accountAddress);
 
-        if (network && networks.includes(network.chainId)) {
-          const signer = provider.getSigner();
-          const accountAddress = await signer.getAddress();
-          setAccount(accountAddress);
+        const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
+        const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
+        setContract(masterChefContract);
 
-          const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
-          setContract(masterChefContract);
-
-          if (masterChefContract) {
-            fetchStakingDetails();
-          }
-        } else {
-          console.log('Unsupported network. Please switch to the correct network.');
+        if (masterChefContract) {
+          fetchStakingDetails();
         }
       } else {
         console.log('Please install MetaMask to use this dApp.');
@@ -107,65 +92,25 @@ const StakingDapp = () => {
           contract.totalStakedBalance(pid),
           fetchBoneTokenBalance(account),
         ]);
-  
-        const lpTokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // LP token address
-        const lpTokenContract = new ethers.Contract(lpTokenAddress, BoneTokenABI, contract.signer);
-        const lpTokenBalance = await lpTokenContract.balanceOf(masterChefAddress);
-  
+
         setViews({
           staked: ethers.utils.formatUnits(stakingBalance, 18),
           reward: ethers.utils.formatUnits(stakingReward, 18),
           totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
           boneBalance: ethers.utils.formatUnits(boneTokenBalance, 18),
-          poolBalance: ethers.utils.formatUnits(lpTokenBalance, 18)
+          poolBalance: ethers.utils.formatUnits(stakingBalance, 18) // Use staking balance as pool balance
         });
       }
     } catch (error) {
       console.error('Error fetching staking details:', error);
     }
   };
-  
+
   const handleStake = async (event) => {
     event.preventDefault();
     try {
       const amount = ethers.utils.parseUnits(stake.toString(), 18);
-      const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
-
-      const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
-      const userBalance = await tokenContract.balanceOf(account);
-      if (userBalance.lt(amount)) {
-        console.error('Insufficient balance');
-        return;
-      }
-
-      const approvedAmount = await tokenContract.allowance(account, masterChefAddress);
-      if (approvedAmount.lt(amount)) {
-        const approveTx = await tokenContract.approve(masterChefAddress, ethers.constants.MaxUint256, {
-          gasLimit: 200000, // Set a reasonable gas limit for approval
-        });
-        await approveTx.wait();
-      }
-
       const pid = 3; // Assuming you want to stake in the first pool (pool id 0)
-      const poolInfo = await contract.poolInfo(pid);
-      const depositFeeBP = poolInfo.depositFeeBP;
-
-      if (depositFeeBP > 0) {
-        const depositFee = amount.mul(depositFeeBP).div(10000);
-        const userStakedAmount = await contract.userInfo(pid, account);
-        if (userStakedAmount.amount.lt(depositFee)) {
-          console.error('Deposit fee is greater than the user\'s staked amount');
-          return;
-        }
-      }
-
-      const lpSupply = await poolInfo.lpToken.balanceOf(masterChefAddress);
-      if (lpSupply.gt(0)) {
-        await contract.updatePool(pid, {
-          gasLimit: 500000, // Set a reasonable gas limit for updating the pool
-        });
-      }
-
       const depositTx = await contract.deposit(pid, amount, {
         gasLimit: 500000, // Set a reasonable gas limit for depositing
       });
@@ -181,10 +126,11 @@ const StakingDapp = () => {
     event.preventDefault();
     try {
       const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
-      const tx = await contract.withdraw(3, amount, {
+      const pid = 3; // Assuming you want to withdraw from the first pool (pool id 0)
+      const withdrawTx = await contract.withdraw(pid, amount, {
         gasLimit: 300000, // Set a reasonable gas limit for withdrawing
-      }); // Assuming pool id is 0
-      await tx.wait();
+      });
+      await withdrawTx.wait();
       setWithdraw('');
       fetchStakingDetails();
     } catch (error) {
@@ -194,10 +140,11 @@ const StakingDapp = () => {
 
   const handleClaimReward = async () => {
     try {
-      const tx = await contract.claimReward({
+      const pid = 3; // Assuming pool ID is 3
+      const claimTx = await contract.claimReward(pid, {
         gasLimit: 300000, // Set a reasonable gas limit for claiming reward
       });
-      await tx.wait();
+      await claimTx.wait();
       fetchStakingDetails();
     } catch (error) {
       console.error('Error claiming reward:', error);
@@ -206,18 +153,15 @@ const StakingDapp = () => {
 
   const fetchBoneTokenBalance = async (userAccount) => {
     try {
-      if (contract && userAccount) { // Check if userAccount is defined
-        const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
-        const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
-        const balance = await tokenContract.balanceOf(userAccount);
-        return balance;
-      }
+      const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
+      const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
+      const balance = await tokenContract.balanceOf(userAccount);
+      return balance;
     } catch (error) {
       console.error('Error fetching Bone token balance:', error);
     }
   };
-  
-  
+
   useEffect(() => {
     const fetchBalance = async () => {
       const balance = await fetchBoneTokenBalance(account);
@@ -227,10 +171,9 @@ const StakingDapp = () => {
         boneBalance: ethers.utils.formatUnits(balance, 18),
       }));
     };
-  
+
     fetchBalance();
   }, [contract, account]);
-  
 
   return (
     <Container>
