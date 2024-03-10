@@ -116,15 +116,24 @@ const StakingDapp = () => {
     }
   };
 
-// Function to handle stake submission
+// Function to handle stake submission 0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF
 const handleStake = async (event) => {
   event.preventDefault();
   try {
     const amount = ethers.utils.parseUnits(stake.toString(), 18);
     const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
 
-    // First, check if the contract is approved to spend the user's tokens
+    // Get the token contract instance
     const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
+
+    // Check if the user has enough balance
+    const userBalance = await tokenContract.balanceOf(account);
+    if (userBalance.lt(amount)) {
+      console.error('Insufficient balance');
+      return;
+    }
+
+    // First, check if the contract is approved to spend the user's tokens
     const approvedAmount = await tokenContract.allowance(account, masterChefAddress);
     if (approvedAmount.lt(amount)) {
       // If not approved, approve the contract to spend tokens
