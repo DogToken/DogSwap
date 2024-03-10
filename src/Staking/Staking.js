@@ -4,17 +4,18 @@ import MasterChefABI from './abis/MasterChef.json'; // Import MasterChef ABI
 import BoneTokenABI from './abis/BoneToken.json'; // Import BoneToken ABI
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
+
 // MasterChef contract address
 const masterChefAddress = '0x4f79af8335d41A98386f09d79D19Ab1552d0b925';
-
-// BoneToken contract address
-const boneTokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF';
 
 const networks = [24734];
 
 export const ChainId = {
   MINTME: 24734,
 };
+
+export const routerAddress = new Map();
+routerAddress.set(ChainId.MINTME, "0x38D613a0636Bd10043405D76e52f7540eeE913d0");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,8 +79,9 @@ const StakingDapp = () => {
 
           // Setup MasterChef contract
           const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
+          // Now you can use the masterChefContract to interact with MasterChef functions
           setContract(masterChefContract); // Set the contract state
-
+          
           // Call fetchStakingDetails only if contract is not null
           if (masterChefContract) {
             fetchStakingDetails(); // Fetch the user's staking details
@@ -119,9 +121,10 @@ const StakingDapp = () => {
     event.preventDefault();
     try {
       const amount = ethers.utils.parseUnits(stake.toString(), 18);
+      const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
 
       // Get the token contract instance
-      const tokenContract = new ethers.Contract(boneTokenAddress, BoneTokenABI, contract.signer);
+      const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
 
       // Check if the user has enough balance
       const userBalance = await tokenContract.balanceOf(account);
@@ -134,13 +137,37 @@ const StakingDapp = () => {
       const approvedAmount = await tokenContract.allowance(account, masterChefAddress);
       if (approvedAmount.lt(amount)) {
         // If not approved, approve the contract to spend tokens
-        const approveTx = await tokenContract.approve(masterChefAddress, ethers.constants.MaxUint256);
+        const approveTx = await tokenContract.approve(masterChefAddress, ethers.constants.MaxUint256, {
+          gasLimit: 200000, // Set a reasonable gas limit for approval
+        });
         await approveTx.wait();
       }
 
       // Now deposit (stake) the tokens
       const pid = 0; // Assuming you want to stake in the first pool (pool id 0)
-      const depositTx = await contract.deposit(pid, amount);
+      const poolInfo = await contract.poolInfo(pid);
+      const depositFeeBP = poolInfo.depositFeeBP;
+
+      if (depositFeeBP > 0) {
+        const depositFee = amount.mul(depositFeeBP).div(10000);
+        const userStakedAmount = await contract.userInfo(pid, account);
+        if (userStakedAmount.amount.lt(depositFee)) {
+          console.error('Deposit fee is greater than the user\'s staked amount');
+          return;
+        }
+      }
+
+      // Check if the lpSupply is not 0 before calling updatePool
+      const lpSupply = await poolInfo.lpToken.balanceOf(masterChefAddress);
+      if (lpSupply.gt(0)) {
+        await contract.updatePool(pid, {
+          gasLimit: 500000, // Set a reasonable gas limit for updating the pool
+        });
+      }
+
+      const depositTx = await contract.deposit(pid, amount, {
+        gasLimit: 500000, // Set a reasonable gas limit for depositing
+      });
       await depositTx.wait();
       setStake('');
       fetchStakingDetails();
@@ -154,7 +181,9 @@ const StakingDapp = () => {
     event.preventDefault();
     try {
       const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
-      const tx = await contract.withdraw(0, amount); // Assuming pool id is 0
+      const tx = await contract.withdraw(0, amount, {
+        gasLimit: 300000, // Set a reasonable gas limit for withdrawing
+      }); // Assuming pool id is 0
       await tx.wait();
       setWithdraw('');
       fetchStakingDetails();
@@ -166,7 +195,9 @@ const StakingDapp = () => {
   // Function to handle claiming reward
   const handleClaimReward = async () => {
     try {
-      const tx = await contract.claimReward();
+      const tx = await contract.claimReward({
+        gasLimit: 300000, // Set a reasonable gas limit for claiming reward
+      });
       await tx.wait();
       fetchStakingDetails();
     } catch (error) {
@@ -174,33 +205,17 @@ const StakingDapp = () => {
     }
   };
 
-  // Function to fetch and display the user's Bone token balance
-    const fetchBoneTokenBalance = async () => {
-      try {
-        if (contract && account) {
-          const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
-          const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
-          const balance = await tokenContract.balanceOf(account);
-          return ethers.utils.formatUnits(balance, 18); // Convert balance to readable format (assuming 18 decimals)
-        }
-      } catch (error) {
-        console.error('Error fetching Bone token balance:', error);
-      }
-    };
-
-  // Call fetchBoneTokenBalance in useEffect to update the balance on component mount
-  useEffect(() => {
-    const fetchBalance = async () => {
-      const balance = await fetchBoneTokenBalance();
-      if (balance) {
-        setBoneTokenBalance(balance);
-      }
-    };
-  fetchBalance();
-}, [contract, account]);
-
-  // Define state for Bone token balance
-    const [boneTokenBalance, setBoneTokenBalance] = useState(null);
+  // Function to fetch user's Bone token balance
+  const fetchBoneTokenBalance = async () => {
+    try {
+      const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
+      const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
+      const balance = await tokenContract.balanceOf(account);
+      console.log('Bone Token Balance:', ethers.utils.formatUnits(balance, 18));
+    } catch (error) {
+      console.error('Error fetching Bone token balance:', error);
+    }
+  };
 
   return (
     <Container>
@@ -218,7 +233,7 @@ const StakingDapp = () => {
           <strong>Total Staked: </strong> {views.totalStaked} $BONE
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Bone Token Balance: </strong> {boneTokenBalance ? `${boneTokenBalance} $BONE` : 'Loading...'}
+          <strong>Bone Token Balance: </strong> {fetchBoneTokenBalance()} $BONE
         </Typography>
         <Box mt={3} className={classes.formContainer}>
           <form className={classes.form} onSubmit={handleStake}>
