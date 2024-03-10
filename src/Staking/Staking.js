@@ -174,6 +174,34 @@ const StakingDapp = () => {
     }
   };
 
+  // Function to fetch and display the user's Bone token balance
+    const fetchBoneTokenBalance = async () => {
+      try {
+        if (contract && account) {
+          const tokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // BoneToken address
+          const tokenContract = new ethers.Contract(tokenAddress, BoneTokenABI, contract.signer);
+          const balance = await tokenContract.balanceOf(account);
+          return ethers.utils.formatUnits(balance, 18); // Convert balance to readable format (assuming 18 decimals)
+        }
+      } catch (error) {
+        console.error('Error fetching Bone token balance:', error);
+      }
+    };
+
+  // Call fetchBoneTokenBalance in useEffect to update the balance on component mount
+  useEffect(() => {
+    const fetchBalance = async () => {
+      const balance = await fetchBoneTokenBalance();
+      if (balance) {
+        setBoneTokenBalance(balance);
+      }
+    };
+  fetchBalance();
+}, [contract, account]);
+
+  // Define state for Bone token balance
+    const [boneTokenBalance, setBoneTokenBalance] = useState(null);
+
   return (
     <Container>
       <Paper className={classes.root}>
@@ -188,6 +216,9 @@ const StakingDapp = () => {
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
           <strong>Total Staked: </strong> {views.totalStaked} $BONE
+        </Typography>
+        <Typography variant="body1" className={classes.paragraph}>
+          <strong>Bone Token Balance: </strong> {boneTokenBalance ? `${boneTokenBalance} $BONE` : 'Loading...'}
         </Typography>
         <Box mt={3} className={classes.formContainer}>
           <form className={classes.form} onSubmit={handleStake}>
