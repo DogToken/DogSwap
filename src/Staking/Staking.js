@@ -45,8 +45,7 @@ const StakingDapp = () => {
     staked: 'Loading...',
     reward: 'Loading...',
     totalStaked: 'Loading...',
-    boneBalance: 'Loading...', // Changed ebenBalance to boneBalance
-    poolBalance: 'Loading...', // Added pool balance
+    boneBalance: 'Loading...', 
   });
 
   useEffect(() => {
@@ -82,72 +81,20 @@ const StakingDapp = () => {
       if (contract && account) {
         const pid = 3; // Assuming pool ID is 3
         const [
-          stakingBalance,
-          stakingReward,
           totalStakedBalance,
           boneTokenBalance,
         ] = await Promise.all([
-          contract.stakingBalanceOf(pid, account),
-          contract.stakingRewardOf(pid, account),
-          contract.totalStakedBalance(pid),
+          contract.totalStakedBalance(pid), // Fetch total staked balance
           fetchBoneTokenBalance(account),
         ]);
 
         setViews({
-          staked: ethers.utils.formatUnits(stakingBalance, 18),
-          reward: ethers.utils.formatUnits(stakingReward, 18),
-          totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
+          totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18), // Set total staked balance
           boneBalance: ethers.utils.formatUnits(boneTokenBalance, 18), // Changed ebenBalance to boneBalance
-          poolBalance: ethers.utils.formatUnits(stakingBalance, 18) // Use staking balance as pool balance
         });
       }
     } catch (error) {
       console.error('Error fetching staking details:', error);
-    }
-  };
-
-  const handleStake = async (event) => {
-    event.preventDefault();
-    try {
-      const amount = ethers.utils.parseUnits(stake.toString(), 18);
-      const pid = 3; // Assuming you want to stake in the first pool (pool id 0)
-      const depositTx = await contract.deposit(pid, amount, {
-        gasLimit: 500000, // Set a reasonable gas limit for depositing
-      });
-      await depositTx.wait();
-      setStake('');
-      fetchStakingDetails();
-    } catch (error) {
-      console.error('Error staking tokens:', error);
-    }
-  };
-
-  const handleWithdraw = async (event) => {
-    event.preventDefault();
-    try {
-      const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
-      const pid = 3; // Assuming you want to withdraw from the first pool (pool id 0)
-      const withdrawTx = await contract.withdraw(pid, amount, {
-        gasLimit: 300000, // Set a reasonable gas limit for withdrawing
-      });
-      await withdrawTx.wait();
-      setWithdraw('');
-      fetchStakingDetails();
-    } catch (error) {
-      console.error('Error withdrawing tokens:', error);
-    }
-  };
-
-  const handleClaimReward = async () => {
-    try {
-      const pid = 3; // Assuming pool ID is 3
-      const claimTx = await contract.claimReward(pid, {
-        gasLimit: 300000, // Set a reasonable gas limit for claiming reward
-      });
-      await claimTx.wait();
-      fetchStakingDetails();
-    } catch (error) {
-      console.error('Error claiming reward:', error);
     }
   };
 
@@ -168,7 +115,7 @@ const StakingDapp = () => {
       console.log('Formatted balance:', ethers.utils.formatUnits(balance, 18)); // Add this line for debugging
       setViews(prevState => ({
         ...prevState,
-        boneBalance: ethers.utils.formatUnits(balance, 18), // Changed ebenBalance to boneBalance
+        boneBalance: ethers.utils.formatUnits(balance, 18), 
       }));
     };
 
@@ -182,19 +129,10 @@ const StakingDapp = () => {
           Staking
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Staked: </strong> {views.staked} $BONE
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Reward: </strong> {views.reward} $BONE
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
           <strong>Total Staked: </strong> {views.totalStaked} $BONE
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
           <strong>Bone Token Balance: </strong> {views.boneBalance} $BONE
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Pool Balance: </strong> {views.poolBalance} $BONE
         </Typography>
         <form className={classes.formContainer} onSubmit={handleStake}>
           <TextField
