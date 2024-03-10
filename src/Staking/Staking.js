@@ -101,27 +101,29 @@ const StakingDapp = () => {
           stakingReward,
           totalStakedBalance,
           boneTokenBalance,
-          lpTokenBalance // Change this line to fetch LP token balance directly from the token contract
         ] = await Promise.all([
           contract.stakingBalanceOf(pid, account),
           contract.stakingRewardOf(pid, account),
           contract.totalStakedBalance(pid),
           fetchBoneTokenBalance(account),
-          fetchBoneTokenBalance(masterChefAddress) // Fetch LP token balance directly from the token contract
         ]);
+  
+        const lpTokenAddress = '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF'; // LP token address
+        const lpTokenContract = new ethers.Contract(lpTokenAddress, BoneTokenABI, contract.signer);
+        const lpTokenBalance = await lpTokenContract.balanceOf(masterChefAddress);
   
         setViews({
           staked: ethers.utils.formatUnits(stakingBalance, 18),
           reward: ethers.utils.formatUnits(stakingReward, 18),
           totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
           boneBalance: ethers.utils.formatUnits(boneTokenBalance, 18),
-          poolBalance: ethers.utils.formatUnits(lpTokenBalance, 18) // Update pool balance state
+          poolBalance: ethers.utils.formatUnits(lpTokenBalance, 18)
         });
       }
     } catch (error) {
       console.error('Error fetching staking details:', error);
     }
-  };  
+  };
   
   const handleStake = async (event) => {
     event.preventDefault();
