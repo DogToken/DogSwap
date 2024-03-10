@@ -90,7 +90,8 @@ const StakingDapp = () => {
           contract.stakingBalanceOf(pid, account),
           contract.stakingRewardOf(pid, account),
           contract.totalStakedBalance(pid),
-          fetchBoneTokenBalance(account, contract), // Corrected function call
+          doesTokenExist('0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF', contract.signer)
+            .then(tokenContract => tokenContract.balanceOf(account)), // Using doesTokenExist to fetch token balance
         ]);
 
         setViews({
@@ -151,7 +152,25 @@ const StakingDapp = () => {
     }
   };
 
-  // Your existing code continues here...
+  // Fetch Bone Token Balance
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        if (contract && account) {
+          const balance = await doesTokenExist('0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF', contract.signer)
+            .then(tokenContract => tokenContract.balanceOf(account)); // Using doesTokenExist to fetch token balance
+          setViews(prevState => ({
+            ...prevState,
+            boneBalance: ethers.utils.formatUnits(balance, 18),
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching bone token balance:', error);
+      }
+    };
+
+    fetchBalance();
+  }, [contract, account]);
 
   return (
     <Container>
