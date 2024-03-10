@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
+import { doesTokenExist, getSigner } from "../ethereumFunctions"; // Import necessary functions
 
 const MasterChefABI = require('./abis/MasterChef.json'); // Import MasterChef ABI
-const BoneTokenABI = require('./abis/BoneToken.json'); // Import BoneToken ABI
-import { doesTokenExist, getSigner } from "../ethereumFunctions"; // Import doesTokenExist and getSigner
 
 const useStyles = makeStyles((theme) => ({
   root: {
