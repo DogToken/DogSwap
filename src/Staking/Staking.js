@@ -62,58 +62,57 @@ const StakingDapp = () => {
     connectToEthereum();
   }, []);
 
-// Function to connect to the Ethereum network and set up the contract
-const connectToEthereum = async () => {
-  try {
-    if (typeof window.ethereum !== 'undefined') {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const network = await provider.getNetwork();
+  // Function to connect to the Ethereum network and set up the contract
+  const connectToEthereum = async () => {
+    try {
+      if (typeof window.ethereum !== 'undefined') {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const network = await provider.getNetwork();
 
-      // Check if the connected network is supported
-      if (network && networks.includes(network.chainId)) {
-        const signer = provider.getSigner();
-        setAccount(await signer.getAddress());
+        // Check if the connected network is supported
+        if (network && networks.includes(network.chainId)) {
+          const signer = provider.getSigner();
+          setAccount(await signer.getAddress());
 
-        // Setup MasterChef contract
-        const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
-        // Now you can use the masterChefContract to interact with MasterChef functions
-        setContract(masterChefContract); // Set the contract state
-        
-        // Call fetchStakingDetails only if contract is not null
-        if (masterChefContract) {
-          fetchStakingDetails(); // Fetch the user's staking details
+          // Setup MasterChef contract
+          const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
+          // Now you can use the masterChefContract to interact with MasterChef functions
+          setContract(masterChefContract); // Set the contract state
+          
+          // Call fetchStakingDetails only if contract is not null
+          if (masterChefContract) {
+            fetchStakingDetails(); // Fetch the user's staking details
+          }
+        } else {
+          console.log('Unsupported network. Please switch to the correct network.');
         }
       } else {
-        console.log('Unsupported network. Please switch to the correct network.');
+        console.log('Please install MetaMask to use this dApp.');
       }
-    } else {
-      console.log('Please install MetaMask to use this dApp.');
+    } catch (error) {
+      console.error('Error connecting to Ethereum:', error);
     }
-  } catch (error) {
-    console.error('Error connecting to Ethereum:', error);
-  }
-};
+  };
 
-// Function to fetch the user's staking details and update the views
-const fetchStakingDetails = async () => {
-  try {
-    if (contract) { // Check if contract is not null
-      const stakingBalance = await contract.stakingBalanceOf(account);
-      const stakingReward = await contract.stakingRewardOf(account);
-      const totalStakedBalance = await contract.totalStakedBalance();
+  // Function to fetch the user's staking details and update the views
+  const fetchStakingDetails = async () => {
+    try {
+      if (contract) { // Check if contract is not null
+        const stakingBalance = await contract.stakingBalanceOf(account);
+        const stakingReward = await contract.stakingRewardOf(account);
+        const totalStakedBalance = await contract.totalStakedBalance();
 
-      setViews({
-        staked: ethers.utils.formatUnits(stakingBalance, 18),
-        reward: ethers.utils.formatUnits(stakingReward, 18),
-        totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
-      });
+        setViews({
+          staked: ethers.utils.formatUnits(stakingBalance, 18),
+          reward: ethers.utils.formatUnits(stakingReward, 18),
+          totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching staking details:', error);
     }
-  } catch (error) {
-    console.error('Error fetching staking details:', error);
-  }
-};
-
+  };
 
   // Function to handle stake submission
   const handleStake = async (event) => {
@@ -206,3 +205,4 @@ const fetchStakingDetails = async () => {
 };
 
 export default StakingDapp;
+  
