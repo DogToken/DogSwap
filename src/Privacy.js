@@ -1,20 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
   makeStyles,
+  Paper,
   Link,
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  container: {
+  root: {
     marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
+    padding: theme.spacing(2),
   },
   title: {
     marginBottom: theme.spacing(2),
   },
-  footer: {
-    marginTop: "250px",
+  paragraph: {
+    marginBottom: theme.spacing(1),
+  },
+  link: {
+    color: theme.palette.primary.main,
+    textDecoration: "none",
+    "&:hover": {
+      textDecoration: "underline",
+    },
   },
 }));
 
@@ -23,21 +33,32 @@ function Privacy() {
 
   const [agreed, setAgreed] = useState(false);
 
+  // Load user agreement status from local storage on component mount
+  useEffect(() => {
+    const userAgreed = localStorage.getItem("privacyAgreement");
+    if (userAgreed === "true") {
+      setAgreed(true);
+    }
+  }, []);
+
   const handleAgree = () => {
+    // Update local storage to remember user's agreement
+    localStorage.setItem("privacyAgreement", "true");
     setAgreed(true);
   };
 
   return (
     <Container maxWidth="md" className={classes.container}>
-      <Typography variant="h4" className={classes.title}>
-        Privacy Policy for DogSwap.Online
-      </Typography>
-      <Typography variant="body1">
-        This Privacy Policy governs the manner in which DogSwap.Online ("we," "our," or "us") collects, uses, maintains, and
-        discloses information collected from users (each, a "User") of the dogswap.online website ("Site").
-      </Typography>
+      <Paper className={classes.root}>
+        <Typography variant="h4" className={classes.title}>
+          Privacy Policy for DogSwap.Online
+        </Typography>
+        <Typography variant="body1">
+          This Privacy Policy governs the manner in which DogSwap.Online ("we," "our," or "us") collects, uses, maintains, and
+          discloses information collected from users (each, a "User") of the dogswap.online website ("Site").
+        </Typography>
 
-      <Typography variant="h5">1. Personal Identification Information</Typography>
+        <Typography variant="h5">1. Personal Identification Information</Typography>
       <Typography variant="body1">
         We may collect personal identification information from Users in various ways, including but not limited to when Users
         visit our Site, register on the Site, place an order, subscribe to the newsletter, respond to a survey, fill out a
@@ -132,24 +153,20 @@ function Privacy() {
       <Typography variant="body1">
         This document was last updated on 25/07/2023.
       </Typography>
-      {!agreed && (
-        <button type="button" onClick={handleAgree}>
-          I Agree
-        </button>
-      )}
-      {agreed && (
-        <Typography variant="h6" align="center" gutterBottom>
-          Thank you for agreeing to our privacy policy!
-        </Typography>
-      )}
 
-      <div className={classes.footer}>
-        {/* Footer content here */}
-      </div>
+        {!agreed && (
+          <button type="button" onClick={handleAgree}>
+            I Agree
+          </button>
+        )}
+        {agreed && (
+          <Typography variant="h6" align="center" gutterBottom>
+            Thank you for agreeing to our privacy policy!
+          </Typography>
+        )}
+      </Paper>
     </Container>
   );
 }
 
 export default Privacy;
-
-

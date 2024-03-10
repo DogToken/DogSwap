@@ -53,9 +53,6 @@ const App = () => {
                   <Route exact path="/farms">
                     <Farms network={network} />
                   </Route>
-                  <Route exact path="/pools">
-                    <Pools network={network} />
-                  </Route>
                   <Route exact path="/stake">
                     <Staking network={network} />
                   </Route>
