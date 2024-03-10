@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { Container, Paper, Typography, Box, TextField, Button, makeStyles } from '@material-ui/core';
 
-const BoneTokenABI = require('./abis/BoneToken.json'); // Import BoneToken ABI
 const MasterChefABI = require('./abis/MasterChef.json'); // Import MasterChef ABI
+const BoneTokenABI = require('./abis/BoneToken.json'); // Import BoneToken ABI
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,7 +45,7 @@ const StakingDapp = () => {
     staked: 'Loading...',
     reward: 'Loading...',
     totalStaked: 'Loading...',
-    boneBalance: 'Loading...', 
+    boneBalance: 'Loading...', // Changed ebenBalance to boneBalance
   });
 
   useEffect(() => {
@@ -109,13 +109,58 @@ const StakingDapp = () => {
     }
   };
 
+  const handleStake = async (event) => {
+    event.preventDefault();
+    try {
+      const amount = ethers.utils.parseUnits(stake.toString(), 18);
+      const pid = 3; // Assuming you want to stake in the first pool (pool id 0)
+      const depositTx = await contract.deposit(pid, amount, {
+        gasLimit: 500000, // Set a reasonable gas limit for depositing
+      });
+      await depositTx.wait();
+      setStake('');
+      fetchStakingDetails();
+    } catch (error) {
+      console.error('Error staking tokens:', error);
+    }
+  };
+
+  const handleWithdraw = async (event) => {
+    event.preventDefault();
+    try {
+      const amount = ethers.utils.parseUnits(withdraw.toString(), 18);
+      const pid = 3; // Assuming you want to withdraw from the first pool (pool id 0)
+      const withdrawTx = await contract.withdraw(pid, amount, {
+        gasLimit: 300000, // Set a reasonable gas limit for withdrawing
+      });
+      await withdrawTx.wait();
+      setWithdraw('');
+      fetchStakingDetails();
+    } catch (error) {
+      console.error('Error withdrawing tokens:', error);
+    }
+  };
+
+  const handleClaimReward = async () => {
+    try {
+      const pid = 3; // Assuming pool ID is 3
+      const claimTx = await contract.claimReward(pid, {
+        gasLimit: 300000, // Set a reasonable gas limit for claiming reward
+      });
+      await claimTx.wait();
+      fetchStakingDetails();
+    } catch (error) {
+      console.error('Error claiming reward:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchBalance = async () => {
       const balance = await fetchBoneTokenBalance(account);
       console.log('Formatted balance:', ethers.utils.formatUnits(balance, 18)); // Add this line for debugging
       setViews(prevState => ({
         ...prevState,
-        boneBalance: ethers.utils.formatUnits(balance, 18), 
+        boneBalance: ethers.utils.formatUnits(balance, 18), // Changed ebenBalance to boneBalance
       }));
     };
 
