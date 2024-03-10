@@ -117,7 +117,6 @@ const StakingDapp = () => {
   };
 
 // Function to handle stake submission
-
 const handleStake = async (event) => {
   event.preventDefault();
   try {
@@ -133,9 +132,10 @@ const handleStake = async (event) => {
       await approveTx.wait();
     }
 
-    // Now stake the tokens
-    const stakeTx = await contract.stakeTokens(amount);
-    await stakeTx.wait();
+    // Now deposit (stake) the tokens
+    const pid = 0; // Assuming you want to stake in the first pool (pool id 0)
+    const depositTx = await contract.deposit(pid, amount);
+    await depositTx.wait();
     setStake('');
     fetchStakingDetails();
   } catch (error) {
