@@ -62,35 +62,36 @@ const StakingDapp = () => {
     connectToEthereum();
   }, []);
 
-  // Function to connect to the Ethereum network and set up the contract
-  const connectToEthereum = async () => {
-    try {
-      if (typeof window.ethereum !== 'undefined') {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const network = await provider.getNetwork();
+// Function to connect to the Ethereum network and set up the contract
+const connectToEthereum = async () => {
+  try {
+    if (typeof window.ethereum !== 'undefined') {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const network = await provider.getNetwork();
 
-        // Check if the connected network is supported
-        if (network && networks.includes(network.chainId)) {
-          const signer = provider.getSigner();
-          setAccount(await signer.getAddress());
+      // Check if the connected network is supported
+      if (network && networks.includes(network.chainId)) {
+        const signer = provider.getSigner();
+        setAccount(await signer.getAddress());
 
-          // Setup MasterChef contract
-          const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
-          // Now you can use the masterChefContract to interact with MasterChef functions
-          setContract(masterChefContract); // Set the contract state
-
-          fetchStakingDetails(); // Fetch the user's staking details
-        } else {
-          console.log('Unsupported network. Please switch to the correct network.');
-        }
+        // Setup MasterChef contract
+        const masterChefContract = new ethers.Contract(masterChefAddress, MasterChefABI, signer);
+        // Now you can use the masterChefContract to interact with MasterChef functions
+        setContract(masterChefContract); // Set the contract state
+        
+        fetchStakingDetails(); // Fetch the user's staking details
       } else {
-        console.log('Please install MetaMask to use this dApp.');
+        console.log('Unsupported network. Please switch to the correct network.');
       }
-    } catch (error) {
-      console.error('Error connecting to Ethereum:', error);
+    } else {
+      console.log('Please install MetaMask to use this dApp.');
     }
-  };
+  } catch (error) {
+    console.error('Error connecting to Ethereum:', error);
+  }
+};
+
 
   // Function to fetch the user's staking details and update the views
   const fetchStakingDetails = async () => {
@@ -191,7 +192,7 @@ const StakingDapp = () => {
             </Button>
           </form>
           <Button variant="contained" color="secondary" onClick={handleClaimReward} className={classes.button}>
-            Claim Reward
+            Claim
           </Button>
         </Box>
       </Paper>
