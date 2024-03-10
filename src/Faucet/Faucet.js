@@ -40,7 +40,7 @@ const Faucet = () => {
         setAccount(accounts[0]);
         const networkId = await provider.eth.net.getId();
         if (networkId === 24734) { // Update with your network ID
-          const faucetContractInstance = new provider.eth.Contract(FaucetABI, '0x98d64dbe9bd305cd21e94d4d20ae7f48fde429b0'); // Update with faucet address
+          const faucetContractInstance = new provider.eth.Contract(FaucetABI, '0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0'); // Update with faucet address
           setFaucetContract(faucetContractInstance);
           fetchAccountDetails();
         } else {
@@ -57,7 +57,7 @@ const Faucet = () => {
   const fetchAccountDetails = async () => {
     try {
       const cookieBalanceResult = await faucetContract.methods.balanceOf(account).call();
-      const contractBalanceResult = await faucetContract.methods.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830').call(); // Update with faucet address
+      const contractBalanceResult = await faucetContract.methods.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830').call(); // Update with token contract address
       const waitTime = await faucetContract.methods.waitTime().call();
       setCookieBalance(cookieBalanceResult);
       setContractBalance(contractBalanceResult);
