@@ -95,9 +95,10 @@ const connectToEthereum = async () => {
   }
 };
 
-  // Function to fetch the user's staking details and update the views
-  const fetchStakingDetails = async () => {
-    try {
+// Function to fetch the user's staking details and update the views
+const fetchStakingDetails = async () => {
+  try {
+    if (contract) { // Check if contract is not null
       const stakingBalance = await contract.stakingBalanceOf(account);
       const stakingReward = await contract.stakingRewardOf(account);
       const totalStakedBalance = await contract.totalStakedBalance();
@@ -107,10 +108,12 @@ const connectToEthereum = async () => {
         reward: ethers.utils.formatUnits(stakingReward, 18),
         totalStaked: ethers.utils.formatUnits(totalStakedBalance, 18),
       });
-    } catch (error) {
-      console.error('Error fetching staking details:', error);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching staking details:', error);
+  }
+};
+
 
   // Function to handle stake submission
   const handleStake = async (event) => {
