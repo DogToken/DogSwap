@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Web3 from 'web3';
+import { ethers } from 'ethers';
 import FaucetABI from './abis/faucet.json'; // Update with correct file path
 import { Container, Paper, Typography, Button, makeStyles } from '@material-ui/core';
 
@@ -28,37 +28,38 @@ const Faucet = () => {
   const [faucetContract, setFaucetContract] = useState(null);
 
   useEffect(() => {
-    initialize();
+    connectToEthereum();
   }, []);
 
-  const initialize = async () => {
+  const connectToEthereum = async () => {
     try {
       if (typeof window.ethereum !== 'undefined') {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = new Web3(window.ethereum);
-        const accounts = await provider.eth.getAccounts();
-        setAccount(accounts[0]);
-        const networkId = await provider.eth.net.getId();
-        if (networkId === 24734) { // Update with your network ID
-          const faucetContractInstance = new provider.eth.Contract(FaucetABI, '0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0'); // Update with faucet address
-          setFaucetContract(faucetContractInstance);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const accountAddress = await signer.getAddress();
+        setAccount(accountAddress);
+
+        const faucetContractAddress = '0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0'; // Update with faucet contract address
+        const faucetContractInstance = new ethers.Contract(faucetContractAddress, FaucetABI, signer);
+        setFaucetContract(faucetContractInstance);
+
+        if (faucetContractInstance) {
           fetchAccountDetails();
-        } else {
-          console.log('Please connect to the correct network.');
         }
       } else {
         console.log('Please install MetaMask to use this dApp.');
       }
     } catch (error) {
-      console.error('Error initializing:', error);
+      console.error('Error connecting to Ethereum:', error);
     }
   };
 
   const fetchAccountDetails = async () => {
     try {
-      const cookieBalanceResult = await faucetContract.methods.balanceOf(account).call();
-      const contractBalanceResult = await faucetContract.methods.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830').call(); // Update with token contract address
-      const waitTime = await faucetContract.methods.waitTime().call();
+      const cookieBalanceResult = await faucetContract.balanceOf(account);
+      const contractBalanceResult = await faucetContract.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830'); // Update with token contract address
+      const waitTime = await faucetContract.waitTime();
       setCookieBalance(cookieBalanceResult);
       setContractBalance(contractBalanceResult);
       setWaitingTime(waitTime);
@@ -69,7 +70,7 @@ const Faucet = () => {
 
   const getCookieTokens = async () => {
     try {
-      await faucetContract.methods.requestTokens().send({ from: account });
+      await faucetContract.requestTokens();
     } catch (error) {
       console.error('Error getting cookie tokens:', error);
     }
@@ -80,13 +81,13 @@ const Faucet = () => {
       <Paper className={classes.root}>
         <Typography variant="h4">Cookie Faucet</Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Your Cookie Balance:</strong> {cookieBalance} Cookies
+          <strong>Your Cookie Balance:</strong> {cookieBalance.toString()} Cookies
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Contract Balance:</strong> {contractBalance} Cookies
+          <strong>Contract Balance:</strong> {contractBalance.toString()} Cookies
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          <strong>Waiting Time:</strong> {waitingTime / 60} minutes
+          <strong>Waiting Time:</strong> {waitingTime.toString() / 60} minutes
         </Typography>
         <Button
           variant="contained"
