@@ -71,7 +71,7 @@ const Faucet = () => {
 
   const getCookieTokens = async () => {
     try {
-      if (faucetContract) {
+      if (faucetContract && account) {
         await faucetContract.methods.requestTokens().send({ from: account });
         // After requesting tokens, fetch updated account details
         fetchAccountDetails();
