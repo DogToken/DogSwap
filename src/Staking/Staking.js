@@ -125,7 +125,7 @@ const Staking = () => {
 
       // Deposit tokens
       const masterChefContract = getMasterChefInstance(networkId, signer);
-      const transaction = await masterChefContract.deposit(0, amountToStake, { value: 0 });
+      const transaction = await masterChefContract.deposit(3, amountToStake, { value: 0 });
       await transaction.wait();
 
       setClaimMessage("Tokens staked successfully!");
@@ -159,7 +159,7 @@ const Staking = () => {
 
       // Withdraw tokens
       const masterChefContract = getMasterChefInstance(networkId, signer);
-      const transaction = await masterChefContract.withdraw(0, amountToWithdraw);
+      const transaction = await masterChefContract.withdraw(3, amountToWithdraw);
       await transaction.wait();
 
       setClaimMessage("Tokens withdrawn successfully!");
