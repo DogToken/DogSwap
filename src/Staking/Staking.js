@@ -61,6 +61,11 @@ const Staking = () => {
   const [walletTokens, setWalletTokens] = useState("0");
   const [pendingRewards, setPendingRewards] = useState("0");
 
+  // Define masterChefContract outside of useEffect
+  const provider = getProvider();
+  const signer = getSigner(provider);
+  const masterChefContract = getMasterChefInstance(0, signer); // Assuming pool id is 0
+
   useEffect(() => {
     // Fetch and set balances
     fetchBalances();
@@ -68,8 +73,6 @@ const Staking = () => {
 
   const fetchBalances = async () => {
     try {
-      const provider = getProvider();
-      const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
 
@@ -95,10 +98,6 @@ const Staking = () => {
   const handleStakeTokens = async () => {
     try {
       setLoading(true);
-      const provider = getProvider();
-      const signer = getSigner(provider);
-      const networkId = await getNetwork(provider);
-      const masterChefContract = getMasterChefInstance(networkId, signer);
 
       // Stake tokens
       const transaction = await masterChefContract.deposit(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming 'deposit' is the correct method name, 0 is the pool id
@@ -119,10 +118,6 @@ const Staking = () => {
   const handleWithdrawTokens = async () => {
     try {
       setLoading(true);
-      const provider = getProvider();
-      const signer = getSigner(provider);
-      const networkId = await getNetwork(provider);
-      const masterChefContract = getMasterChefInstance(networkId, signer);
 
       // Withdraw tokens
       const transaction = await masterChefContract.withdraw(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming 'withdraw' is the correct method name, 0 is the pool id
