@@ -59,7 +59,7 @@ const Staking = () => {
   const [stakingAmount, setStakingAmount] = useState("");
   const [totalTokens, setTotalTokens] = useState("0");
   const [walletTokens, setWalletTokens] = useState("0");
-  const [pendingRewards, setPendingRewards] = useState("0");
+  const [pendingBone, setPendingBone] = useState("0");
 
   // Define masterChefContract outside of useEffect
   const provider = getProvider();
@@ -87,9 +87,9 @@ const Staking = () => {
       setTotalTokens(formattedTotalSupply.toString());
 
       // Fetch pending rewards
-      const pendingRewards = await masterChefContract.pendingRewards(0, signer.getAddress()); // Assuming pool id is 0
+      const pendingRewards = await masterChefContract.pendingBone(0, signer.getAddress()); // Assuming pool id is 0
       const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
-      setPendingRewards(formattedPendingRewards.toString());
+      setPendingBone(formattedPendingRewards.toString());
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -164,7 +164,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Pending Rewards</Typography>
-              <Typography variant="body1">{pendingRewards}</Typography>
+              <Typography variant="body1">{pendingBone}</Typography>
             </CardContent>
           </Card>
         </Grid>
