@@ -113,8 +113,8 @@ const Staking = () => {
         throw new Error("Please enter a valid amount to stake.");
       }
   
-      // Stake tokens
-      const transaction = await masterChefContract.deposit(0, amountToStake);
+      // Deposit tokens
+      const transaction = await masterChefContract.deposit(0, amountToStake, { value: 0 });
       await transaction.wait();
   
       setClaimMessage("Tokens staked successfully!");
@@ -130,6 +130,7 @@ const Staking = () => {
   };
   
   
+  
   const handleWithdrawTokens = async () => {
     try {
       setLoading(true);
@@ -143,7 +144,7 @@ const Staking = () => {
       }
   
       // Withdraw tokens
-      const transaction = await masterChefContract.withdraw(0, amountToWithdraw);
+      const transaction = await masterChefContract.withdraw(0, amountToWithdraw, { value: 0 });
       await transaction.wait();
   
       setClaimMessage("Tokens withdrawn successfully!");
@@ -156,9 +157,7 @@ const Staking = () => {
     } finally {
       setLoading(false);
     }
-  };
-  
-  
+  };  
 
   return (
     <Container className={classes.container}>
