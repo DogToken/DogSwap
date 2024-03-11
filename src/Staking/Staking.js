@@ -59,8 +59,8 @@ const Staking = () => {
   const [stakingAmount, setStakingAmount] = useState("");
   const [totalTokens, setTotalTokens] = useState("0");
   const [walletTokens, setWalletTokens] = useState("0");
-  const [pendingRewards, setPendingRewards] = useState("0");
-  const [stakedTokens, setStakedTokens] = useState("0");
+  const [pendingBone, setPendingBone] = useState("0");
+  const [stakedAmount, setStakedAmount] = useState("0"); // State variable to hold the staked amount
 
   useEffect(() => {
     // Fetch and set balances
@@ -86,14 +86,14 @@ const Staking = () => {
       setTotalTokens(formattedTotalSupply.toString());
 
       // Fetch pending rewards
-      const pendingRewards = await masterChefContract.pendingRewards(0, signer.getAddress()); // Assuming pool id is 0
+      const pendingRewards = await masterChefContract.pendingBone(0, signer.getAddress()); // Assuming pool id is 0
       const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
-      setPendingRewards(formattedPendingRewards.toString());
+      setPendingBone(formattedPendingRewards.toString());
 
-      // Fetch staked tokens
-      const stakedTokens = await masterChefContract.stakedTokens(0, signer.getAddress()); // Assuming pool id is 0
-      const formattedStakedTokens = ethers.utils.formatUnits(stakedTokens, 18); // Assuming 18 decimals for the token
-      setStakedTokens(formattedStakedTokens.toString());
+      // Fetch staked amount
+      const userInfo = await masterChefContract.userInfo(0, signer.getAddress()); // Assuming pool id is 0
+      const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18); // Assuming 18 decimals for the token
+      setStakedAmount(formattedStakedAmount.toString());
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -114,6 +114,7 @@ const Staking = () => {
       // Get the network ID
       const provider = getProvider();
       const networkId = await getNetwork(provider);
+      const signer = getSigner(provider);
 
       // Get Bone token instance
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
@@ -143,7 +144,7 @@ const Staking = () => {
     try {
       setLoading(true);
 
-      // Parse staking amount
+      // Parse withdrawal amount
       const amountToWithdraw = ethers.utils.parseUnits(stakingAmount, 18);
 
       // Ensure the amount to withdraw is greater than zero
@@ -154,10 +155,11 @@ const Staking = () => {
       // Get the network ID
       const provider = getProvider();
       const networkId = await getNetwork(provider);
+      const signer = getSigner(provider);
 
       // Withdraw tokens
       const masterChefContract = getMasterChefInstance(networkId, signer);
-      const transaction = await masterChefContract.withdraw(0, amountToWithdraw, { value: 0 });
+      const transaction = await masterChefContract.withdraw(0, amountToWithdraw);
       await transaction.wait();
 
       setClaimMessage("Tokens withdrawn successfully!");
@@ -201,7 +203,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Staked Tokens</Typography>
-              <Typography variant="body1">{stakedTokens}</Typography>
+              <Typography variant="body1">{stakedAmount}</Typography> {/* Display staked amount */}
             </CardContent>
           </Card>
         </Grid>
@@ -209,7 +211,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Pending Rewards</Typography>
-              <Typography variant="body1">{pendingRewards}</Typography>
+              <Typography variant="body1">{pendingBone}</Typography>
             </CardContent>
           </Card>
         </Grid>
