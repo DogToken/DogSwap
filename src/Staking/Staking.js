@@ -191,14 +191,14 @@ const Staking = () => {
         💰 Staking $BONE
       </Typography>
       <Typography variant="body1" className={classes.subTitle}>
-        Stake your $BONE tokens to earn rewards and support the network.
+        Stake your $BONE tokens to earn rewards and support the DogSwap ecosystem.
       </Typography>
       <Grid container spacing={2} justify="center">
         <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faCoins} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Total Tokens: {totalTokens}</Typography>
+              <Typography variant="h6" className={classes.balanceText}>Total $BONE: {totalTokens}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -206,7 +206,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faWallet} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Wallet Tokens: {walletTokens}</Typography>
+              <Typography variant="h6" className={classes.balanceText}>Your $BONE: {walletTokens}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -214,7 +214,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faHandHoldingUsd} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Staked Tokens: {stakedAmount}</Typography>
+              <Typography variant="h6" className={classes.balanceText}>Staked $BONE: {stakedAmount}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -222,7 +222,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faClock} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Pending Rewards: {pendingBone}</Typography>
+              <Typography variant="h6" className={classes.balanceText}>Pending $BONE: {pendingBone}</Typography>
             </CardContent>
           </Card>
         </Grid>
