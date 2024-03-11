@@ -113,6 +113,13 @@ const Staking = () => {
         throw new Error("Please enter a valid amount to stake.");
       }
   
+      // Get Bone token instance
+      const boneTokenContract = getBoneTokenInstance(networkId, signer);
+  
+      // Approve spending tokens
+      const approveTx = await boneTokenContract.approve(MASTER_CHEF_ADDRESS, amountToStake);
+      await approveTx.wait();
+  
       // Deposit tokens
       const transaction = await masterChefContract.deposit(0, amountToStake, { value: 0 });
       await transaction.wait();
@@ -129,8 +136,6 @@ const Staking = () => {
     }
   };
   
-  
-  
   const handleWithdrawTokens = async () => {
     try {
       setLoading(true);
@@ -144,7 +149,7 @@ const Staking = () => {
       }
   
       // Withdraw tokens
-      const transaction = await masterChefContract.withdraw(0, amountToWithdraw, { value: 0 });
+      const transaction = await masterChefContract.withdraw(0, amountToWithdraw);
       await transaction.wait();
   
       setClaimMessage("Tokens withdrawn successfully!");
