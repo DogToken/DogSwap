@@ -105,8 +105,15 @@ const Staking = () => {
     try {
       setLoading(true);
   
-      // Stake tokens
+      // Parse staking amount
       const amountToStake = ethers.utils.parseUnits(stakingAmount, 18);
+  
+      // Ensure the amount to stake is greater than zero
+      if (amountToStake.lte(0)) {
+        throw new Error("Please enter a valid amount to stake.");
+      }
+  
+      // Stake tokens
       const transaction = await masterChefContract.deposit(0, amountToStake);
       await transaction.wait();
   
@@ -122,12 +129,20 @@ const Staking = () => {
     }
   };
   
+  
   const handleWithdrawTokens = async () => {
     try {
       setLoading(true);
   
-      // Withdraw tokens
+      // Parse withdrawal amount
       const amountToWithdraw = ethers.utils.parseUnits(stakingAmount, 18);
+  
+      // Ensure the amount to withdraw is greater than zero
+      if (amountToWithdraw.lte(0)) {
+        throw new Error("Please enter a valid amount to withdraw.");
+      }
+  
+      // Withdraw tokens
       const transaction = await masterChefContract.withdraw(0, amountToWithdraw);
       await transaction.wait();
   
@@ -142,6 +157,7 @@ const Staking = () => {
       setLoading(false);
     }
   };
+  
   
 
   return (
