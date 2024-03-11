@@ -73,6 +73,8 @@ const Faucet = () => {
     try {
       if (faucetContract) {
         await faucetContract.methods.requestTokens().send({ from: account });
+        // After requesting tokens, fetch updated account details
+        fetchAccountDetails();
       }
     } catch (error) {
       console.error('Error getting cookie tokens:', error);
