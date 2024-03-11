@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Container, Typography, CircularProgress, TextField } from "@material-ui/core";
+import { Button, Container, Typography, CircularProgress, TextField, Grid, Card, CardContent } from "@material-ui/core";
 import { Contract, BigNumber } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import masterChefABI from "./abis/MasterChef.json";
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[3],
   },
   button: {
-    marginTop: theme.spacing(2),
+    margin: theme.spacing(2),
   },
   loading: {
     marginTop: theme.spacing(2),
@@ -30,6 +30,14 @@ const useStyles = makeStyles((theme) => ({
   subTitle: {
     color: theme.palette.text.secondary,
     marginBottom: theme.spacing(2),
+  },
+  card: {
+    margin: theme.spacing(1),
+    padding: theme.spacing(2),
+    backgroundColor: theme.palette.secondary.light,
+  },
+  cardContent: {
+    textAlign: "left",
   },
 }));
 
@@ -68,14 +76,14 @@ const Staking = () => {
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
 
       const [total, staked, wallet, rewards] = await Promise.all([
-        masterChefContract.totalAllocPoint(),
-        masterChefContract.userInfo(0, signer.getAddress()), // Updated method name
+        masterChefContract.totalTokens(),
+        masterChefContract.totalStakedTokens(),
         boneTokenContract.balanceOf(signer.getAddress()),
-        masterChefContract.pendingBone(0, signer.getAddress()), // Assuming 'pendingBone' is the correct method name
+        masterChefContract.pendingRewards(signer.getAddress()),
       ]);
 
       setTotalTokens(total);
-      setTotalStakedTokens(staked.amount); // Access the 'amount' property of the returned object
+      setTotalStakedTokens(staked);
       setWalletTokens(wallet);
       setPendingRewards(rewards);
     } catch (error) {
@@ -106,6 +114,29 @@ const Staking = () => {
     }
   };
 
+  const handleWithdrawTokens = async () => {
+    try {
+      setLoading(true);
+      const provider = getProvider();
+      const signer = getSigner(provider);
+      const networkId = await getNetwork(provider);
+
+      const masterChefContract = getMasterChefInstance(networkId, signer);
+      const transaction = await masterChefContract.withdraw(stakingAmount); // Assuming 'withdraw' is the correct method name
+
+      await transaction.wait();
+
+      setClaimMessage("Tokens withdrawn successfully!");
+      // Refresh balances after withdrawal
+      fetchBalances();
+    } catch (error) {
+      console.error("Error withdrawing tokens:", error);
+      setClaimMessage("Failed to withdraw tokens. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Container className={classes.container}>
       <Typography variant="h4" className={classes.title}>
@@ -114,12 +145,47 @@ const Staking = () => {
       <Typography variant="body1" className={classes.subTitle}>
         Stake your $BONE tokens to earn rewards and support the network.
       </Typography>
+      <Grid container spacing={2} justify="center">
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <Typography variant="h6">Total Tokens</Typography>
+              <Typography variant="body1">{totalTokens.toString()}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <Typography variant="h6">Total Staked Tokens</Typography>
+              <Typography variant="body1">{totalStakedTokens.toString()}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <Typography variant="h6">Wallet Tokens</Typography>
+              <Typography variant="body1">{walletTokens.toString()}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <Typography variant="h6">Pending Rewards</Typography>
+              <Typography variant="body1">{pendingRewards.toString()}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
       <TextField
-        label="Stake Amount"
+        label="Amount to Stake"
         variant="outlined"
+        fullWidth
+        margin="normal"
         value={stakingAmount}
         onChange={(e) => setStakingAmount(e.target.value)}
-        className={classes.textField}
       />
       <Button
         variant="contained"
@@ -130,24 +196,20 @@ const Staking = () => {
       >
         {loading ? <CircularProgress size={24} color="inherit" /> : "Stake $BONE 💰"}
       </Button>
+      <Button
+        variant="contained"
+        color="secondary"
+        className={classes.button}
+        onClick={handleWithdrawTokens}
+        disabled={loading}
+      >
+        {loading ? <CircularProgress size={24} color="inherit" /> : "Withdraw $BONE 💰"}
+      </Button>
       {claimMessage && (
         <Typography variant="body1" className={classes.loading}>
           {claimMessage}
         </Typography>
       )}
-      {/* Display balance information */}
-      <Typography variant="body1" className={classes.subTitle}>
-        Total Tokens: {totalTokens.toString()}
-      </Typography>
-      <Typography variant="body1" className={classes.subTitle}>
-        Total Staked Tokens: {totalStakedTokens.toString()}
-      </Typography>
-      <Typography variant="body1" className={classes.subTitle}>
-        Wallet Tokens: {walletTokens.toString()}
-      </Typography>
-      <Typography variant="body1" className={classes.subTitle}>
-        Pending Rewards: {pendingRewards.toString()}
-      </Typography>
     </Container>
   );
 };
