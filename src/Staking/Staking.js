@@ -69,13 +69,13 @@ const Staking = () => {
 
       const [total, staked, wallet, rewards] = await Promise.all([
         masterChefContract.totalAllocPoint(),
-        masterChefContract.balanceOf(signer.getAddress()), // Assuming 'balanceOf' is the correct method name for staked tokens
+        masterChefContract.userInfo(0, signer.getAddress()), // Updated method name
         boneTokenContract.balanceOf(signer.getAddress()),
         masterChefContract.pendingBone(0, signer.getAddress()), // Assuming 'pendingBone' is the correct method name
       ]);
 
       setTotalTokens(total);
-      setTotalStakedTokens(staked);
+      setTotalStakedTokens(staked.amount); // Access the 'amount' property of the returned object
       setWalletTokens(wallet);
       setPendingRewards(rewards);
     } catch (error) {
