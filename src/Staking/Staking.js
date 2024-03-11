@@ -108,7 +108,46 @@ const Staking = () => {
 
   return (
     <Container className={classes.container}>
-      {/* JSX content here */}
+      <Typography variant="h4" className={classes.title}>
+        💰 Staking $BONE
+      </Typography>
+      <Typography variant="body1" className={classes.subTitle}>
+        Stake your $BONE tokens to earn rewards and support the network.
+      </Typography>
+      <TextField
+        label="Stake Amount"
+        variant="outlined"
+        value={stakingAmount}
+        onChange={(e) => setStakingAmount(e.target.value)}
+        className={classes.textField}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        className={classes.button}
+        onClick={handleStakeTokens}
+        disabled={loading}
+      >
+        {loading ? <CircularProgress size={24} color="inherit" /> : "Stake $BONE 💰"}
+      </Button>
+      {claimMessage && (
+        <Typography variant="body1" className={classes.loading}>
+          {claimMessage}
+        </Typography>
+      )}
+      {/* Display balance information */}
+      <Typography variant="body1" className={classes.subTitle}>
+        Total Tokens: {totalTokens.toString()}
+      </Typography>
+      <Typography variant="body1" className={classes.subTitle}>
+        Total Staked Tokens: {totalStakedTokens.toString()}
+      </Typography>
+      <Typography variant="body1" className={classes.subTitle}>
+        Wallet Tokens: {walletTokens.toString()}
+      </Typography>
+      <Typography variant="body1" className={classes.subTitle}>
+        Pending Rewards: {pendingRewards.toString()}
+      </Typography>
     </Container>
   );
 };
