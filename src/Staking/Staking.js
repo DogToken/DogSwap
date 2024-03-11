@@ -191,7 +191,7 @@ const Staking = () => {
         💰 Staking $BONE
       </Typography>
       <Typography variant="body1" className={classes.subTitle}>
-        Stake your $BONE tokens to earn rewards and support the DogSwap ecosystem.
+        Stake your $BONE tokens to earn rewards and support the DogSwap ecosystem. Carefull, there is a 10% deposit fee.
       </Typography>
       <Grid container spacing={2} justify="center">
         <Grid item xs={12} sm={6} md={3}>
