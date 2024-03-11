@@ -58,13 +58,9 @@ const Staking = () => {
   const [claimMessage, setClaimMessage] = useState("");
   const [stakingAmount, setStakingAmount] = useState("");
   const [totalTokens, setTotalTokens] = useState("0");
+  const [totalStakedTokens, setTotalStakedTokens] = useState("0");
   const [walletTokens, setWalletTokens] = useState("0");
   const [pendingRewards, setPendingRewards] = useState("0");
-
-  // Define masterChefContract outside of useEffect
-  const provider = getProvider();
-  const signer = getSigner(provider);
-  const masterChefContract = getMasterChefInstance(0, signer); // Assuming pool id is 0
 
   useEffect(() => {
     // Fetch and set balances
@@ -73,23 +69,25 @@ const Staking = () => {
 
   const fetchBalances = async () => {
     try {
+      const provider = getProvider();
+      const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
+      const masterChefContract = getMasterChefInstance(networkId, signer);
 
       // Fetch the balance of the user's wallet
       const walletBalance = await boneTokenContract.balanceOf(signer.getAddress());
       const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
       setWalletTokens(formattedWalletBalance.toString());
 
-      // Fetch total token supply
-      const totalSupply = await boneTokenContract.totalSupply();
-      const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18); // Assuming 18 decimals for the token
-      setTotalTokens(formattedTotalSupply.toString());
+      // Fetch total staked tokens and pending rewards
+      const [totalStaked, rewards] = await Promise.all([
+        masterChefContract.totalStakedTokens(),
+        masterChefContract.pendingRewards(signer.getAddress())
+      ]);
 
-      // Fetch pending rewards
-      const pendingRewards = await masterChefContract.pendingRewards(0, signer.getAddress()); // Assuming pool id is 0
-      const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
-      setPendingRewards(formattedPendingRewards.toString());
+      setTotalStakedTokens(totalStaked.toString());
+      setPendingRewards(rewards.toString());
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -98,9 +96,13 @@ const Staking = () => {
   const handleStakeTokens = async () => {
     try {
       setLoading(true);
+      const provider = getProvider();
+      const signer = getSigner(provider);
+      const networkId = await getNetwork(provider);
+      const masterChefContract = getMasterChefInstance(networkId, signer);
 
       // Stake tokens
-      const transaction = await masterChefContract.deposit(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming 'deposit' is the correct method name, 0 is the pool id
+      const transaction = await masterChefContract.deposit(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming pool id is 0
       await transaction.wait();
 
       setClaimMessage("Tokens staked successfully!");
@@ -118,9 +120,13 @@ const Staking = () => {
   const handleWithdrawTokens = async () => {
     try {
       setLoading(true);
+      const provider = getProvider();
+      const signer = getSigner(provider);
+      const networkId = await getNetwork(provider);
+      const masterChefContract = getMasterChefInstance(networkId, signer);
 
       // Withdraw tokens
-      const transaction = await masterChefContract.withdraw(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming 'withdraw' is the correct method name, 0 is the pool id
+      const transaction = await masterChefContract.withdraw(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming pool id is 0
       await transaction.wait();
 
       setClaimMessage("Tokens withdrawn successfully!");
@@ -144,7 +150,7 @@ const Staking = () => {
         Stake your $BONE tokens to earn rewards and support the network.
       </Typography>
       <Grid container spacing={2} justify="center">
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Total Tokens</Typography>
@@ -152,7 +158,15 @@ const Staking = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <Typography variant="h6">Total Staked Tokens</Typography>
+              <Typography variant="body1">{totalStakedTokens}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Wallet Tokens</Typography>
@@ -160,7 +174,7 @@ const Staking = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Pending Rewards</Typography>
@@ -170,7 +184,7 @@ const Staking = () => {
         </Grid>
       </Grid>
       <TextField
-        label="Amount to Stake"
+        label="Amount to Stake/Withdraw"
         variant="outlined"
         fullWidth
         margin="normal"
