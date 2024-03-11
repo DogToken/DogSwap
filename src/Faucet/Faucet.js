@@ -62,7 +62,7 @@ const Faucet = () => {
   return (
     <Container className={classes.container}>
       <Typography variant="h4" gutterBottom>
-        Faucet
+      🦴 $BONE Faucet
       </Typography>
       <Button
         variant="contained"
@@ -71,7 +71,7 @@ const Faucet = () => {
         onClick={handleClaimTokens}
         disabled={loading}
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Claim Tokens"}
+        {loading ? <CircularProgress size={24} color="inherit" /> : "Claim $BONE 🦴"}
       </Button>
       {claimMessage && (
         <Typography variant="body1" className={classes.loading}>
