@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Container, Typography, CircularProgress, TextField, Grid, Card, CardContent } from "@material-ui/core";
-import { Contract, BigNumber } from "ethers";
+import { Contract, BigNumber, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import boneTokenABI from "./abis/BoneToken.json"; // Import the ABI for the $BONE token contract
 
@@ -70,7 +70,8 @@ const Staking = () => {
 
       // Fetch the balance of the user's wallet
       const walletBalance = await boneTokenContract.balanceOf(signer.getAddress());
-      setWalletTokens(walletBalance);
+      const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
+      setWalletTokens(formattedWalletBalance);
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -145,7 +146,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Wallet Tokens</Typography>
-              <Typography variant="body1">{walletTokens.toString()}</Typography>
+              <Typography variant="body1">{walletTokens}</Typography>
             </CardContent>
           </Card>
         </Grid>
