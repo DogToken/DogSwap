@@ -104,13 +104,14 @@ const Staking = () => {
   const handleStakeTokens = async () => {
     try {
       setLoading(true);
-
+  
       // Stake tokens
-      const transaction = await masterChefContract.deposit(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming 'deposit' is the correct method name, 0 is the pool id
+      const amountToStake = ethers.utils.parseUnits(stakingAmount, 18);
+      const transaction = await masterChefContract.deposit(0, amountToStake);
       await transaction.wait();
-
+  
       setClaimMessage("Tokens staked successfully!");
-
+  
       // Refresh balances after staking
       fetchBalances();
     } catch (error) {
@@ -120,17 +121,18 @@ const Staking = () => {
       setLoading(false);
     }
   };
-
+  
   const handleWithdrawTokens = async () => {
     try {
       setLoading(true);
-
+  
       // Withdraw tokens
-      const transaction = await masterChefContract.withdraw(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming 'withdraw' is the correct method name, 0 is the pool id
+      const amountToWithdraw = ethers.utils.parseUnits(stakingAmount, 18);
+      const transaction = await masterChefContract.withdraw(0, amountToWithdraw);
       await transaction.wait();
-
+  
       setClaimMessage("Tokens withdrawn successfully!");
-
+  
       // Refresh balances after withdrawal
       fetchBalances();
     } catch (error) {
@@ -140,6 +142,7 @@ const Staking = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <Container className={classes.container}>
