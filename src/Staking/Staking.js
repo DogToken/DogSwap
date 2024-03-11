@@ -68,10 +68,10 @@ const Staking = () => {
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
 
       const [total, staked, wallet, rewards] = await Promise.all([
-        masterChefContract.totalTokens(),
-        masterChefContract.totalStakedTokens(),
+        masterChefContract.totalAllocPoint(),
+        masterChefContract.balanceOf(signer.getAddress()), // Assuming 'balanceOf' is the correct method name for staked tokens
         boneTokenContract.balanceOf(signer.getAddress()),
-        masterChefContract.pendingRewards(signer.getAddress()),
+        masterChefContract.pendingBone(0, signer.getAddress()), // Assuming 'pendingBone' is the correct method name
       ]);
 
       setTotalTokens(total);
