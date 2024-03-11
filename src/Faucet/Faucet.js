@@ -22,23 +22,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Faucet = () => {
   const classes = useStyles();
-  const [account, setAccount] = useState('');
   const [cookieBalance, setCookieBalance] = useState(0);
   const [contractBalance, setContractBalance] = useState(0);
   const [waitingTime, setWaitingTime] = useState(0);
   const [faucetContract, setFaucetContract] = useState(null);
-
-  useEffect(() => {
-    initialize();
-  }, []);
-
-  const initialize = async () => {
-    try {
-      // Already handled by the Web3Provider
-    } catch (error) {
-      console.error('Error initializing:', error);
-    }
-  };
 
   const fetchAccountDetails = async (network) => {
     try {
