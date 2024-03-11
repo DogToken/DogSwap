@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Container, Typography, CircularProgress, TextField, Grid, Card, CardContent } from "@material-ui/core";
 import { Contract, BigNumber } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
-import masterChefABI from "./abis/MasterChef.json";
 import boneTokenABI from "./abis/BoneToken.json"; // Import the ABI for the $BONE token contract
 
 const useStyles = makeStyles((theme) => ({
@@ -44,10 +43,6 @@ const useStyles = makeStyles((theme) => ({
 const MASTER_CHEF_ADDRESS = "0x4f79af8335d41A98386f09d79D19Ab1552d0b925"; // Update with your MasterChef contract address
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF"; // Update with the $BONE token contract address
 
-const getMasterChefInstance = (networkId, signer) => {
-  return new Contract(MASTER_CHEF_ADDRESS, masterChefABI, signer);
-};
-
 const getBoneTokenInstance = (networkId, signer) => {
   return new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
 };
@@ -72,23 +67,29 @@ const Staking = () => {
       const provider = getProvider();
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
-      const masterChefContract = getMasterChefInstance(networkId, signer);
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
 
-      const [total, staked, wallet, rewards] = await Promise.all([
-        masterChefContract.totalTokens(),
-        masterChefContract.totalStakedTokens(),
+      const [wallet, rewards] = await Promise.all([
         boneTokenContract.balanceOf(signer.getAddress()),
-        masterChefContract.pendingRewards(signer.getAddress()),
+        getMasterChefData(networkId, signer)
       ]);
 
-      setTotalTokens(total);
-      setTotalStakedTokens(staked);
       setWalletTokens(wallet);
       setPendingRewards(rewards);
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
+  };
+
+  const getMasterChefData = async (networkId, signer) => {
+    const masterChefContract = getMasterChefInstance(networkId, signer);
+    const [totalAllocPoint, staked] = await Promise.all([
+      masterChefContract.totalAllocPoint(),
+      masterChefContract.totalStakedTokens(),
+    ]);
+
+    setTotalTokens(totalAllocPoint);
+    setTotalStakedTokens(staked);
   };
 
   const handleStakeTokens = async () => {
