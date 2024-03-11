@@ -27,25 +27,16 @@ const Faucet = () => {
   const [waitingTime, setWaitingTime] = useState(0);
   const [faucetContract, setFaucetContract] = useState(null);
 
-  useEffect(() => {
-    initialize();
-  }, []);
-
-  const initialize = async () => {
-    try {
-      // Already handled by the Web3Provider
-    } catch (error) {
-      console.error('Error initializing:', error);
-    }
-  };
-
   const fetchAccountDetails = async (network) => {
     try {
+      console.log('Fetching account details for account:', network.account);
+      console.log('Faucet contract address:', network.faucetAddress);
       if (faucetContract && network.account) {
         console.log('Fetching account details...');
         const provider = new ethers.providers.Web3Provider(network.provider);
         const signer = provider.getSigner();
         const contract = new ethers.Contract(network.faucetAddress, FaucetABI, signer);
+        console.log('Contract:', contract);
         const cookieBalanceResult = await contract.balanceOf(network.account);
         const contractBalanceResult = await contract.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830');
         const waitTime = await contract.waitTime();
@@ -104,3 +95,4 @@ const Faucet = () => {
 };
 
 export default Faucet;
+
