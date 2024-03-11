@@ -32,4 +32,10 @@ const claimTokensFromFaucet = async () => {
   }
 };
 
-export { claimTokensFromFaucet, BONE_ADDRESS, boneABI };
+const Faucet = {
+  claimTokensFromFaucet,
+  BONE_ADDRESS,
+  boneABI
+};
+
+export default Faucet;
