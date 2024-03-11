@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
+import { getProvider, getAccount, doesTokenExist } from './ethereumFunctions'; // Import necessary functions
 import FaucetABI from './abis/faucet.json'; // Update with correct file path
 import { Container, Paper, Typography, Button, makeStyles } from '@material-ui/core';
-import { getProvider, getAccount, getSigner, getNetwork, doesTokenExist } from "../ethereumFunctions"; // Import necessary functions
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,17 +36,15 @@ const Faucet = () => {
     try {
       if (typeof window.ethereum !== 'undefined') {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = getProvider();
-        const signer = getSigner(provider);
-        const accountAddress = await getAccount();
-        setAccount(accountAddress);
-        const networkId = await getNetwork(provider);
-        if (networkId === 24734) { // Update with your network ID
-          const faucetContractInstance = getFaucetContract(signer); // Update to use getFaucetContract function
+        const provider = getProvider(); // Use getProvider function
+        const accounts = await getAccount();
+        setAccount(accounts);
+        const faucetContractInstance = doesTokenExist('0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0', provider); // Use doesTokenExist function
+        if (faucetContractInstance) {
           setFaucetContract(faucetContractInstance);
           fetchAccountDetails();
         } else {
-          console.log('Please connect to the correct network.');
+          console.log('Faucet contract not found.');
         }
       } else {
         console.log('Please install MetaMask to use this dApp.');
@@ -58,9 +56,9 @@ const Faucet = () => {
 
   const fetchAccountDetails = async () => {
     try {
-      const cookieBalanceResult = await faucetContract.methods.balanceOf(account).call();
-      const contractBalanceResult = await faucetContract.methods.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830').call(); // Update with faucet address
-      const waitTime = await faucetContract.methods.waitTime().call();
+      const cookieBalanceResult = await faucetContract.balanceOf(account);
+      const contractBalanceResult = await faucetContract.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830');
+      const waitTime = await faucetContract.waitTime();
       setCookieBalance(cookieBalanceResult);
       setContractBalance(contractBalanceResult);
       setWaitingTime(waitTime);
@@ -71,15 +69,10 @@ const Faucet = () => {
 
   const getCookieTokens = async () => {
     try {
-      await faucetContract.methods.requestTokens().send({ from: account });
+      await faucetContract.requestTokens({ from: account });
     } catch (error) {
       console.error('Error getting cookie tokens:', error);
     }
-  };
-
-  const getFaucetContract = (signer) => {
-    const faucetAddress = '0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0'; // Update with faucet address
-    return new signer.Contract(FaucetABI, faucetAddress);
   };
 
   return (
