@@ -13,12 +13,23 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     border: `2px solid ${theme.palette.primary.main}`,
     borderRadius: theme.spacing(2),
+    background: theme.palette.background.default,
+    boxShadow: theme.shadows[3],
   },
   button: {
     marginTop: theme.spacing(2),
   },
   loading: {
     marginTop: theme.spacing(2),
+  },
+  title: {
+    marginBottom: theme.spacing(2),
+    fontWeight: "bold",
+    color: theme.palette.primary.main,
+  },
+  subTitle: {
+    color: theme.palette.text.secondary,
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -61,8 +72,11 @@ const Faucet = () => {
 
   return (
     <Container className={classes.container}>
-      <Typography variant="h4" gutterBottom>
-      🦴 $BONE Faucet
+      <Typography variant="h4" className={classes.title}>
+        🦴 $BONE Faucet
+      </Typography>
+      <Typography variant="body1" className={classes.subTitle}>
+        Welcome to the $BONE Faucet! Claim free $BONE tokens to test your applications.
       </Typography>
       <Button
         variant="contained"
