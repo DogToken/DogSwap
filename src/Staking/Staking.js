@@ -86,12 +86,12 @@ const Staking = () => {
       setTotalTokens(formattedTotalSupply.toString());
 
       // Fetch pending rewards
-      const pendingRewards = await masterChefContract.pendingBone(0, signer.getAddress()); // Assuming pool id is 0
+      const pendingRewards = await masterChefContract.pendingBone(3, signer.getAddress()); // Assuming pool id is 0
       const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
       setPendingBone(formattedPendingRewards.toString());
 
       // Fetch staked amount
-      const userInfo = await masterChefContract.userInfo(0, signer.getAddress()); // Assuming pool id is 0
+      const userInfo = await masterChefContract.userInfo(3, signer.getAddress()); // Assuming pool id is 0
       const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18); // Assuming 18 decimals for the token
       setStakedAmount(formattedStakedAmount.toString());
     } catch (error) {
