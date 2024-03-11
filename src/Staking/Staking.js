@@ -3,6 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Container, Typography, CircularProgress, TextField, Grid, Card, CardContent } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons'; // Import FontAwesome icons
 import boneTokenABI from "./abis/BoneToken.json"; // Import the ABI for the $BONE token contract
 import masterChefABI from "./abis/MasterChef.json"; // Import the ABI for the MasterChef contract
 
@@ -38,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
   },
   cardContent: {
     textAlign: "left",
+  },
+  balanceIcon: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -186,32 +191,40 @@ const Staking = () => {
         <Grid item xs={12} sm={6} md={4}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <Typography variant="h6">Total Tokens</Typography>
-              <Typography variant="body1">{totalTokens}</Typography>
+              <FontAwesomeIcon icon={faCoins} className={classes.balanceIcon} />
+              <Typography variant="body1">
+                Total Tokens: {totalTokens}
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <Typography variant="h6">Wallet Tokens</Typography>
-              <Typography variant="body1">{walletTokens}</Typography>
+              <FontAwesomeIcon icon={faWallet} className={classes.balanceIcon} />
+              <Typography variant="body1">
+                Wallet Tokens: {walletTokens}
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <Typography variant="h6">Staked Tokens</Typography>
-              <Typography variant="body1">{stakedAmount}</Typography> {/* Display staked amount */}
+              <FontAwesomeIcon icon={faHandHoldingUsd} className={classes.balanceIcon} />
+              <Typography variant="body1">
+                Staked Tokens: {stakedAmount}
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <Typography variant="h6">Pending Rewards</Typography>
-              <Typography variant="body1">{pendingBone}</Typography>
+              <FontAwesomeIcon icon={faClock} className={classes.balanceIcon} />
+              <Typography variant="body1">
+                Pending Rewards: {pendingBone}
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
