@@ -82,6 +82,11 @@ const Staking = () => {
       const totalSupply = await boneTokenContract.totalSupply();
       const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18); // Assuming 18 decimals for the token
       setTotalTokens(formattedTotalSupply.toString());
+
+      // Fetch pending rewards
+      const pendingRewards = await masterChefContract.pendingRewards(0, signer.getAddress()); // Assuming pool id is 0
+      const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
+      setPendingRewards(formattedPendingRewards.toString());
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -96,7 +101,7 @@ const Staking = () => {
       const masterChefContract = getMasterChefInstance(networkId, signer);
 
       // Stake tokens
-      const transaction = await masterChefContract.deposit(0, stakingAmount); // Assuming 'deposit' is the correct method name, 0 is the pool id
+      const transaction = await masterChefContract.deposit(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming 'deposit' is the correct method name, 0 is the pool id
       await transaction.wait();
 
       setClaimMessage("Tokens staked successfully!");
@@ -120,7 +125,7 @@ const Staking = () => {
       const masterChefContract = getMasterChefInstance(networkId, signer);
 
       // Withdraw tokens
-      const transaction = await masterChefContract.withdraw(0, stakingAmount); // Assuming 'withdraw' is the correct method name, 0 is the pool id
+      const transaction = await masterChefContract.withdraw(0, ethers.utils.parseUnits(stakingAmount, 18)); // Assuming 'withdraw' is the correct method name, 0 is the pool id
       await transaction.wait();
 
       setClaimMessage("Tokens withdrawn successfully!");
