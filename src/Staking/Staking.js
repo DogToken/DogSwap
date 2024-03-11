@@ -89,22 +89,22 @@ const Staking = () => {
       // Fetch the balance of the user's wallet
       const walletBalance = await boneTokenContract.balanceOf(signer.getAddress());
       const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
-      setWalletTokens(parseFloat(formattedWalletBalance).toFixed(2));
+      setWalletTokens(parseFloat(formattedWalletBalance).toFixed(5));
 
       // Fetch total token supply
       const totalSupply = await boneTokenContract.totalSupply();
       const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18); // Assuming 18 decimals for the token
-      setTotalTokens(parseFloat(formattedTotalSupply).toFixed(2));
+      setTotalTokens(parseFloat(formattedTotalSupply).toFixed(5));
 
       // Fetch pending rewards
       const pendingRewards = await masterChefContract.pendingBone(3, signer.getAddress()); // Assuming pool id is 0
       const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
-      setPendingBone(parseFloat(formattedPendingRewards).toFixed(2));
+      setPendingBone(parseFloat(formattedPendingRewards).toFixed(5));
 
       // Fetch staked amount
       const userInfo = await masterChefContract.userInfo(3, signer.getAddress()); // Assuming pool id is 0
       const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18); // Assuming 18 decimals for the token
-      setStakedAmount(parseFloat(formattedStakedAmount).toFixed(2));
+      setStakedAmount(parseFloat(formattedStakedAmount).toFixed(5));
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -194,43 +194,35 @@ const Staking = () => {
         Stake your $BONE tokens to earn rewards and support the network.
       </Typography>
       <Grid container spacing={2} justify="center">
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faCoins} className={classes.balanceIcon} />
-              <Typography variant="body1" className={classes.balanceText}>
-                Total Tokens: {totalTokens}
-              </Typography>
+              <FontAwesomeIcon icon={faCoins} size="2x" className={classes.balanceIcon} />
+              <Typography variant="h6" className={classes.balanceText}>Total Tokens: {totalTokens}</Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faWallet} className={classes.balanceIcon} />
-              <Typography variant="body1" className={classes.balanceText}>
-                Wallet Tokens: {walletTokens}
-              </Typography>
+              <FontAwesomeIcon icon={faWallet} size="2x" className={classes.balanceIcon} />
+              <Typography variant="h6" className={classes.balanceText}>Wallet Tokens: {walletTokens}</Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faHandHoldingUsd} className={classes.balanceIcon} />
-              <Typography variant="body1" className={classes.balanceText}>
-                Staked Tokens: {stakedAmount}
-              </Typography>
+              <FontAwesomeIcon icon={faHandHoldingUsd} size="2x" className={classes.balanceIcon} />
+              <Typography variant="h6" className={classes.balanceText}>Staked Tokens: {stakedAmount}</Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={6} md={3}>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faClock} className={classes.balanceIcon} />
-              <Typography variant="body1" className={classes.balanceText}>
-                Pending Rewards: {pendingBone}
-              </Typography>
+              <FontAwesomeIcon icon={faClock} size="2x" className={classes.balanceIcon} />
+              <Typography variant="h6" className={classes.balanceText}>Pending Rewards: {pendingBone}</Typography>
             </CardContent>
           </Card>
         </Grid>
