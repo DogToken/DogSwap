@@ -4,6 +4,7 @@ import { Button, Container, Typography, CircularProgress, TextField, Grid, Card,
 import { Contract, BigNumber, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import boneTokenABI from "./abis/BoneToken.json"; // Import the ABI for the $BONE token contract
+import masterChefABI from "./abis/MasterChef.json"; // Import the ABI for the MasterChef contract
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,9 +42,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF"; // Update with the $BONE token contract address
+const MASTER_CHEF_ADDRESS = "0x4f79af8335d41A98386f09d79D19Ab1552d0b925"; // Update with the MasterChef contract address
 
 const getBoneTokenInstance = (networkId, signer) => {
   return new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
+};
+
+const getMasterChefInstance = (networkId, signer) => {
+  return new Contract(MASTER_CHEF_ADDRESS, masterChefABI, signer);
 };
 
 const Staking = () => {
@@ -67,11 +73,21 @@ const Staking = () => {
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
+      const masterChefContract = getMasterChefInstance(networkId, signer);
 
       // Fetch the balance of the user's wallet
       const walletBalance = await boneTokenContract.balanceOf(signer.getAddress());
       const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
       setWalletTokens(formattedWalletBalance.toString());
+
+      // Fetch total staked tokens and pending rewards
+      const [totalStaked, rewards] = await Promise.all([
+        masterChefContract.totalStakedTokens(),
+        masterChefContract.pendingRewards(signer.getAddress())
+      ]);
+
+      setTotalStakedTokens(totalStaked.toString());
+      setPendingRewards(rewards.toString());
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -83,8 +99,12 @@ const Staking = () => {
       const provider = getProvider();
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
+      const masterChefContract = getMasterChefInstance(networkId, signer);
 
-      // Placeholder logic for staking tokens
+      // Stake tokens
+      const transaction = await masterChefContract.deposit(stakingAmount); // Assuming 'deposit' is the correct method name
+      await transaction.wait();
+
       setClaimMessage("Tokens staked successfully!");
 
       // Refresh balances after staking
@@ -103,8 +123,12 @@ const Staking = () => {
       const provider = getProvider();
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
+      const masterChefContract = getMasterChefInstance(networkId, signer);
 
-      // Placeholder logic for withdrawing tokens
+      // Withdraw tokens
+      const transaction = await masterChefContract.withdraw(stakingAmount); // Assuming 'withdraw' is the correct method name
+      await transaction.wait();
+
       setClaimMessage("Tokens withdrawn successfully!");
 
       // Refresh balances after withdrawal
