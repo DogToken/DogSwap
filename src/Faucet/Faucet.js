@@ -76,7 +76,7 @@ const Faucet = () => {
         🦴 $BONE Faucet
       </Typography>
       <Typography variant="body1" className={classes.subTitle}>
-        Welcome to the $BONE Faucet! Claim free $BONE tokens to test your applications.
+        Welcome to the $BONE Faucet! Claim some free $BONE tokens to stake or trade them!.
       </Typography>
       <Button
         variant="contained"
