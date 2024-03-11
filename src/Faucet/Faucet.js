@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Container, Typography, CircularProgress } from "@material-ui/core";
 import { Contract } from "ethers";
@@ -31,6 +31,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     marginBottom: theme.spacing(2),
   },
+  timer: {
+    margin: theme.spacing(2),
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+    color: theme.palette.primary.main,
+  },
 }));
 
 const BONE_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
@@ -40,34 +46,55 @@ const getFaucetContractInstance = (networkId, signer) => {
   return new Contract(FAUCET_ADDRESS, faucetABI, signer);
 };
 
-const claimTokensFromFaucet = async () => {
-  try {
-    const provider = getProvider();
-    const signer = getSigner(provider);
-    const networkId = await getNetwork(provider);
-
-    const faucetContract = getFaucetContractInstance(networkId, signer);
-    const transaction = await faucetContract.requestTokens(); // Use requestTokens instead of claimTokens
-
-    await transaction.wait();
-
-    return { success: true, message: "Tokens claimed successfully!" };
-  } catch (error) {
-    console.error("Error claiming tokens:", error);
-    return { success: false, message: "Failed to claim tokens. Please try again later." };
-  }
-};
-
 const Faucet = () => {
   const classes = useStyles();
-  const [loading, setLoading] = React.useState(false);
-  const [claimMessage, setClaimMessage] = React.useState("");
+  const [loading, setLoading] = useState(false);
+  const [claimMessage, setClaimMessage] = useState("");
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Set the countdown timer
+      setCountdown((prevCountdown) => (prevCountdown > 0 ? prevCountdown - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleClaimTokens = async () => {
     setLoading(true);
     const result = await claimTokensFromFaucet();
     setLoading(false);
     setClaimMessage(result.message);
+    setCountdown(1800); // Reset countdown to 30 minutes after claiming
+  };
+
+  const claimTokensFromFaucet = async () => {
+    try {
+      const provider = getProvider();
+      const signer = getSigner(provider);
+      const networkId = await getNetwork(provider);
+
+      const faucetContract = getFaucetContractInstance(networkId, signer);
+      const transaction = await faucetContract.requestTokens(); // Use requestTokens instead of claimTokens
+
+      await transaction.wait();
+
+      return { success: true, message: "Tokens claimed successfully!" };
+    } catch (error) {
+      console.error("Error claiming tokens:", error);
+      return { success: false, message: "Failed to claim tokens. Please try again later." };
+    }
+  };
+
+  const renderTimer = () => {
+    const minutes = Math.floor(countdown / 60);
+    const seconds = countdown % 60;
+    return (
+      <Typography variant="body1" className={classes.timer}>
+        Next claim available in: {`${minutes}:${seconds < 10 ? "0" + seconds : seconds}`}
+      </Typography>
+    );
   };
 
   return (
@@ -78,15 +105,18 @@ const Faucet = () => {
       <Typography variant="body1" className={classes.subTitle}>
         Welcome to the $BONE Faucet! Claim some free $BONE tokens to stake or trade them!.
       </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        className={classes.button}
-        onClick={handleClaimTokens}
-        disabled={loading}
-      >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Claim $BONE 🦴"}
-      </Button>
+      {countdown === 0 && (
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          onClick={handleClaimTokens}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Claim $BONE 🦴"}
+        </Button>
+      )}
+      {countdown > 0 && renderTimer()}
       {claimMessage && (
         <Typography variant="body1" className={classes.loading}>
           {claimMessage}
