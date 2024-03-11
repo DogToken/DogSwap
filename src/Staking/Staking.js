@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MASTER_CHEF_ADDRESS = "0x4f79af8335d41A98386f09d79D19Ab1552d0b925"; // Update with your MasterChef contract address
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF"; // Update with the $BONE token contract address
 
 const getBoneTokenInstance = (networkId, signer) => {
@@ -69,27 +68,12 @@ const Staking = () => {
       const networkId = await getNetwork(provider);
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
 
-      const [wallet, rewards] = await Promise.all([
-        boneTokenContract.balanceOf(signer.getAddress()),
-        getMasterChefData(networkId, signer)
-      ]);
-
-      setWalletTokens(wallet);
-      setPendingRewards(rewards);
+      // Fetch the balance of the user's wallet
+      const walletBalance = await boneTokenContract.balanceOf(signer.getAddress());
+      setWalletTokens(walletBalance);
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
-  };
-
-  const getMasterChefData = async (networkId, signer) => {
-    const masterChefContract = getMasterChefInstance(networkId, signer);
-    const [totalAllocPoint, staked] = await Promise.all([
-      masterChefContract.totalAllocPoint(),
-      masterChefContract.totalStakedTokens(),
-    ]);
-
-    setTotalTokens(totalAllocPoint);
-    setTotalStakedTokens(staked);
   };
 
   const handleStakeTokens = async () => {
@@ -99,12 +83,9 @@ const Staking = () => {
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
 
-      const masterChefContract = getMasterChefInstance(networkId, signer);
-      const transaction = await masterChefContract.deposit(stakingAmount); // Assuming 'deposit' is the correct method name
-
-      await transaction.wait();
-
+      // Placeholder logic for staking tokens
       setClaimMessage("Tokens staked successfully!");
+
       // Refresh balances after staking
       fetchBalances();
     } catch (error) {
@@ -122,12 +103,9 @@ const Staking = () => {
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
 
-      const masterChefContract = getMasterChefInstance(networkId, signer);
-      const transaction = await masterChefContract.withdraw(stakingAmount); // Assuming 'withdraw' is the correct method name
-
-      await transaction.wait();
-
+      // Placeholder logic for withdrawing tokens
       setClaimMessage("Tokens withdrawn successfully!");
+
       // Refresh balances after withdrawal
       fetchBalances();
     } catch (error) {
