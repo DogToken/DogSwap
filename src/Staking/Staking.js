@@ -40,9 +40,15 @@ const useStyles = makeStyles((theme) => ({
   },
   cardContent: {
     textAlign: "left",
+    display: "flex",
+    alignItems: "center",
   },
   balanceIcon: {
     marginRight: theme.spacing(1),
+  },
+  balanceText: {
+    fontSize: "1.2rem", // Adjust the font size
+    marginLeft: theme.spacing(1), // Add left margin for spacing
   },
 }));
 
@@ -83,22 +89,22 @@ const Staking = () => {
       // Fetch the balance of the user's wallet
       const walletBalance = await boneTokenContract.balanceOf(signer.getAddress());
       const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
-      setWalletTokens(formattedWalletBalance.toString());
+      setWalletTokens(parseFloat(formattedWalletBalance).toFixed(2));
 
       // Fetch total token supply
       const totalSupply = await boneTokenContract.totalSupply();
       const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18); // Assuming 18 decimals for the token
-      setTotalTokens(formattedTotalSupply.toString());
+      setTotalTokens(parseFloat(formattedTotalSupply).toFixed(2));
 
       // Fetch pending rewards
       const pendingRewards = await masterChefContract.pendingBone(3, signer.getAddress()); // Assuming pool id is 0
       const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
-      setPendingBone(formattedPendingRewards.toString());
+      setPendingBone(parseFloat(formattedPendingRewards).toFixed(2));
 
       // Fetch staked amount
       const userInfo = await masterChefContract.userInfo(3, signer.getAddress()); // Assuming pool id is 0
       const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18); // Assuming 18 decimals for the token
-      setStakedAmount(formattedStakedAmount.toString());
+      setStakedAmount(parseFloat(formattedStakedAmount).toFixed(2));
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -192,7 +198,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faCoins} className={classes.balanceIcon} />
-              <Typography variant="body1">
+              <Typography variant="body1" className={classes.balanceText}>
                 Total Tokens: {totalTokens}
               </Typography>
             </CardContent>
@@ -202,7 +208,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faWallet} className={classes.balanceIcon} />
-              <Typography variant="body1">
+              <Typography variant="body1" className={classes.balanceText}>
                 Wallet Tokens: {walletTokens}
               </Typography>
             </CardContent>
@@ -212,7 +218,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faHandHoldingUsd} className={classes.balanceIcon} />
-              <Typography variant="body1">
+              <Typography variant="body1" className={classes.balanceText}>
                 Staked Tokens: {stakedAmount}
               </Typography>
             </CardContent>
@@ -222,7 +228,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faClock} className={classes.balanceIcon} />
-              <Typography variant="body1">
+              <Typography variant="body1" className={classes.balanceText}>
                 Pending Rewards: {pendingBone}
               </Typography>
             </CardContent>
