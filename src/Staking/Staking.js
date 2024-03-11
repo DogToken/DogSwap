@@ -221,7 +221,7 @@ const Staking = () => {
         variant="outlined"
         fullWidth
         margin="normal"
-        value={stakingAmount}
+        value={parseFloat(stakingAmount).toFixed(18)} // Format stakingAmount with 18 decimal places
         onChange={(e) => setStakingAmount(e.target.value)}
       />
       <Button
