@@ -51,10 +51,10 @@ const Staking = () => {
   const [loading, setLoading] = useState(false);
   const [claimMessage, setClaimMessage] = useState("");
   const [stakingAmount, setStakingAmount] = useState("");
-  const [totalTokens, setTotalTokens] = useState(BigNumber.from(0));
-  const [totalStakedTokens, setTotalStakedTokens] = useState(BigNumber.from(0));
-  const [walletTokens, setWalletTokens] = useState(BigNumber.from(0));
-  const [pendingRewards, setPendingRewards] = useState(BigNumber.from(0));
+  const [totalTokens, setTotalTokens] = useState("0");
+  const [totalStakedTokens, setTotalStakedTokens] = useState("0");
+  const [walletTokens, setWalletTokens] = useState("0");
+  const [pendingRewards, setPendingRewards] = useState("0");
 
   useEffect(() => {
     // Fetch and set balances
@@ -71,7 +71,7 @@ const Staking = () => {
       // Fetch the balance of the user's wallet
       const walletBalance = await boneTokenContract.balanceOf(signer.getAddress());
       const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
-      setWalletTokens(formattedWalletBalance);
+      setWalletTokens(formattedWalletBalance.toString());
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -130,7 +130,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Total Tokens</Typography>
-              <Typography variant="body1">{totalTokens.toString()}</Typography>
+              <Typography variant="body1">{totalTokens}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -138,7 +138,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Total Staked Tokens</Typography>
-              <Typography variant="body1">{totalStakedTokens.toString()}</Typography>
+              <Typography variant="body1">{totalStakedTokens}</Typography>
             </CardContent>
           </Card>
         </Grid>
@@ -154,7 +154,7 @@ const Staking = () => {
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Pending Rewards</Typography>
-              <Typography variant="body1">{pendingRewards.toString()}</Typography>
+              <Typography variant="body1">{pendingRewards}</Typography>
             </CardContent>
           </Card>
         </Grid>
