@@ -60,6 +60,7 @@ const Staking = () => {
   const [totalTokens, setTotalTokens] = useState("0");
   const [walletTokens, setWalletTokens] = useState("0");
   const [pendingBone, setPendingBone] = useState("0");
+  const [stakedAmount, setStakedAmount] = useState("0"); // State variable to hold the staked amount
 
   // Define masterChefContract outside of useEffect
   const provider = getProvider();
@@ -90,6 +91,11 @@ const Staking = () => {
       const pendingRewards = await masterChefContract.pendingBone(0, signer.getAddress()); // Assuming pool id is 0
       const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
       setPendingBone(formattedPendingRewards.toString());
+
+      // Fetch staked amount
+      const userInfo = await masterChefContract.userInfo(0, signer.getAddress()); // Assuming pool id is 0
+      const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18); // Assuming 18 decimals for the token
+      setStakedAmount(formattedStakedAmount.toString());
     } catch (error) {
       console.error("Error fetching balances:", error);
     }
@@ -157,6 +163,14 @@ const Staking = () => {
             <CardContent className={classes.cardContent}>
               <Typography variant="h6">Wallet Tokens</Typography>
               <Typography variant="body1">{walletTokens}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <Typography variant="h6">Staked Tokens</Typography>
+              <Typography variant="body1">{stakedAmount}</Typography> {/* Display staked amount */}
             </CardContent>
           </Card>
         </Grid>
