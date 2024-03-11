@@ -36,10 +36,10 @@ const Faucet = () => {
     try {
       if (typeof window.ethereum !== 'undefined') {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = getProvider(); // Use getProvider function
+        const provider = getProvider();
         const accounts = await getAccount();
         setAccount(accounts);
-        const faucetContractInstance = doesTokenExist('0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0', provider); // Use doesTokenExist function
+        const faucetContractInstance = doesTokenExist('0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0', provider);
         if (faucetContractInstance) {
           setFaucetContract(faucetContractInstance);
           fetchAccountDetails();
@@ -56,12 +56,14 @@ const Faucet = () => {
 
   const fetchAccountDetails = async () => {
     try {
-      const cookieBalanceResult = await faucetContract.balanceOf(account);
-      const contractBalanceResult = await faucetContract.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830');
-      const waitTime = await faucetContract.waitTime();
-      setCookieBalance(cookieBalanceResult);
-      setContractBalance(contractBalanceResult);
-      setWaitingTime(waitTime);
+      if (faucetContract) {
+        const cookieBalanceResult = await faucetContract.methods.balanceOf(account).call();
+        const contractBalanceResult = await faucetContract.methods.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830').call();
+        const waitTime = await faucetContract.methods.waitTime().call();
+        setCookieBalance(cookieBalanceResult);
+        setContractBalance(contractBalanceResult);
+        setWaitingTime(waitTime);
+      }
     } catch (error) {
       console.error('Error fetching account details:', error);
     }
@@ -69,7 +71,9 @@ const Faucet = () => {
 
   const getCookieTokens = async () => {
     try {
-      await faucetContract.requestTokens({ from: account });
+      if (faucetContract) {
+        await faucetContract.methods.requestTokens().send({ from: account });
+      }
     } catch (error) {
       console.error('Error getting cookie tokens:', error);
     }
