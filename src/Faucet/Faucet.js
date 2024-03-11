@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Web3 from 'web3';
+import { Container, Paper, Typography, Button, makeStyles } from '@material-ui/core';
 import { getProvider, getAccount, doesTokenExist } from '../ethereumFunctions'; // Import necessary functions
 import FaucetABI from './abis/faucet.json'; // Update with correct file path
-import { Container, Paper, Typography, Button, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,10 +37,8 @@ const Faucet = () => {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
         const provider = getProvider();
         const accounts = await getAccount();
-        console.log('Account:', accounts); // Check if account is fetched
         setAccount(accounts);
         const faucetContractInstance = doesTokenExist('0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0', provider);
-        console.log('Faucet Contract Instance:', faucetContractInstance); // Check if contract instance is obtained
         if (faucetContractInstance) {
           setFaucetContract(faucetContractInstance);
           fetchAccountDetails();
@@ -59,13 +56,9 @@ const Faucet = () => {
   const fetchAccountDetails = async () => {
     try {
       if (faucetContract && account) {
-        console.log('Fetching account details...');
         const cookieBalanceResult = await faucetContract.methods.balanceOf(account).call();
         const contractBalanceResult = await faucetContract.methods.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830').call();
         const waitTime = await faucetContract.methods.waitTime().call();
-        console.log('Cookie Balance:', cookieBalanceResult);
-        console.log('Contract Balance:', contractBalanceResult);
-        console.log('Waiting Time:', waitTime);
         setCookieBalance(cookieBalanceResult);
         setContractBalance(contractBalanceResult);
         setWaitingTime(waitTime);
@@ -78,8 +71,8 @@ const Faucet = () => {
   const getCookieTokens = async () => {
     try {
       if (faucetContract && account) {
-        await faucetContract.methods.requestTokens().send({ from: account });
-        // After requesting tokens, fetch updated account details
+        const feeAmount = '1000000000000000000'; // 1 ETH in wei
+        await faucetContract.methods.requestTokens().send({ from: account, value: feeAmount });
         fetchAccountDetails();
       }
     } catch (error) {
