@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import { Container, Paper, Typography, Button, makeStyles } from '@material-ui/core';
-import { getProvider, getAccount, doesTokenExist } from '../ethereumFunctions'; // Import necessary functions
-import FaucetABI from './abis/faucet.json'; // Update with correct file path
+import Web3Provider from '../network'; // Import the Web3Provider from the network file
+import FaucetABI from './abis/faucet.json'; // Import the ABI file
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,47 +34,40 @@ const Faucet = () => {
 
   const initialize = async () => {
     try {
-      if (typeof window.ethereum !== 'undefined') {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const provider = getProvider();
-        const accounts = await getAccount();
-        setAccount(accounts);
-        const faucetContractInstance = doesTokenExist('0x98D64Dbe9Bd305cD21e94D4d20aE7F48FDE429B0', provider);
-        if (faucetContractInstance) {
-          setFaucetContract(faucetContractInstance);
-          fetchAccountDetails();
-        } else {
-          console.log('Faucet contract not found.');
-        }
-      } else {
-        console.log('Please install MetaMask to use this dApp.');
-      }
+      // Already handled by the Web3Provider
     } catch (error) {
       console.error('Error initializing:', error);
     }
   };
 
-  const fetchAccountDetails = async () => {
+  const fetchAccountDetails = async (network) => {
     try {
-      if (faucetContract && account) {
-        const cookieBalanceResult = await faucetContract.methods.balanceOf(account).call();
-        const contractBalanceResult = await faucetContract.methods.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830').call();
-        const waitTime = await faucetContract.methods.waitTime().call();
+      if (faucetContract && network.account) {
+        console.log('Fetching account details...');
+        const provider = new ethers.providers.Web3Provider(network.provider);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(network.faucetAddress, FaucetABI, signer);
+        const cookieBalanceResult = await contract.balanceOf(network.account);
+        const contractBalanceResult = await contract.balanceOf('0x13672f4bC2fd37ee68E70f7030e1731701d60830');
+        const waitTime = await contract.waitTime();
+        console.log('Cookie Balance:', cookieBalanceResult);
+        console.log('Contract Balance:', contractBalanceResult);
+        console.log('Waiting Time:', waitTime);
         setCookieBalance(cookieBalanceResult);
         setContractBalance(contractBalanceResult);
         setWaitingTime(waitTime);
+        setFaucetContract(contract);
       }
     } catch (error) {
       console.error('Error fetching account details:', error);
     }
   };
 
-  const getCookieTokens = async () => {
+  const getCookieTokens = async (network) => {
     try {
-      if (faucetContract && account) {
-        const feeAmount = '1000000000000000000'; // 1 ETH in wei
-        await faucetContract.methods.requestTokens().send({ from: account, value: feeAmount });
-        fetchAccountDetails();
+      if (faucetContract && network.account) {
+        console.log('Getting cookie tokens...');
+        // Modify this part to interact with the contract using the signer from the network
       }
     } catch (error) {
       console.error('Error getting cookie tokens:', error);
@@ -81,28 +75,32 @@ const Faucet = () => {
   };
 
   return (
-    <Container>
-      <Paper className={classes.root}>
-        <Typography variant="h4">Cookie Faucet</Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Your Cookie Balance:</strong> {cookieBalance} Cookies
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Contract Balance:</strong> {contractBalance} Cookies
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          <strong>Waiting Time:</strong> {waitingTime / 60} minutes
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.button}
-          onClick={getCookieTokens}
-        >
-          Get Cookies
-        </Button>
-      </Paper>
-    </Container>
+    <Web3Provider
+      render={(network) => (
+        <Container>
+          <Paper className={classes.root}>
+            <Typography variant="h4">Cookie Faucet</Typography>
+            <Typography variant="body1" className={classes.paragraph}>
+              <strong>Your Cookie Balance:</strong> {cookieBalance} Cookies
+            </Typography>
+            <Typography variant="body1" className={classes.paragraph}>
+              <strong>Contract Balance:</strong> {contractBalance} Cookies
+            </Typography>
+            <Typography variant="body1" className={classes.paragraph}>
+              <strong>Waiting Time:</strong> {waitingTime / 60} minutes
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={() => getCookieTokens(network)}
+            >
+              Get Cookies
+            </Button>
+          </Paper>
+        </Container>
+      )}
+    />
   );
 };
 
