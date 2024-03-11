@@ -103,7 +103,7 @@ const Faucet = () => {
         🦴 $BONE Faucet
       </Typography>
       <Typography variant="body1" className={classes.subTitle}>
-        Welcome to the $BONE Faucet! Claim some free $BONE tokens to stake or trade them!.
+        Welcome to the $BONE Faucet! Claim 0.1 free $BONE tokens to stake or trade them! You'll need to wait 30 minutes per claim.
       </Typography>
       {countdown === 0 && (
         <Button
