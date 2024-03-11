@@ -36,7 +36,7 @@ const claimTokensFromFaucet = async () => {
     const networkId = await getNetwork(provider);
 
     const faucetContract = getFaucetContractInstance(networkId, signer);
-    const transaction = await faucetContract.claimTokens();
+    const transaction = await faucetContract.requestTokens(); // Use requestTokens instead of claimTokens
 
     await transaction.wait();
 
