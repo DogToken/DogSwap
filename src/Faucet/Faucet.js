@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
-import { getProvider, getAccount, doesTokenExist } from '..ethereumFunctions'; // Import necessary functions
+import { getProvider, getAccount, doesTokenExist } from '../ethereumFunctions'; // Import necessary functions
 import FaucetABI from './abis/faucet.json'; // Update with correct file path
 import { Container, Paper, Typography, Button, makeStyles } from '@material-ui/core';
 
