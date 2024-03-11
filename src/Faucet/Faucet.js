@@ -27,6 +27,18 @@ const Faucet = () => {
   const [waitingTime, setWaitingTime] = useState(0);
   const [faucetContract, setFaucetContract] = useState(null);
 
+  useEffect(() => {
+    initialize();
+  }, []);
+
+  const initialize = async () => {
+    try {
+      // Already handled by the Web3Provider
+    } catch (error) {
+      console.error('Error initializing:', error);
+    }
+  };
+
   const fetchAccountDetails = async (network) => {
     try {
       if (faucetContract && network.account) {
