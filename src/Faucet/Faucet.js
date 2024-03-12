@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Container, Typography, CircularProgress, Grid } from "@material-ui/core";
+import { Button, Container, Typography, CircularProgress, Grid, Box } from "@material-ui/core";
 import { Contract } from "ethers";
 // Import your Ethereum functions and ABIs here
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
@@ -9,11 +9,8 @@ import faucetABI from "./abis/faucet.json"; // Import the ABI for the faucet con
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    padding: theme.spacing(2),
     textAlign: "center",
-    borderRadius: theme.spacing(2),
-    background: theme.palette.background.default,
-    boxShadow: theme.shadows[3],
+    padding: theme.spacing(2),
   },
   button: {
     marginTop: theme.spacing(2),
@@ -34,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
   claimButtonContainer: {
     display: "flex",
     justifyContent: "center",
+  },
+  space: {
+    height: theme.spacing(8), // Adjust the height as needed
   },
 }));
 
@@ -133,25 +133,28 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
 
 const FaucetPage = () => {
   const faucets = [
-    { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "Faucet 1", description: "Welcome to Faucet 1", claimInterval: 1800 },
-    { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Faucet 2", description: "Welcome to Faucet 2", claimInterval: 3600 },
-    { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Faucet 3", description: "Welcome to Faucet 3", claimInterval: 5400 },
-    { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Faucet 4", description: "Welcome to Faucet 4", claimInterval: 7200 },
+    { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "$BONE Faucet", description: "Claim 0.1 free $BONE tokens every 30 minutes! ", claimInterval: 1800 },
+    { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Dummy Faucet", description: "Welcome to Faucet 2", claimInterval: 3600 },
+    { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Dummy Faucet", description: "Welcome to Faucet 3", claimInterval: 5400 },
+    { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Dummy Faucet", description: "Welcome to Faucet 4", claimInterval: 7200 },
   ];
 
   return (
-    <Grid container spacing={3} justify="center">
-      {faucets.map((faucet) => (
-        <Grid item xs={12} key={faucet.id}>
-          <Faucet
-            faucetAddress={faucet.address}
-            title={faucet.title}
-            description={faucet.description}
-            claimInterval={faucet.claimInterval}
-          />
-        </Grid>
-      ))}
-    </Grid>
+    <React.Fragment>
+      <Grid container spacing={3} justify="center">
+        {faucets.map((faucet) => (
+          <Grid item xs={12} key={faucet.id}>
+            <Faucet
+              faucetAddress={faucet.address}
+              title={faucet.title}
+              description={faucet.description}
+              claimInterval={faucet.claimInterval}
+            />
+          </Grid>
+        ))}
+      </Grid>
+      <Box className={classes.space}></Box>
+    </React.Fragment>
   );
 };
 
