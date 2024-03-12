@@ -44,7 +44,7 @@ const getFaucetContractInstance = (networkId, signer, faucetAddress) => {
 };
 
 const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
-  const classes = useStyles();
+  const classes = useStyles(); // Moved classes definition here
   const [loading, setLoading] = useState(false);
   const [claimMessage, setClaimMessage] = useState("");
   const [countdown, setCountdown] = useState(() => {
@@ -132,11 +132,13 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
 };
 
 const FaucetPage = () => {
+  const classes = useStyles(); // Moved classes definition here
+
   const faucets = [
-    { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "$BONE Faucet", description: "Claim 0.1 free $BONE tokens every 30 minutes! ", claimInterval: 1800 },
-    { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Dummy Faucet", description: "Welcome to Faucet 2", claimInterval: 3600 },
-    { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Dummy Faucet", description: "Welcome to Faucet 3", claimInterval: 5400 },
-    { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Dummy Faucet", description: "Welcome to Faucet 4", claimInterval: 7200 },
+    { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "Faucet 1", description: "Welcome to Faucet 1", claimInterval: 1800 },
+    { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Faucet 2", description: "Welcome to Faucet 2", claimInterval: 3600 },
+    { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Faucet 3", description: "Welcome to Faucet 3", claimInterval: 5400 },
+    { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Faucet 4", description: "Welcome to Faucet 4", claimInterval: 7200 },
   ];
 
   return (
