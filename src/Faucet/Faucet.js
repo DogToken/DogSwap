@@ -10,25 +10,25 @@ import faucetABI from "./abis/faucet.json"; // Import the ABI for the faucet con
 const useStyles = makeStyles((theme) => ({
   container: {
     padding: theme.spacing(2),
-    textAlign: "center",
+    textAlign: "left",
     borderRadius: theme.spacing(2),
     background: theme.palette.background.default,
     boxShadow: theme.shadows[3],
   },
   button: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
   },
   loading: {
     marginTop: theme.spacing(2),
   },
   title: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(1),
     fontWeight: "bold",
     color: theme.palette.primary.main,
   },
   subTitle: {
     color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(1),
   },
   timer: {
     margin: theme.spacing(2),
@@ -109,17 +109,15 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
       <Typography variant="body1" className={classes.subTitle}>
         {description}
       </Typography>
-      {countdown === 0 && (
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.button}
-          onClick={handleClaimTokens}
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={24} color="inherit" /> : "Claim $BONE 🦴"}
-        </Button>
-      )}
+      <Button
+        variant="contained"
+        color="primary"
+        className={classes.button}
+        onClick={handleClaimTokens}
+        disabled={loading || countdown !== 0}
+      >
+        {loading ? <CircularProgress size={24} color="inherit" /> : "Claim $BONE 🦴"}
+      </Button>
       {countdown > 0 && renderTimer()}
       {claimMessage && (
         <Typography variant="body1" className={classes.loading}>
@@ -132,14 +130,14 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
 
 const FaucetPage = () => {
   const faucets = [
-    { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "$BONE Faucet", description: "Welcome to Faucet 1", claimInterval: 1800 },
-    { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Dummy Faucet", description: "Your token as a faucet? Contact Doggo!", claimInterval: 3600 },
-    { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Dummy Faucet", description: "Your token as a faucet? Contact Doggo!", claimInterval: 5400 },
-    { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Dummy Faucet", description: "Your token as a faucet? Contact Doggo!", claimInterval: 7200 },
+    { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "Faucet 1", description: "Welcome to Faucet 1", claimInterval: 1800 },
+    { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Faucet 2", description: "Welcome to Faucet 2", claimInterval: 3600 },
+    { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Faucet 3", description: "Welcome to Faucet 3", claimInterval: 5400 },
+    { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Faucet 4", description: "Welcome to Faucet 4", claimInterval: 7200 },
   ];
 
   return (
-    <Grid container spacing={3} justify="center">
+    <Grid container spacing={3}>
       {faucets.map((faucet) => (
         <Grid item xs={12} key={faucet.id}>
           <Faucet
