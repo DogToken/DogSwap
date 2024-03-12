@@ -50,7 +50,7 @@ Maybe we can pair up and get more functionalities together?
 [WETH: 0x067fa59cd5d5cd62be16c8d1df0d80e35a1d88dc](https://www.mintme.com/explorer/addr/0x067fa59cd5d5cd62be16c8d1df0d80e35a1d88dc "WETH")
 [$BONE: 0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF](https://www.mintme.com/explorer/addr/0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF "BONE")
 [DogSwap: 0x1628160C66e0330090248a163A34Ba5B5A82D4f7](https://www.mintme.com/explorer/addr/0x1628160C66e0330090248a163A34Ba5B5A82D4f7 "DogSwap")
-[MasterChef: 0x51d0cdced95b28dbaafa5581a30e1b5d68f8daaa](https://www.mintme.com/explorer/addr/0x51d0cdced95b28dbaafa5581a30e1b5d68f8daaa "Masterchef")
+[MasterChef: 0x4f79af8335d41A98386f09d79D19Ab1552d0b925](https://www.mintme.com/explorer/addr/0x4f79af8335d41A98386f09d79D19Ab1552d0b925 "Masterchef")
 [Multicall: 0xad5f71866fbf0d7ea5a3399d8c492eaf47c67844](https://www.mintme.com/explorer/addr/0xad5f71866fbf0d7ea5a3399d8c492eaf47c67844 "Multicall")
 ```
 ## Donations
