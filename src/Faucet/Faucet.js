@@ -9,7 +9,6 @@ import faucetABI from "./abis/faucet.json"; // Import the ABI for the faucet con
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: theme.spacing(4),
     padding: theme.spacing(4),
     textAlign: "center",
     border: `2px solid ${theme.palette.primary.main}`,
@@ -41,33 +40,38 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const BONE_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
-const FAUCET_ADDRESS = "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250";
 
 const getFaucetContractInstance = (networkId, signer, faucetAddress) => {
   return new Contract(faucetAddress, faucetABI, signer);
 };
 
-const Faucet = ({ faucetAddress }) => {
+const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [claimMessage, setClaimMessage] = useState("");
-  const [countdown, setCountdown] = useState(0);
+  const [countdown, setCountdown] = useState(() => {
+    const storedCountdown = localStorage.getItem(`countdown_${faucetAddress}`);
+    return storedCountdown ? parseInt(storedCountdown, 10) : 0;
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Set the countdown timer
       setCountdown((prevCountdown) => (prevCountdown > 0 ? prevCountdown - 1 : 0));
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem(`countdown_${faucetAddress}`, countdown.toString());
+  }, [countdown, faucetAddress]);
+
   const handleClaimTokens = async () => {
     setLoading(true);
     const result = await claimTokensFromFaucet();
     setLoading(false);
     setClaimMessage(result.message);
-    setCountdown(1800); // Reset countdown to 30 minutes after claiming
+    setCountdown(claimInterval); // Reset countdown to claimInterval seconds after claiming
   };
 
   const claimTokensFromFaucet = async () => {
@@ -77,7 +81,7 @@ const Faucet = ({ faucetAddress }) => {
       const networkId = await getNetwork(provider);
 
       const faucetContract = getFaucetContractInstance(networkId, signer, faucetAddress);
-      const transaction = await faucetContract.requestTokens(); // Use requestTokens instead of claimTokens
+      const transaction = await faucetContract.requestTokens();
 
       await transaction.wait();
 
@@ -101,10 +105,10 @@ const Faucet = ({ faucetAddress }) => {
   return (
     <Container className={classes.container}>
       <Typography variant="h4" className={classes.title}>
-        🦴 $BONE Faucet
+        {title}
       </Typography>
       <Typography variant="body1" className={classes.subTitle}>
-        Welcome to the $BONE Faucet! Claim 0.1 free $BONE tokens to stake or trade them! You'll need to wait 30 minutes per claim.
+        {description}
       </Typography>
       {countdown === 0 && (
         <Button
@@ -129,17 +133,22 @@ const Faucet = ({ faucetAddress }) => {
 
 const FaucetPage = () => {
   const faucets = [
-    { id: 1, address: FAUCET_ADDRESS },
-    { id: 2, address: "0x1111111111111111111111111111111111111111" },
-    { id: 3, address: "0x2222222222222222222222222222222222222222" },
-    { id: 4, address: "0x3333333333333333333333333333333333333333" },
+    { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "$BONE Faucet", description: "Welcome to Faucet 1", claimInterval: 1800 },
+    { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Faucet 2", description: "Welcome to Faucet 2", claimInterval: 3600 },
+    { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Faucet 3", description: "Welcome to Faucet 3", claimInterval: 5400 },
+    { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Faucet 4", description: "Welcome to Faucet 4", claimInterval: 7200 },
   ];
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} justify="center">
       {faucets.map((faucet) => (
         <Grid item xs={12} sm={6} md={3} key={faucet.id}>
-          <Faucet faucetAddress={faucet.address} />
+          <Faucet
+            faucetAddress={faucet.address}
+            title={faucet.title}
+            description={faucet.description}
+            claimInterval={faucet.claimInterval}
+          />
         </Grid>
       ))}
     </Grid>
