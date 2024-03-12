@@ -9,9 +9,8 @@ import faucetABI from "./abis/faucet.json"; // Import the ABI for the faucet con
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    padding: theme.spacing(4),
+    padding: theme.spacing(2),
     textAlign: "center",
-    border: `2px solid ${theme.palette.primary.main}`,
     borderRadius: theme.spacing(2),
     background: theme.palette.background.default,
     boxShadow: theme.shadows[3],
@@ -104,7 +103,7 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
 
   return (
     <Container className={classes.container}>
-      <Typography variant="h4" className={classes.title}>
+      <Typography variant="h6" className={classes.title}>
         {title}
       </Typography>
       <Typography variant="body1" className={classes.subTitle}>
@@ -134,15 +133,15 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
 const FaucetPage = () => {
   const faucets = [
     { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "$BONE Faucet", description: "Welcome to Faucet 1", claimInterval: 1800 },
-    { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Faucet 2", description: "Welcome to Faucet 2", claimInterval: 3600 },
-    { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Faucet 3", description: "Welcome to Faucet 3", claimInterval: 5400 },
-    { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Faucet 4", description: "Welcome to Faucet 4", claimInterval: 7200 },
+    { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Dummy Faucet", description: "Your token as a faucet? Contact Doggo!", claimInterval: 3600 },
+    { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Dummy Faucet", description: "Your token as a faucet? Contact Doggo!", claimInterval: 5400 },
+    { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Dummy Faucet", description: "Your token as a faucet? Contact Doggo!", claimInterval: 7200 },
   ];
 
   return (
     <Grid container spacing={3} justify="center">
       {faucets.map((faucet) => (
-        <Grid item xs={12} sm={6} md={3} key={faucet.id}>
+        <Grid item xs={12} key={faucet.id}>
           <Faucet
             faucetAddress={faucet.address}
             title={faucet.title}
