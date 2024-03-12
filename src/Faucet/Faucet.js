@@ -10,13 +10,13 @@ import faucetABI from "./abis/faucet.json"; // Import the ABI for the faucet con
 const useStyles = makeStyles((theme) => ({
   container: {
     padding: theme.spacing(2),
-    textAlign: "left",
+    textAlign: "center",
     borderRadius: theme.spacing(2),
     background: theme.palette.background.default,
     boxShadow: theme.shadows[3],
   },
   button: {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
   loading: {
     marginTop: theme.spacing(2),
@@ -25,16 +25,15 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     fontWeight: "bold",
     color: theme.palette.primary.main,
+    textAlign: "left",
   },
-  subTitle: {
-    color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(1),
+  description: {
+    marginBottom: theme.spacing(2),
+    textAlign: "left",
   },
-  timer: {
-    margin: theme.spacing(2),
-    fontSize: "1.5rem",
-    fontWeight: "bold",
-    color: theme.palette.primary.main,
+  claimButtonContainer: {
+    display: "flex",
+    justifyContent: "center",
   },
 }));
 
@@ -106,19 +105,23 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
       <Typography variant="h6" className={classes.title}>
         {title}
       </Typography>
-      <Typography variant="body1" className={classes.subTitle}>
+      <Typography variant="body1" className={classes.description}>
         {description}
       </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        className={classes.button}
-        onClick={handleClaimTokens}
-        disabled={loading || countdown !== 0}
-      >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Claim $BONE 🦴"}
-      </Button>
-      {countdown > 0 && renderTimer()}
+      <div className={classes.claimButtonContainer}>
+        {countdown === 0 && (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={handleClaimTokens}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Claim $BONE 🦴"}
+          </Button>
+        )}
+        {countdown > 0 && renderTimer()}
+      </div>
       {claimMessage && (
         <Typography variant="body1" className={classes.loading}>
           {claimMessage}
@@ -137,7 +140,7 @@ const FaucetPage = () => {
   ];
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} justify="center">
       {faucets.map((faucet) => (
         <Grid item xs={12} key={faucet.id}>
           <Faucet
