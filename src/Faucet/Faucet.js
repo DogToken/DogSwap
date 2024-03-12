@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Container, Typography, CircularProgress, Grid, Box } from "@material-ui/core";
 import { Contract } from "ethers";
-// Import your Ethereum functions and ABIs here
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
-import boneABI from "./abis/bone.json"; // Import the ABI for $BONE token
-import faucetABI from "./abis/faucet.json"; // Import the ABI for the faucet contract
+import boneABI from "./abis/bone.json";
+import faucetABI from "./abis/faucet.json";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -43,11 +42,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   space: {
-    height: theme.spacing(8), // Adjust the height as needed
+    height: theme.spacing(8),
   },
 }));
-
-const BONE_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
 
 const getFaucetContractInstance = (networkId, signer, faucetAddress) => {
   return new Contract(faucetAddress, faucetABI, signer);
@@ -79,7 +76,7 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
     const result = await claimTokensFromFaucet();
     setLoading(false);
     setClaimMessage(result.message);
-    setCountdown(claimInterval); // Reset countdown to claimInterval seconds after claiming
+    setCountdown(claimInterval);
   };
 
   const claimTokensFromFaucet = async () => {
@@ -147,6 +144,8 @@ const FaucetPage = () => {
     { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Faucet 3", description: "Welcome to Faucet 3", claimInterval: 5400 },
     { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Faucet 4", description: "Welcome to Faucet 4", claimInterval: 7200 },
   ];
+
+  const classes = useStyles();
 
   return (
     <React.Fragment>
