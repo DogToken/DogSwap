@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Container, Typography, CircularProgress } from "@material-ui/core";
+import { Button, Container, Typography, CircularProgress, Grid } from "@material-ui/core";
 import { Contract } from "ethers";
+// Import your Ethereum functions and ABIs here
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import boneABI from "./abis/bone.json"; // Import the ABI for $BONE token
 import faucetABI from "./abis/faucet.json"; // Import the ABI for the faucet contract
@@ -42,11 +43,11 @@ const useStyles = makeStyles((theme) => ({
 const BONE_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
 const FAUCET_ADDRESS = "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250";
 
-const getFaucetContractInstance = (networkId, signer) => {
-  return new Contract(FAUCET_ADDRESS, faucetABI, signer);
+const getFaucetContractInstance = (networkId, signer, faucetAddress) => {
+  return new Contract(faucetAddress, faucetABI, signer);
 };
 
-const Faucet = () => {
+const Faucet = ({ faucetAddress }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [claimMessage, setClaimMessage] = useState("");
@@ -75,7 +76,7 @@ const Faucet = () => {
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
 
-      const faucetContract = getFaucetContractInstance(networkId, signer);
+      const faucetContract = getFaucetContractInstance(networkId, signer, faucetAddress);
       const transaction = await faucetContract.requestTokens(); // Use requestTokens instead of claimTokens
 
       await transaction.wait();
@@ -126,4 +127,23 @@ const Faucet = () => {
   );
 };
 
-export default Faucet;
+const FaucetPage = () => {
+  const faucets = [
+    { id: 1, address: FAUCET_ADDRESS },
+    { id: 2, address: "0x1111111111111111111111111111111111111111" },
+    { id: 3, address: "0x2222222222222222222222222222222222222222" },
+    { id: 4, address: "0x3333333333333333333333333333333333333333" },
+  ];
+
+  return (
+    <Grid container spacing={3}>
+      {faucets.map((faucet) => (
+        <Grid item xs={12} sm={6} md={3} key={faucet.id}>
+          <Faucet faucetAddress={faucet.address} />
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
+export default FaucetPage;
