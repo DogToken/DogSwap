@@ -11,9 +11,19 @@ const useStyles = makeStyles((theme) => ({
   container: {
     textAlign: "center",
     padding: theme.spacing(2),
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    borderRadius: theme.spacing(2),
+    background: "#FFFFFF",
+    maxWidth: 400,
+    margin: "auto",
   },
   button: {
     marginTop: theme.spacing(2),
+    backgroundColor: theme.palette.primary.main,
+    color: "#FFFFFF",
+    "&:hover": {
+      backgroundColor: theme.palette.primary.dark,
+    },
   },
   loading: {
     marginTop: theme.spacing(2),
@@ -44,7 +54,7 @@ const getFaucetContractInstance = (networkId, signer, faucetAddress) => {
 };
 
 const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
-  const classes = useStyles(); // Moved classes definition here
+  const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [claimMessage, setClaimMessage] = useState("");
   const [countdown, setCountdown] = useState(() => {
@@ -94,7 +104,7 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
     const minutes = Math.floor(countdown / 60);
     const seconds = countdown % 60;
     return (
-      <Typography variant="body1" className={classes.timer}>
+      <Typography variant="body1">
         Next claim available in: {`${minutes}:${seconds < 10 ? "0" + seconds : seconds}`}
       </Typography>
     );
@@ -112,7 +122,6 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
         {countdown === 0 && (
           <Button
             variant="contained"
-            color="primary"
             className={classes.button}
             onClick={handleClaimTokens}
             disabled={loading}
@@ -132,8 +141,6 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
 };
 
 const FaucetPage = () => {
-  const classes = useStyles(); // Moved classes definition here
-
   const faucets = [
     { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "Faucet 1", description: "Welcome to Faucet 1", claimInterval: 1800 },
     { id: 2, address: "0x1111111111111111111111111111111111111111", title: "Faucet 2", description: "Welcome to Faucet 2", claimInterval: 3600 },
@@ -143,7 +150,7 @@ const FaucetPage = () => {
 
   return (
     <React.Fragment>
-      <Grid container spacing={3} justify="center">
+      <Grid container spacing={3}>
         {faucets.map((faucet) => (
           <Grid item xs={12} key={faucet.id}>
             <Faucet
