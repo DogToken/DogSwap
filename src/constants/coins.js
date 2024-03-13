@@ -111,6 +111,12 @@ const MINTMECoins = [
     address: "0xe7D8B46047d55902982CeD9D37eE85A63B991a1a",
     logoUrl: "https://dogswap.online/images/coins/1.png",
   },
+  {
+    name: "10K Litoshi",
+    abbr: "10KL",
+    address: "0x02d0E745f6A5BCC5216E63E12249e08514CcFfE4",
+    logoUrl: "https://dogswap.online/images/coins/1.png",
+  },
 ]
 
 const COINS = new Map();
