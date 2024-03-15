@@ -95,7 +95,7 @@ const TVLPage = () => {
       const boneInWMINT = totalBoneValueInWMINT / boneSupply;
   
       // Convert the value of 1 BONE in terms of WMINT to its equivalent value in USD
-      bonePriceInUSDC = boneInWMINT * parseFloat(wmintPriceInUSDC);
+      bonePriceInUSDC = boneInWMINT * parseFloat(wmintPriceInUSDC) * 0.01;
       setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
   
       // Calculate TVL using the prices obtained
