@@ -4,8 +4,9 @@ import { Container, Typography, CircularProgress, Box } from "@material-ui/core"
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import pairABI from "../build/IUniswapV2Pair.json";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesome icons
+import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons'; // Import FontAwesome icons
 import boneTokenABI from "./abis/BoneToken.json"; // Import the ABI for the $BONE token contract
-import masterChefABI from "./abis/MasterChef.json"; // Import the ABI for the MasterChef contract
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -22,11 +23,17 @@ const useStyles = makeStyles((theme) => ({
   },
   tvlValue: {
     fontWeight: "bold",
-    fontSize: "1.5rem",
+    fontSize: "2rem",
     marginTop: theme.spacing(2),
   },
   priceInfo: {
     marginTop: theme.spacing(2),
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -65,7 +72,6 @@ const TVLPage = () => {
       const networkId = await getNetwork(provider);
   
       let wmintPriceInUSDC = 0;
-      let bonePriceInUSDC = 0;
   
       // Calculate price of WMINT in USDC using the reserves of the WMINT-USDC pool
       const wmintPool = POOLS.find(pool => pool.name === "WMINT-USDC");
@@ -73,7 +79,7 @@ const TVLPage = () => {
       const wmintReserve0 = parseFloat(wmintReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
       const wmintReserve1 = parseFloat(wmintReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
       wmintPriceInUSDC = wmintReserve1 / wmintReserve0;
-      setWmintPrice(wmintPriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
+      setWmintPrice(wmintPriceInUSDC.toFixed(2)); // Limiting to 2 digits after the comma
   
       // Fetch the total supply of $BONE token
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
@@ -90,7 +96,8 @@ const TVLPage = () => {
         tvl += poolTVL;
       }
   
-      setTVLData(tvl.toFixed(8)); // Limiting to 8 digits after the comma
+      setTVLData(tvl.toFixed(2)); // Limiting to 2 digits after the comma
+      setBonePrice(boneSupply * wmintPriceInUSDC); // Calculating the bone price
       setLoading(false);
     } catch (error) {
       console.error("Error fetching TVL data:", error);
@@ -110,12 +117,13 @@ const TVLPage = () => {
           </Typography>
           <Box className={classes.space}></Box>
           <Typography variant="subtitle1" className={classes.priceInfo}>
+            <FontAwesomeIcon icon={faWallet} className={classes.icon} />
             1 MINTME = ${wmintPrice} USD
           </Typography>
           <Typography variant="subtitle1" className={classes.priceInfo}>
-            1 🦴 BONE = ${bonePrice} USD
+            <FontAwesomeIcon icon={faHandHoldingUsd} className={classes.icon} />
+            1 🦴 BONE = ${bonePrice ? bonePrice.toFixed(2) : "Loading..."} USD
           </Typography>
-          {/* Additional information or calculations can be displayed here */}
         </>
       )}
       <Box className={classes.space}></Box>
