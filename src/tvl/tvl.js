@@ -72,7 +72,8 @@ const TVLPage = () => {
       const boneReserveWMINT = bonePool.reserve0 === wmintPool.reserve0 ? boneReserve0 : boneReserve1;
       const boneReserveUSDC = bonePool.reserve0 === wmintPool.reserve1 ? boneReserve0 : boneReserve1;
       const mintmePerBone = boneReserveWMINT / boneReserveUSDC;
-      bonePriceInUSDC = wmintPriceInUSDC / mintmePerBone;
+      const usdcPerMintme = 1 / wmintPriceInUSDC;
+      bonePriceInUSDC = usdcPerMintme / mintmePerBone;
       setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
 
       // Calculate TVL using the prices obtained
