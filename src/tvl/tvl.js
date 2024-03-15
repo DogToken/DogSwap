@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Container, Typography, CircularProgress, Box } from "@material-ui/core";
-import { Contract } from "ethers";
+import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import pairABI from "../build/IUniswapV2Pair.json";
+import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons'; // Import FontAwesome icons
+import boneTokenABI from "./abis/BoneToken.json"; // Import the ABI for the $BONE token contract
+import masterChefABI from "./abis/MasterChef.json"; // Import the ABI for the MasterChef contract
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -33,6 +36,16 @@ const POOLS = [
   { id: 2, name: "WMINT-USDC", address: "0x1Ea95048A66455C3852dBE4620A3970831564189", reserve0: 0, reserve1: 0 }, // Replace "0x..." with actual address
   // Add more pools as needed
 ];
+
+const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF"; // Update with the $BONE token contract address
+const MASTER_CHEF_ADDRESS = "0x4f79af8335d41A98386f09d79D19Ab1552d0b925"; // Update with the MasterChef contract address
+
+const getBoneTokenInstance = (networkId, signer) => {
+  return new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
+};
+const getMasterChefInstance = (networkId, signer) => {
+  return new Contract(MASTER_CHEF_ADDRESS, masterChefABI, signer);
+};
 
 const TVLPage = () => {
   const classes = useStyles();
