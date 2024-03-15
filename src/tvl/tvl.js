@@ -4,7 +4,6 @@ import { Container, Typography, CircularProgress, Box } from "@material-ui/core"
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import pairABI from "../build/IUniswapV2Pair.json";
-import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons'; // Import FontAwesome icons
 import boneTokenABI from "./abis/BoneToken.json"; // Import the ABI for the $BONE token contract
 import masterChefABI from "./abis/MasterChef.json"; // Import the ABI for the MasterChef contract
 
@@ -32,22 +31,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const POOLS = [
-  { id: 0, name: "$BONE-WMINT", address: "0x21D897515b2C4393F7a23BBa210b271D13CCdF10", reserve0: 0, reserve1: 0 }, // Replace "0x..." with actual address
-  { id: 1, name: "$BONE-USDC", address: "0x0BA7216BD34CAF32d1FBCb9341997328b38a03a3", reserve0: 0, reserve1: 0 }, // Replace "0x..." with actual address
-  { id: 2, name: "WMINT-USDC", address: "0x1Ea95048A66455C3852dBE4620A3970831564189", reserve0: 0, reserve1: 0 }, // Replace "0x..." with actual address
-  { id: 3, name: "WMINT-DOGSP", address: "0x07Da7DA47b3C71a023d194ff623ab3a737c46393", reserve0: 0, reserve1: 0 }, // Replace "0x..." with actual address
-  { id: 5, name: "$BONE-DOGSP", address: "0xCfFF901398cB001D740FFf564D2dcc9Dbd898a11", reserve0: 0, reserve1: 0 }, // Replace "0x..." with actual address
+  { id: 0, name: "$BONE-WMINT", address: "0x21D897515b2C4393F7a23BBa210b271D13CCdF10" },
+  { id: 1, name: "$BONE-USDC", address: "0x0BA7216BD34CAF32d1FBCb9341997328b38a03a3" },
+  { id: 2, name: "WMINT-USDC", address: "0x1Ea95048A66455C3852dBE4620A3970831564189" },
+  { id: 3, name: "WMINT-DOGSP", address: "0x07Da7DA47b3C71a023d194ff623ab3a737c46393" },
+  { id: 5, name: "$BONE-DOGSP", address: "0xCfFF901398cB001D740FFf564D2dcc9Dbd898a11" },
   // Add more pools as needed
 ];
 
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF"; // Update with the $BONE token contract address
-const MASTER_CHEF_ADDRESS = "0x4f79af8335d41A98386f09d79D19Ab1552d0b925"; // Update with the MasterChef contract address
 
 const getBoneTokenInstance = (networkId, signer) => {
   return new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
-};
-const getMasterChefInstance = (networkId, signer) => {
-  return new Contract(MASTER_CHEF_ADDRESS, masterChefABI, signer);
 };
 
 const TVLPage = () => {
@@ -80,26 +75,10 @@ const TVLPage = () => {
       wmintPriceInUSDC = wmintReserve1 / wmintReserve0;
       setWmintPrice(wmintPriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
   
-      // Calculate price of $BONE using the reserves of the $BONE-WMINT pool
-      const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
-      const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
-      const boneReserve0 = parseFloat(boneReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
-      const boneReserve1 = parseFloat(boneReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
-      const boneReserveWMINT = bonePool.reserve0 === wmintPool.reserve0 ? boneReserve0 : boneReserve1;
-      const boneReserveUSDC = bonePool.reserve0 === wmintPool.reserve1 ? boneReserve0 : boneReserve1;
-      const totalBoneValueInWMINT = boneReserveWMINT + (boneReserveUSDC / wmintPriceInUSDC);
-  
       // Fetch the total supply of $BONE token
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
       const totalSupply = await boneTokenContract.totalSupply();
       const boneSupply = parseFloat(ethers.utils.formatUnits(totalSupply, 18)); // Assuming 18 decimals for the token
-  
-      // Calculate the value of 1 BONE in terms of WMINT
-      const boneInWMINT = totalBoneValueInWMINT / boneSupply;
-  
-      // Convert the value of 1 BONE in terms of WMINT to its equivalent value in USD
-      bonePriceInUSDC = boneInWMINT * parseFloat(wmintPriceInUSDC) * 0.1;
-      setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
   
       // Calculate TVL using the prices obtained
       let tvl = 0;
@@ -127,7 +106,7 @@ const TVLPage = () => {
       ) : (
         <>
           <Typography variant="h5" className={classes.tvlValue}>
-          <Typography>{tvlData}</Typography>
+            ${tvlData}
           </Typography>
           <Box className={classes.space}></Box>
           <Typography variant="subtitle1" className={classes.priceInfo}>
