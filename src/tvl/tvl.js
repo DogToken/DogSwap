@@ -4,9 +4,7 @@ import { Container, Typography, CircularProgress, Box } from "@material-ui/core"
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import pairABI from "../build/IUniswapV2Pair.json";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import FontAwesome icons
-import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons'; // Import FontAwesome icons
-import boneTokenABI from "./abis/BoneToken.json"; // Import the ABI for the $BONE token contract
+import boneTokenABI from "./abis/BoneToken.json";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -23,17 +21,11 @@ const useStyles = makeStyles((theme) => ({
   },
   tvlValue: {
     fontWeight: "bold",
-    fontSize: "2rem",
+    fontSize: "1.5rem",
     marginTop: theme.spacing(2),
   },
   priceInfo: {
     marginTop: theme.spacing(2),
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  icon: {
-    marginRight: theme.spacing(1),
   },
 }));
 
@@ -72,6 +64,7 @@ const TVLPage = () => {
       const networkId = await getNetwork(provider);
   
       let wmintPriceInUSDC = 0;
+      let bonePriceInUSDC = 0;
   
       // Calculate price of WMINT in USDC using the reserves of the WMINT-USDC pool
       const wmintPool = POOLS.find(pool => pool.name === "WMINT-USDC");
@@ -79,13 +72,29 @@ const TVLPage = () => {
       const wmintReserve0 = parseFloat(wmintReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
       const wmintReserve1 = parseFloat(wmintReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
       wmintPriceInUSDC = wmintReserve1 / wmintReserve0;
-      setWmintPrice(wmintPriceInUSDC.toFixed(2)); // Limiting to 2 digits after the comma
+      setWmintPrice(wmintPriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
+
+      // Calculate price of $BONE using the reserves of the $BONE-WMINT pool
+      const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
+      const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
+      const boneReserve0 = parseFloat(boneReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
+      const boneReserve1 = parseFloat(boneReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
+      const boneReserveWMINT = bonePool.reserve0 === wmintPool.reserve0 ? boneReserve0 : boneReserve1;
+      const boneReserveUSDC = bonePool.reserve0 === wmintPool.reserve1 ? boneReserve0 : boneReserve1;
+      const totalBoneValueInWMINT = boneReserveWMINT + (boneReserveUSDC / wmintPriceInUSDC);
   
       // Fetch the total supply of $BONE token
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
       const totalSupply = await boneTokenContract.totalSupply();
       const boneSupply = parseFloat(ethers.utils.formatUnits(totalSupply, 18)); // Assuming 18 decimals for the token
   
+      // Calculate the value of 1 BONE in terms of WMINT
+      const boneInWMINT = totalBoneValueInWMINT / boneSupply;
+  
+      // Convert the value of 1 BONE in terms of WMINT to its equivalent value in USD
+      bonePriceInUSDC = boneInWMINT * parseFloat(wmintPriceInUSDC) * 0.1;
+      setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
+
       // Calculate TVL using the prices obtained
       let tvl = 0;
       for (const pool of POOLS) {
@@ -96,8 +105,7 @@ const TVLPage = () => {
         tvl += poolTVL;
       }
   
-      setTVLData(tvl.toFixed(2)); // Limiting to 2 digits after the comma
-      setBonePrice(boneSupply * wmintPriceInUSDC); // Calculating the bone price
+      setTVLData(tvl.toFixed(8)); // Limiting to 8 digits after the comma
       setLoading(false);
     } catch (error) {
       console.error("Error fetching TVL data:", error);
@@ -113,16 +121,14 @@ const TVLPage = () => {
       ) : (
         <>
           <Typography variant="h5" className={classes.tvlValue}>
-            ${tvlData}
+            {tvlData}
           </Typography>
           <Box className={classes.space}></Box>
           <Typography variant="subtitle1" className={classes.priceInfo}>
-            <FontAwesomeIcon icon={faWallet} className={classes.icon} />
             1 MINTME = ${wmintPrice} USD
           </Typography>
           <Typography variant="subtitle1" className={classes.priceInfo}>
-            <FontAwesomeIcon icon={faHandHoldingUsd} className={classes.icon} />
-            1 🦴 BONE = ${bonePrice ? bonePrice.toFixed(2) : "Loading..."} USD
+            1 🦴 BONE = ${bonePrice} USD
           </Typography>
         </>
       )}
