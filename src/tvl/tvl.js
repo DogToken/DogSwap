@@ -48,14 +48,14 @@ const TVLPage = () => {
   const fetchTVLData = async () => {
     try {
       setLoading(true);
-  
+
       const provider = getProvider();
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
-  
+
       let wmintPriceInUSDC = 0;
       let bonePriceInUSDC = 0;
-  
+
       // Calculate price of WMINT in USDC using the reserves of the WMINT-USDC pool
       const wmintPool = POOLS.find(pool => pool.name === "WMINT-USDC");
       const wmintReserves = await new Contract(wmintPool.address, pairABI.abi, signer).getReserves();
@@ -63,8 +63,8 @@ const TVLPage = () => {
       const wmintReserve1 = parseFloat(wmintReserves[1]); // Convert to float
       // Adjusting the decimal precision for WMINT
       wmintPriceInUSDC = wmintReserve1 / (wmintReserve0 * Math.pow(10, 12)); // Adjusting for 18 decimals of WMINT
-      setWmintPrice(wmintPriceInUSDC.toFixed(4)); // Limiting to 4 digits after the comma
-  
+      setWmintPrice(wmintPriceInUSDC.toFixed(6)); // Limiting to 6 digits after the comma
+
       // Calculate price of $BONE using the reserves of the $BONE-WMINT pool
       const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
       const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
@@ -73,8 +73,8 @@ const TVLPage = () => {
       // Adjusting the decimal precision for BONE
       const boneReserveWMINT = bonePool.reserve0 === wmintPool.reserve0 ? boneReserve0 : boneReserve1;
       bonePriceInUSDC = (boneReserveWMINT / Math.pow(10, 18)) / ((wmintReserve1 / Math.pow(10, 12)) * wmintPriceInUSDC); // Adjusting for 18 decimals of WMINT, 12 decimals of WMINT-USDC pool, and 6 decimals of USDC
-      setBonePrice(bonePriceInUSDC.toFixed(4)); // Limiting to 4 digits after the comma
-  
+      setBonePrice(bonePriceInUSDC.toFixed(6)); // Limiting to 6 digits after the comma
+
       // Calculate TVL using the prices obtained
       let tvl = 0;
       for (const pool of POOLS) {
@@ -83,14 +83,14 @@ const TVLPage = () => {
         // Accumulate poolTVL to calculate overall TVL
         // Example: tvl += poolTVL;
       }
-  
+
       setTVLData(tvl);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching TVL data:", error);
       setLoading(false);
     }
-  };  
+  };
 
   return (
     <Container className={classes.container}>
