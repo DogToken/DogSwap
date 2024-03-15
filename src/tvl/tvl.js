@@ -74,7 +74,12 @@ const TVLPage = () => {
       const totalPoolUSDC = boneReserveUSDC + (boneReserveWMINT * wmintPriceInUSDC);
       const boneSupply = 0; // Replace with the total supply of $BONE
       const bonePriceInWMINT = totalPoolUSDC / boneSupply;
-      bonePriceInUSDC = bonePriceInWMINT * wmintPriceInUSDC;
+
+      // Calculate the value of 1 $BONE in terms of MINTME
+      const boneInMintme = 1 / bonePriceInWMINT;
+
+      // Convert the value of 1 $BONE in MINTME to its equivalent value in USD
+      bonePriceInUSDC = boneInMintme * parseFloat(wmintPriceInUSDC);
       setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
 
       // Calculate TVL using the prices obtained
