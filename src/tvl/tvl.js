@@ -59,21 +59,19 @@ const TVLPage = () => {
       // Calculate price of WMINT in USDC using the reserves of the WMINT-USDC pool
       const wmintPool = POOLS.find(pool => pool.name === "WMINT-USDC");
       const wmintReserves = await new Contract(wmintPool.address, pairABI.abi, signer).getReserves();
-      const wmintReserve0 = parseFloat(wmintReserves[0]); // Convert to float
-      const wmintReserve1 = parseFloat(wmintReserves[1]); // Convert to float
-      // Adjusting the decimal precision for WMINT
-      wmintPriceInUSDC = wmintReserve1 / (wmintReserve0 * Math.pow(10, 12)); // Adjusting for 18 decimals of WMINT
-      setWmintPrice(wmintPriceInUSDC.toFixed(6)); // Limiting to 6 digits after the comma
+      const wmintReserve0 = wmintReserves[0];
+      const wmintReserve1 = wmintReserves[1];
+      wmintPriceInUSDC = wmintReserve1 / wmintReserve0;
+      setWmintPrice(wmintPriceInUSDC);
 
       // Calculate price of $BONE using the reserves of the $BONE-WMINT pool
       const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
       const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
-      const boneReserve0 = parseFloat(boneReserves[0]); // Convert to float
-      const boneReserve1 = parseFloat(boneReserves[1]); // Convert to float
-      // Adjusting the decimal precision for BONE
+      const boneReserve0 = boneReserves[0];
+      const boneReserve1 = boneReserves[1];
       const boneReserveWMINT = bonePool.reserve0 === wmintPool.reserve0 ? boneReserve0 : boneReserve1;
-      bonePriceInUSDC = (boneReserveWMINT / Math.pow(10, 18)) / ((wmintReserve1 / Math.pow(10, 12)) * wmintPriceInUSDC); // Adjusting for 18 decimals of WMINT, 12 decimals of WMINT-USDC pool, and 6 decimals of USDC
-      setBonePrice(bonePriceInUSDC.toFixed(6)); // Limiting to 6 digits after the comma
+      bonePriceInUSDC = boneReserveWMINT / wmintReserve1 * wmintPriceInUSDC;
+      setBonePrice(bonePriceInUSDC);
 
       // Calculate TVL using the prices obtained
       let tvl = 0;
