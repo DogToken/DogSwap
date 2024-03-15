@@ -15,6 +15,39 @@ import { faMoneyBillAlt } from '@fortawesome/free-solid-svg-icons'; // Import Fo
 import boneTokenABI from "./abis/BoneToken.json"; // Import Bone token ABI
 import masterChefABI from "./abis/MasterChef.json"; // Import MasterChef ABI
 
+// Define styles object
+const styles = (theme) => ({
+  paperContainer: {
+    borderRadius: theme.spacing(2),
+    padding: theme.spacing(1),
+    paddingBottom: theme.spacing(3),
+  },
+  title: {
+    textAlign: "center",
+    padding: theme.spacing(0.5),
+    marginBottom: theme.spacing(1),
+  },
+  balance: {
+    padding: theme.spacing(1),
+    overflow: "wrap",
+    textAlign: "center",
+  },
+  buttonContainer: {
+    marginTop: theme.spacing(2), // Add space between the buttons and the content above
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  stakeButton: {
+    marginRight: theme.spacing(4), // Add 25px spacing to the right of the "Stake" button
+  },
+  withdrawButton: {
+    marginLeft: theme.spacing(4), // Add 25px spacing to the left of the "Withdraw" button
+  },
+  footer: {
+    marginTop: "50px",
+  },
+});
+
 const useStyles = makeStyles(styles);
 
 function Farms(props) {
