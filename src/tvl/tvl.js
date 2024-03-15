@@ -71,15 +71,14 @@ const TVLPage = () => {
       const boneReserve1 = parseFloat(boneReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
       const boneReserveWMINT = bonePool.reserve0 === wmintPool.reserve0 ? boneReserve0 : boneReserve1;
       const boneReserveUSDC = bonePool.reserve0 === wmintPool.reserve1 ? boneReserve0 : boneReserve1;
-      const totalPoolUSDC = boneReserveUSDC + (boneReserveWMINT * wmintPriceInUSDC);
+      const totalBoneValueInWMINT = boneReserveWMINT + (boneReserveUSDC / wmintPriceInUSDC);
       const boneSupply = 0; // Replace with the total supply of $BONE
-      const bonePriceInWMINT = totalPoolUSDC / boneSupply;
 
-      // Calculate the value of 1 $BONE in terms of MINTME
-      const boneInMintme = boneReserveWMINT / wmintReserve1;
+      // Calculate the value of 1 BONE in terms of WMINT
+      const boneInWMINT = totalBoneValueInWMINT / boneSupply;
 
-      // Convert the value of 1 $BONE in MINTME to its equivalent value in USD
-      bonePriceInUSDC = boneInMintme * parseFloat(wmintPriceInUSDC);
+      // Convert the value of 1 BONE in terms of WMINT to its equivalent value in USD
+      bonePriceInUSDC = boneInWMINT * parseFloat(wmintPriceInUSDC);
       setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
 
       // Calculate TVL using the prices obtained
