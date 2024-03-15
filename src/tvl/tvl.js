@@ -72,7 +72,7 @@ const TVLPage = () => {
       const boneReserveWMINT = bonePool.reserve0 === wmintPool.reserve0 ? boneReserve0 : boneReserve1;
       const boneReserveUSDC = bonePool.reserve0 === wmintPool.reserve1 ? boneReserve0 : boneReserve1;
       const totalBoneValueInWMINT = boneReserveWMINT + (boneReserveUSDC / wmintPriceInUSDC);
-      const boneSupply = 0; // Replace with the total supply of $BONE
+      const boneSupply = 35000; // Replace with the total supply of $BONE
 
       // Calculate the value of 1 BONE in terms of WMINT
       const boneInWMINT = totalBoneValueInWMINT / boneSupply;
