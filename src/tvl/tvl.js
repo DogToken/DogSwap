@@ -122,7 +122,8 @@ const TVLPage = () => {
         <>
           <Box className={classes.space}></Box>
           <Typography variant="subtitle1" className={classes.priceInfo}>
-            TVL = ${tvlData} USD (which is ridiculously wrong lol)
+            TVL = ${tvlData} USD 
+            (which is ridiculously wrong lol)
           </Typography>
           <Typography variant="subtitle1" className={classes.priceInfo}>
             1 MINTME = ${wmintPrice} USD
