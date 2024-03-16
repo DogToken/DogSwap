@@ -101,7 +101,7 @@ const TVLPage = () => {
         const poolReserves = await new Contract(pool.address, pairABI.abi, signer).getReserves();
         const reserve0 = parseFloat(poolReserves[0]) / Math.pow(10, 18); // Assuming 18 decimals for token0
         const reserve1 = parseFloat(poolReserves[1]) / Math.pow(10, 6); // Assuming 6 decimals for token1
-        const poolTVL = reserve0 * wmintPriceInUSDC + reserve1 * wmintPriceInUSDC; // Adjust as needed
+        const poolTVL = reserve0 * reserve1; // Multiply both reserves to get TVL
         tvl += poolTVL;
       }
   
