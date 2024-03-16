@@ -69,7 +69,7 @@ const TVLPage = () => {
       // Calculate price of WMINT in USDC using the reserves of the WMINT-USDC pool
       const wmintPool = POOLS.find(pool => pool.name === "WMINT-USDC");
       const wmintReserves = await new Contract(wmintPool.address, pairABI.abi, signer).getReserves();
-      const wmintReserve0 = parseFloat(wmintReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
+      const wmintReserve0 = parseFloat(wmintReserves[0]); // Assuming 18 decimals for WMINT
       const wmintReserve1 = parseFloat(wmintReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
       wmintPriceInUSDC = wmintReserve1 / wmintReserve0;
       setWmintPrice(wmintPriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
@@ -77,7 +77,7 @@ const TVLPage = () => {
       // Calculate price of $BONE using the reserves of the $BONE-WMINT pool
       const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
       const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
-      const boneReserve0 = parseFloat(boneReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
+      const boneReserve0 = parseFloat(boneReserves[0]); // Assuming 18 decimals for WMINT
       const boneReserve1 = parseFloat(boneReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
       const boneReserveWMINT = bonePool.reserve0 === wmintPool.reserve0 ? boneReserve0 : boneReserve1;
       const boneReserveUSDC = bonePool.reserve0 === wmintPool.reserve1 ? boneReserve0 : boneReserve1;
