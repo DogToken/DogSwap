@@ -120,9 +120,6 @@ const TVLPage = () => {
         <CircularProgress />
       ) : (
         <>
-          <Typography variant="h5" className={classes.tvlValue}>
-            {tvlData}
-          </Typography>
           <Box className={classes.space}></Box>
           <Typography variant="subtitle1" className={classes.priceInfo}>
             TVL = ${tvlData} USD (which is ridiculously wrong lol)
