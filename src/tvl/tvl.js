@@ -75,22 +75,13 @@ const TVLPage = () => {
       wmintPriceInUSDC = getTokenPrice(wmintReserve0, wmintReserve1);
       setWmintPrice(wmintPriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
 
-      // Calculate price of $BONE in USDC
-      const bonePool = POOLS.find(pool => pool.name === "$BONE-USDC");
-      if (bonePool) {
-        const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
-        const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS; // Adjusting the decimal precision for BONE
-        const boneReserve1 = boneReserves[1] / 10 ** 6; // Adjusting the decimal precision for USDC
-        bonePriceInUSDC = getTokenPrice(boneReserve0, boneReserve1);
-      } else {
-        // If $BONE-USDC pool is not available, calculate $BONE price using $BONE-WMINT pool
-        const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
-        const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
-        const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS; // Adjusting the decimal precision for BONE
-        const boneReserve1 = boneReserves[1] / 10 ** 18; // Adjusting the decimal precision for WMINT
-        const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1);
-        bonePriceInUSDC = boneInWMINT * wmintPriceInUSDC;
-      }
+      // Calculate price of $BONE in USDC using the $BONE-WMINT pool
+      const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
+      const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
+      const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS; // Adjusting the decimal precision for BONE
+      const boneReserve1 = boneReserves[1] / 10 ** 18; // Adjusting the decimal precision for WMINT
+      const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1);
+      bonePriceInUSDC = boneInWMINT * wmintPriceInUSDC;
       setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
 
       // Calculate TVL using the prices obtained
