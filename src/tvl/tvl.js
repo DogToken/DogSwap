@@ -73,7 +73,7 @@ const TVLPage = () => {
       const wmintReserve1 = parseFloat(wmintReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
       wmintPriceInUSDC = wmintReserve1 / wmintReserve0;
       setWmintPrice(wmintPriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
-
+  
       // Calculate price of $BONE using the reserves of the $BONE-WMINT pool
       const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
       const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
@@ -94,14 +94,39 @@ const TVLPage = () => {
       // Convert the value of 1 BONE in terms of WMINT to its equivalent value in USD
       bonePriceInUSDC = boneInWMINT * parseFloat(wmintPriceInUSDC) * 0.1;
       setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
-
+  
       // Calculate TVL using the prices obtained
       let tvl = 0;
       for (const pool of POOLS) {
         const poolReserves = await new Contract(pool.address, pairABI.abi, signer).getReserves();
         const reserve0 = parseFloat(poolReserves[0]) / Math.pow(10, 18); // Assuming 18 decimals for token0
         const reserve1 = parseFloat(poolReserves[1]) / Math.pow(10, 6); // Assuming 6 decimals for token1
-        const poolTVL = reserve0 * reserve1; // Multiply both reserves to get TVL
+  
+        // Determine the token pair in the pool
+        const token0 = pool.name.split("-")[0];
+        const token1 = pool.name.split("-")[1];
+  
+        // Calculate the value of each token reserve in USDC
+        let token0ValueInUSDC;
+        let token1ValueInUSDC;
+        if (token0 === "WMINT") {
+          token0ValueInUSDC = reserve0 * wmintPriceInUSDC;
+        } else if (token0 === "$BONE") {
+          token0ValueInUSDC = reserve0 * bonePriceInUSDC;
+        } else {
+          token0ValueInUSDC = reserve0; // Assuming token0 is already in USDC
+        }
+  
+        if (token1 === "WMINT") {
+          token1ValueInUSDC = reserve1 * wmintPriceInUSDC;
+        } else if (token1 === "$BONE") {
+          token1ValueInUSDC = reserve1 * bonePriceInUSDC;
+        } else {
+          token1ValueInUSDC = reserve1; // Assuming token1 is already in USDC
+        }
+  
+        // Sum the values of the two token reserves in USDC
+        const poolTVL = token0ValueInUSDC + token1ValueInUSDC;
         tvl += poolTVL;
       }
   
@@ -111,8 +136,8 @@ const TVLPage = () => {
       console.error("Error fetching TVL data:", error);
       setLoading(false);
     }
-  };    
-
+  };
+  
   return (
     <Container className={classes.container}>
       <Typography variant="h4">Total Value Locked (TVL)</Typography>
@@ -122,8 +147,7 @@ const TVLPage = () => {
         <>
           <Box className={classes.space}></Box>
           <Typography variant="subtitle1" className={classes.priceInfo}>
-            TVL = ${tvlData} USD 
-            (which is ridiculously wrong lol)
+            TVL = ${tvlData} USD
           </Typography>
           <Typography variant="subtitle1" className={classes.priceInfo}>
             1 MINTME = ${wmintPrice} USD
