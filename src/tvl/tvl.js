@@ -38,8 +38,8 @@ const POOLS = [
   // Add more pools as needed
 ];
 
-const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
-const BONE_TOKEN_DECIMALS = 18;
+const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF"; // Update with the $BONE token contract address
+const BONE_TOKEN_DECIMALS = 18; // Update with the actual decimal precision of the $BONE token
 
 const getBoneTokenInstance = (networkId, signer) => {
   return new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
@@ -65,17 +65,25 @@ const TVLPage = () => {
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
 
-      // Fetch WMINT price from CoinMarketCap API
-      const wmintPriceInUSDC = await fetchWmintPrice();
+      let wmintPriceInUSDC = 0;
+      let bonePriceInUSDC = 0;
+
+      // Calculate price of WMINT in USDC using the reserves of the WMINT-USDC pool
+      const wmintPool = POOLS.find(pool => pool.name === "WMINT-USDC");
+      const wmintReserves = await new Contract(wmintPool.address, pairABI.abi, signer).getReserves();
+      const wmintReserve0 = wmintReserves[0] / 10 ** 18; // Adjusting the decimal precision for WMINT
+      const wmintReserve1 = wmintReserves[1] / 10 ** 6; // Adjusting the decimal precision for USDC
+      wmintPriceInUSDC = getTokenPrice(wmintReserve0, wmintReserve1);
+      setWmintPrice(wmintPriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
 
       // Calculate price of $BONE in USDC using the $BONE-WMINT pool
       const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
       const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
-      const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS;
-      const boneReserve1 = boneReserves[1] / 10 ** 18;
+      const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS; // Adjusting the decimal precision for BONE
+      const boneReserve1 = boneReserves[1] / 10 ** 18; // Adjusting the decimal precision for WMINT
       const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1);
-      const bonePriceInUSDC = boneInWMINT * wmintPriceInUSDC;
-      setBonePrice(bonePriceInUSDC.toFixed(8));
+      bonePriceInUSDC = boneInWMINT * wmintPriceInUSDC;
+      setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
 
       // Fetch the total supply of $BONE token
       const boneTokenContract = getBoneTokenInstance(networkId, signer);
@@ -87,8 +95,8 @@ const TVLPage = () => {
       let tvl = 0;
       for (const pool of POOLS) {
         const poolReserves = await new Contract(pool.address, pairABI.abi, signer).getReserves();
-        const reserve0 = poolReserves[0] / 10 ** 18;
-        const reserve1 = poolReserves[1] / (pool.name.includes("USDC") ? 10 ** 6 : 10 ** 18);
+        const reserve0 = poolReserves[0] / 10 ** 18; // Adjusting the decimal precision for token0
+        const reserve1 = poolReserves[1] / (pool.name.includes("USDC") ? 10 ** 6 : 10 ** 18); // Adjusting the decimal precision for token1
 
         // Determine the token pair in the pool
         const token0 = pool.name.split("-")[0];
@@ -102,7 +110,7 @@ const TVLPage = () => {
         } else if (token0 === "$BONE") {
           token0ValueInUSDC = reserve0 * bonePriceInUSDC;
         } else {
-          token0ValueInUSDC = reserve0;
+          token0ValueInUSDC = reserve0; // Assuming token0 is already in USDC
         }
 
         if (token1 === "WMINT") {
@@ -110,9 +118,9 @@ const TVLPage = () => {
         } else if (token1 === "$BONE") {
           token1ValueInUSDC = reserve1 * bonePriceInUSDC;
         } else if (token1 === "USDC") {
-          token1ValueInUSDC = reserve1;
+          token1ValueInUSDC = reserve1; // No need to adjust for USDC
         } else {
-          token1ValueInUSDC = reserve1;
+          token1ValueInUSDC = reserve1; // Assuming token1 is already in USDC
         }
 
         // Sum the values of the two token reserves in USDC
@@ -120,34 +128,11 @@ const TVLPage = () => {
         tvl += poolTVL;
       }
 
-      setTVLData(tvl.toFixed(8));
-      setWmintPrice(wmintPriceInUSDC.toFixed(8));
+      setTVLData(tvl.toFixed(8)); // Limiting to 8 digits after the comma
       setLoading(false);
     } catch (error) {
       console.error("Error fetching TVL data:", error);
       setLoading(false);
-    }
-  };
-
-  const fetchWmintPrice = async () => {
-    const apiKey = "62467a6a-a3a9-4cc4-9fbf-c2a382627596";
-    const coinId = "3361"; // CoinMarketCap ID for MINTME
-
-    const apiUrl = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=${coinId}&convert=USD`;
-
-    const headers = {
-      "X-CMC_PRO_API_KEY": apiKey,
-      "Accept": "application/json",
-    };
-
-    try {
-      const response = await fetch(apiUrl, { headers });
-      const data = await response.json();
-      const price = data.data[coinId].quote.USD.price;
-      return price;
-    } catch (error) {
-      console.error("Error fetching WMINT price:", error);
-      return null;
     }
   };
 
