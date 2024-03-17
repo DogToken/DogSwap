@@ -39,6 +39,7 @@ const POOLS = [
 ];
 
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF"; // Update with the $BONE token contract address
+const BONE_TOKEN_DECIMALS = 18; // Update with the actual decimal precision of the $BONE token
 
 const getBoneTokenInstance = (networkId, signer) => {
   return new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
@@ -69,8 +70,8 @@ const TVLPage = () => {
       // Calculate price of WMINT in USDC using the reserves of the WMINT-USDC pool
       const wmintPool = POOLS.find(pool => pool.name === "WMINT-USDC");
       const wmintReserves = await new Contract(wmintPool.address, pairABI.abi, signer).getReserves();
-      const wmintReserve0 = parseFloat(wmintReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
-      const wmintReserve1 = parseFloat(wmintReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
+      const wmintReserve0 = wmintReserves[0] / 10 ** 18; // Adjusting the decimal precision for WMINT
+      const wmintReserve1 = wmintReserves[1] / 10 ** 6; // Adjusting the decimal precision for USDC
       wmintPriceInUSDC = getTokenPrice(wmintReserve0, wmintReserve1);
       setWmintPrice(wmintPriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
 
@@ -78,15 +79,15 @@ const TVLPage = () => {
       const bonePool = POOLS.find(pool => pool.name === "$BONE-USDC");
       if (bonePool) {
         const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
-        const boneReserve0 = parseFloat(boneReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for BONE
-        const boneReserve1 = parseFloat(boneReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
+        const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS; // Adjusting the decimal precision for BONE
+        const boneReserve1 = boneReserves[1] / 10 ** 6; // Adjusting the decimal precision for USDC
         bonePriceInUSDC = getTokenPrice(boneReserve0, boneReserve1);
       } else {
         // If $BONE-USDC pool is not available, calculate $BONE price using $BONE-WMINT pool
         const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
         const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
-        const boneReserve0 = parseFloat(boneReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for BONE
-        const boneReserve1 = parseFloat(boneReserves[1]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
+        const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS; // Adjusting the decimal precision for BONE
+        const boneReserve1 = boneReserves[1] / 10 ** 18; // Adjusting the decimal precision for WMINT
         const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1);
         bonePriceInUSDC = boneInWMINT * wmintPriceInUSDC;
       }
@@ -96,8 +97,8 @@ const TVLPage = () => {
       let tvl = 0;
       for (const pool of POOLS) {
         const poolReserves = await new Contract(pool.address, pairABI.abi, signer).getReserves();
-        const reserve0 = parseFloat(poolReserves[0]) / Math.pow(10, 18); // Assuming 18 decimals for token0
-        const reserve1 = parseFloat(poolReserves[1]) / Math.pow(10, 6); // Assuming 6 decimals for token1
+        const reserve0 = poolReserves[0] / 10 ** 18; // Assuming 18 decimals for token0
+        const reserve1 = poolReserves[1] / 10 ** 6; // Assuming 6 decimals for token1
 
         // Determine the token pair in the pool
         const token0 = pool.name.split("-")[0];
