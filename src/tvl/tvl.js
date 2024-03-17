@@ -88,8 +88,8 @@ const TVLPage = () => {
       let tvl = 0;
       for (const pool of POOLS) {
         const poolReserves = await new Contract(pool.address, pairABI.abi, signer).getReserves();
-        const reserve0 = poolReserves[0] / 10 ** 18; // Assuming 18 decimals for token0
-        const reserve1 = poolReserves[1] / 10 ** 6; // Assuming 6 decimals for token1
+        const reserve0 = poolReserves[0] / 10 ** 18; // Adjusting the decimal precision for token0
+        const reserve1 = poolReserves[1] / (pool.name.includes("USDC") ? 10 ** 6 : 10 ** 18); // Adjusting the decimal precision for token1
 
         // Determine the token pair in the pool
         const token0 = pool.name.split("-")[0];
@@ -110,6 +110,8 @@ const TVLPage = () => {
           token1ValueInUSDC = reserve1 * wmintPriceInUSDC;
         } else if (token1 === "$BONE") {
           token1ValueInUSDC = reserve1 * bonePriceInUSDC;
+        } else if (token1 === "USDC") {
+          token1ValueInUSDC = reserve1; // No need to adjust for USDC
         } else {
           token1ValueInUSDC = reserve1; // Assuming token1 is already in USDC
         }
