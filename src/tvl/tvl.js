@@ -55,6 +55,7 @@ const TVLPage = () => {
 
   useEffect(() => {
     fetchTVLData();
+    fetchTokenPrice();
   }, []);
 
   const fetchTVLData = async () => {
@@ -136,12 +137,25 @@ const TVLPage = () => {
     }
   };
 
-  const getTokenPrice = (reserve0, reserve1) => {
-    if (reserve0 === 0 || reserve1 === 0) {
-      return 0;
+  const fetchTokenPrice = async () => {
+    const apiKey = "62467a6a-a3a9-4cc4-9fbf-c2a382627596"; // Replace with your CoinMarketCap API key
+    const symbol = "MINTME";
+
+    const apiUrl = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=${symbol}`;
+
+    const headers = {
+      "X-CMC_PRO_API_KEY": apiKey,
+      "Accept": "application/json",
+    };
+
+    try {
+      const response = await fetch(apiUrl, { headers });
+      const data = await response.json();
+      const price = data.data[symbol].quote.USD.price;
+      setTokenPrice(price.toFixed(8)); // Update the state with the fetched price
+    } catch (error) {
+      console.error("Error fetching token price:", error);
     }
-    const tokenPrice = reserve1 / reserve0;
-    return tokenPrice;
   };
 
   return (
