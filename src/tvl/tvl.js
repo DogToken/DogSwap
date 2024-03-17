@@ -51,7 +51,6 @@ const TVLPage = () => {
   const [tvlData, setTVLData] = useState(null);
   const [wmintPrice, setWmintPrice] = useState(null);
   const [bonePrice, setBonePrice] = useState(null);
-  const [boneSupply, setBoneSupply] = useState(null);
 
   useEffect(() => {
     fetchTVLData();
@@ -84,12 +83,6 @@ const TVLPage = () => {
       const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1);
       bonePriceInUSDC = boneInWMINT * wmintPriceInUSDC;
       setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
-
-      // Fetch the total supply of $BONE token
-      const boneTokenContract = getBoneTokenInstance(networkId, signer);
-      const totalSupply = await boneTokenContract.totalSupply();
-      const boneSupplyValue = parseFloat(ethers.utils.formatUnits(totalSupply, BONE_TOKEN_DECIMALS));
-      setBoneSupply(boneSupplyValue.toFixed(2));
 
       // Calculate TVL using the prices obtained
       let tvl = 0;
@@ -136,26 +129,12 @@ const TVLPage = () => {
     }
   };
 
-  const getTokenPrice = async (reserve0, reserve1) => {
-    const apiKey = "62467a6a-a3a9-4cc4-9fbf-c2a382627596"; // Replace with your CoinMarketCap API key
-    const symbol = "MINTME";
-
-    const apiUrl = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=${symbol}`;
-
-    const headers = {
-      "X-CMC_PRO_API_KEY": apiKey,
-      "Accept": "application/json",
-    };
-
-    try {
-      const response = await fetch(apiUrl, { headers });
-      const data = await response.json();
-      const price = data.data[symbol].quote.USD.price;
-      return price;
-    } catch (error) {
-      console.error("Error fetching token price:", error);
+  const getTokenPrice = (reserve0, reserve1) => {
+    if (reserve0 === 0 || reserve1 === 0) {
       return 0;
     }
+    const tokenPrice = reserve1 / reserve0;
+    return tokenPrice;
   };
 
   return (
@@ -174,9 +153,6 @@ const TVLPage = () => {
           </Typography>
           <Typography variant="subtitle1" className={classes.priceInfo}>
             1 🦴 BONE = ${bonePrice} USD
-          </Typography>
-          <Typography variant="subtitle1" className={classes.priceInfo}>
-            Total $BONE Supply = {boneSupply}
           </Typography>
         </>
       )}
