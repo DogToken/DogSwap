@@ -58,54 +58,51 @@ const TVLPage = () => {
   const fetchTVLData = async () => {
     try {
       setLoading(true);
-  
+
       const provider = getProvider();
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
-  
+
       let wmintPriceInUSDC = 0;
       let bonePriceInUSDC = 0;
-  
+
       // Calculate price of WMINT in USDC using the reserves of the WMINT-USDC pool
       const wmintPool = POOLS.find(pool => pool.name === "WMINT-USDC");
       const wmintReserves = await new Contract(wmintPool.address, pairABI.abi, signer).getReserves();
       const wmintReserve0 = parseFloat(wmintReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
       const wmintReserve1 = parseFloat(wmintReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
-      wmintPriceInUSDC = wmintReserve1 / wmintReserve0;
+      wmintPriceInUSDC = getTokenPrice(wmintReserve0, wmintReserve1);
       setWmintPrice(wmintPriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
-  
-      // Calculate price of $BONE using the reserves of the $BONE-WMINT pool
-      const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
-      const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
-      const boneReserve0 = parseFloat(boneReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
-      const boneReserve1 = parseFloat(boneReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
-      const boneReserveWMINT = bonePool.reserve0 === wmintPool.reserve0 ? boneReserve0 : boneReserve1;
-      const boneReserveUSDC = bonePool.reserve0 === wmintPool.reserve1 ? boneReserve0 : boneReserve1;
-      const totalBoneValueInWMINT = boneReserveWMINT + (boneReserveUSDC / wmintPriceInUSDC);
-  
-      // Fetch the total supply of $BONE token
-      const boneTokenContract = getBoneTokenInstance(networkId, signer);
-      const totalSupply = await boneTokenContract.totalSupply();
-      const boneSupply = parseFloat(ethers.utils.formatUnits(totalSupply, 18)); // Assuming 18 decimals for the token
-  
-      // Calculate the value of 1 BONE in terms of WMINT
-      const boneInWMINT = totalBoneValueInWMINT / boneSupply;
-  
-      // Convert the value of 1 BONE in terms of WMINT to its equivalent value in USD
-      bonePriceInUSDC = boneInWMINT * parseFloat(wmintPriceInUSDC) * 0.1;
+
+      // Calculate price of $BONE in USDC
+      const bonePool = POOLS.find(pool => pool.name === "$BONE-USDC");
+      if (bonePool) {
+        const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
+        const boneReserve0 = parseFloat(boneReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for BONE
+        const boneReserve1 = parseFloat(boneReserves[1]) / Math.pow(10, 6); // Adjusting the decimal precision for USDC
+        bonePriceInUSDC = getTokenPrice(boneReserve0, boneReserve1);
+      } else {
+        // If $BONE-USDC pool is not available, calculate $BONE price using $BONE-WMINT pool
+        const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
+        const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
+        const boneReserve0 = parseFloat(boneReserves[0]) / Math.pow(10, 18); // Adjusting the decimal precision for BONE
+        const boneReserve1 = parseFloat(boneReserves[1]) / Math.pow(10, 18); // Adjusting the decimal precision for WMINT
+        const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1);
+        bonePriceInUSDC = boneInWMINT * wmintPriceInUSDC;
+      }
       setBonePrice(bonePriceInUSDC.toFixed(8)); // Limiting to 8 digits after the comma
-  
+
       // Calculate TVL using the prices obtained
       let tvl = 0;
       for (const pool of POOLS) {
         const poolReserves = await new Contract(pool.address, pairABI.abi, signer).getReserves();
         const reserve0 = parseFloat(poolReserves[0]) / Math.pow(10, 18); // Assuming 18 decimals for token0
         const reserve1 = parseFloat(poolReserves[1]) / Math.pow(10, 6); // Assuming 6 decimals for token1
-  
+
         // Determine the token pair in the pool
         const token0 = pool.name.split("-")[0];
         const token1 = pool.name.split("-")[1];
-  
+
         // Calculate the value of each token reserve in USDC
         let token0ValueInUSDC;
         let token1ValueInUSDC;
@@ -116,7 +113,7 @@ const TVLPage = () => {
         } else {
           token0ValueInUSDC = reserve0; // Assuming token0 is already in USDC
         }
-  
+
         if (token1 === "WMINT") {
           token1ValueInUSDC = reserve1 * wmintPriceInUSDC;
         } else if (token1 === "$BONE") {
@@ -124,12 +121,12 @@ const TVLPage = () => {
         } else {
           token1ValueInUSDC = reserve1; // Assuming token1 is already in USDC
         }
-  
+
         // Sum the values of the two token reserves in USDC
         const poolTVL = token0ValueInUSDC + token1ValueInUSDC;
         tvl += poolTVL;
       }
-  
+
       setTVLData(tvl.toFixed(8)); // Limiting to 8 digits after the comma
       setLoading(false);
     } catch (error) {
@@ -137,7 +134,15 @@ const TVLPage = () => {
       setLoading(false);
     }
   };
-  
+
+  const getTokenPrice = (reserve0, reserve1) => {
+    if (reserve0 === 0 || reserve1 === 0) {
+      return 0;
+    }
+    const tokenPrice = reserve1 / reserve0;
+    return tokenPrice;
+  };
+
   return (
     <Container className={classes.container}>
       <Typography variant="h4">Total Value Locked (TVL)</Typography>
