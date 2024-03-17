@@ -133,7 +133,7 @@ const TVLPage = () => {
     const apiKey = "62467a6a-a3a9-4cc4-9fbf-c2a382627596";
     const coinId = "3361"; // CoinMarketCap ID for MINTME
 
-    const apiUrl = `https://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=${coinId}&convert=USD`;
+    const apiUrl = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?id=${coinId}&convert=USD`;
 
     const headers = {
       "X-CMC_PRO_API_KEY": apiKey,
