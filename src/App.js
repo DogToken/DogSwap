@@ -10,7 +10,7 @@ import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./footer"; // Import the Footer component
 import "./footer.css"; // Import the Footer styles
 import { inject } from '@vercel/analytics';
-import { SpeedInsights } from "@vercel/speed-insights/react"
+import { inject } from "@vercel/speed-insights/react"
 import About from "./About";
 import Contact from "./Contact";
 import Privacy from "./Privacy";
