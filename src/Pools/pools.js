@@ -28,7 +28,7 @@ const Pools = () => {
     return (
       <Container maxWidth="lg" className={classes.root}>
         <Typography variant="h3" className={classes.title}>
-          Staking Pools
+          Reward Pools
         </Typography>
         <Grid container spacing={4} justify="center">
           {poolData.map((pool, index) => (
