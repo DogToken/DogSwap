@@ -16,6 +16,7 @@ import Privacy from "./Privacy";
 import Staking from "./Staking/Staking";
 import Faucet from "./Faucet/Faucet";
 import TVL from "./tvl/tvl";
+import Pools from "./Pools/pools";
 
 inject();
 
@@ -58,6 +59,9 @@ const App = () => {
                   </Route>
                   <Route exact path="/tvl">
                     <TVL network={network} />
+                  </Route>
+                  <Route exact path="/pools">
+                    <Pools network={network} />
                   </Route>
                   <Route exact path="/about">
                     <About />
