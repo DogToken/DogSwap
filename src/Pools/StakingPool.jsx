@@ -217,8 +217,40 @@ const useStyles = makeStyles((theme) => ({
         </div>
       </div>
       <div className={classes.stakingContainer}>
-        {/* ... (rest of the component) */}
+        <TextField
+          label="Amount to Stake/Withdraw"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={stakingAmount}
+          onChange={(e) => setStakingAmount(e.target.value)}
+        />
+        <div className={classes.stakingAction}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={handleStakeTokens}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Stake $BONE 💰"}
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            onClick={handleWithdrawTokens}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Withdraw $BONE 💰"}
+          </Button>
+        </div>
       </div>
+      {claimMessage && (
+        <Typography variant="body1" className={classes.loading}>
+          {claimMessage}
+        </Typography>
+      )}
     </div>
   );
 };
