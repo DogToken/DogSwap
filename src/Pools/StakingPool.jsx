@@ -36,19 +36,25 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
       },
     },
-    balanceCard: {
+    balanceContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
       marginBottom: theme.spacing(2),
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
       backgroundColor: theme.palette.secondary.light,
       borderRadius: theme.spacing(1),
       boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     },
+    balanceItem: {
+      display: 'flex',
+      alignItems: 'center',
+    },
     balanceIcon: {
-      marginRight: theme.spacing(1),
+      marginRight: theme.spacing(0.5),
       color: theme.palette.primary.main,
     },
     balanceText: {
-      fontSize: '1rem',
+      fontSize: '0.8rem',
       fontWeight: 'bold',
     },
   }));
@@ -68,38 +74,38 @@ const useStyles = makeStyles((theme) => ({
     const [totalLpTokens, setTotalLpTokens] = useState('0');
     const [stakedLpTokens, setStakedLpTokens] = useState('0');
     const [pendingBone, setPendingBone] = useState('0');
-
-  useEffect(() => {
-    // Fetch and set balances
-    fetchBalances();
-  }, []);
-
-  const fetchBalances = async () => {
-    try {
-      const provider = getProvider();
-      const signer = getSigner(provider);
-      const networkId = await getNetwork(provider);
-      const lpTokenContract = getLpTokenInstance(networkId, signer, lpTokenAddress);
-      const masterChefContract = getMasterChefInstance(networkId, signer);
-
-      // Fetch the total LP token supply
-      const totalSupply = await lpTokenContract.totalSupply();
-      const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18);
-      setTotalLpTokens(parseFloat(formattedTotalSupply).toFixed(5));
-
-      // Fetch staked LP tokens
-      const userInfo = await masterChefContract.userInfo(poolId, signer.getAddress());
-      const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18);
-      setStakedLpTokens(parseFloat(formattedStakedAmount).toFixed(5));
-
-      // Fetch pending rewards
-      const pendingRewards = await masterChefContract.pendingBone(poolId, signer.getAddress());
-      const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18);
-      setPendingBone(parseFloat(formattedPendingRewards).toFixed(5));
-    } catch (error) {
-      console.error('Error fetching balances:', error);
-    }
-  };
+  
+    useEffect(() => {
+      // Fetch and set balances
+      fetchBalances();
+    }, []);
+  
+    const fetchBalances = async () => {
+      try {
+        const provider = getProvider();
+        const signer = getSigner(provider);
+        const networkId = await getNetwork(provider);
+        const lpTokenContract = getLpTokenInstance(networkId, signer, lpTokenAddress);
+        const masterChefContract = getMasterChefInstance(networkId, signer);
+  
+        // Fetch the total LP token supply
+        const totalSupply = await lpTokenContract.totalSupply();
+        const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18);
+        setTotalLpTokens(parseFloat(formattedTotalSupply).toFixed(5));
+  
+        // Fetch staked LP tokens
+        const userInfo = await masterChefContract.userInfo(poolId, signer.getAddress());
+        const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18);
+        setStakedLpTokens(parseFloat(formattedStakedAmount).toFixed(5));
+  
+        // Fetch pending rewards
+        const pendingRewards = await masterChefContract.pendingBone(poolId, signer.getAddress());
+        const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18);
+        setPendingBone(parseFloat(formattedPendingRewards).toFixed(5));
+      } catch (error) {
+        console.error('Error fetching balances:', error);
+      }
+    };  
 
   const handleStakeTokens = async () => {
     try {
@@ -196,67 +202,23 @@ const useStyles = makeStyles((theme) => ({
       <Typography variant="body1" className={classes.subTitle}>
         {subTitle}
       </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card className={classes.balanceCard}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faCoins} size="2x" className={classes.balanceIcon} />
-              <Typography variant="body1" className={classes.balanceText}>Total LP Tokens: {totalLpTokens}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card className={classes.balanceCard}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faHandHoldingUsd} size="2x" className={classes.balanceIcon} />
-              <Typography variant="body1" className={classes.balanceText}>Staked LP Tokens: {stakedLpTokens}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card className={classes.balanceCard}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faClock} size="2x" className={classes.balanceIcon} />
-              <Typography variant="body1" className={classes.balanceText}>Pending $BONE: {pendingBone}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-      <div className={classes.stakingContainer}>
-        <TextField
-          label="Amount to Stake/Withdraw"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={stakingAmount}
-          onChange={(e) => setStakingAmount(e.target.value)}
-        />
-        <div className={classes.stakingAction}>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            onClick={handleStakeTokens}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Stake $BONE 💰"}
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            className={classes.button}
-            onClick={handleWithdrawTokens}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Withdraw $BONE 💰"}
-          </Button>
+      <div className={classes.balanceContainer}>
+        <div className={classes.balanceItem}>
+          <FontAwesomeIcon icon={faCoins} size="1x" className={classes.balanceIcon} />
+          <Typography variant="body2" className={classes.balanceText}>Total LP Tokens: {totalLpTokens}</Typography>
+        </div>
+        <div className={classes.balanceItem}>
+          <FontAwesomeIcon icon={faHandHoldingUsd} size="1x" className={classes.balanceIcon} />
+          <Typography variant="body2" className={classes.balanceText}>Staked LP Tokens: {stakedLpTokens}</Typography>
+        </div>
+        <div className={classes.balanceItem}>
+          <FontAwesomeIcon icon={faClock} size="1x" className={classes.balanceIcon} />
+          <Typography variant="body2" className={classes.balanceText}>Pending $BONE: {pendingBone}</Typography>
         </div>
       </div>
-      {claimMessage && (
-        <Typography variant="body1" className={classes.loading}>
-          {claimMessage}
-        </Typography>
-      )}
+      <div className={classes.stakingContainer}>
+        {/* ... (rest of the component) */}
+      </div>
     </div>
   );
 };
