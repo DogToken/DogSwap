@@ -6,9 +6,6 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { ethers } from "ethers";
-import { inject } from "@vercel/speed-insights/react"
-
-inject();
 
 function getLibrary(provider) {
   if (provider && provider.isMetaMask) {
