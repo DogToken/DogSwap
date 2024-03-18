@@ -37,7 +37,6 @@ const theme = createTheme({
 const App = () => {
   return (
     <div className="App">
-      <SpeedInsights />
       <SnackbarProvider maxSnack={3}>
         <ThemeProvider theme={theme}>
           <Web3Provider
