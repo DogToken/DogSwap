@@ -6,6 +6,7 @@ export const poolData = [
       BONE_TOKEN_ADDRESS: '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF',
       MASTER_CHEF_ADDRESS: '0x4f79af8335d41A98386f09d79D19Ab1552d0b925',
       poolId: 5,
+      lpTokenAddress: '0xCfFF901398cB001D740FFf564D2dcc9Dbd898a11',
     },
     {
         title: '$BONE / MintMe',
@@ -13,6 +14,7 @@ export const poolData = [
         BONE_TOKEN_ADDRESS: '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF',
         MASTER_CHEF_ADDRESS: '0x4f79af8335d41A98386f09d79D19Ab1552d0b925',
         poolId: 0,
+        lpTokenAddress: '0x21D897515b2C4393F7a23BBa210b271D13CCdF10',
       },
     // Add more pool data objects here
   ];

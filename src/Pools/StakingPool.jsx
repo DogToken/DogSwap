@@ -29,7 +29,12 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(3),
     },
     stakingAction: {
+      display: 'flex',
+      justifyContent: 'center',
       marginTop: theme.spacing(2),
+      '& > *': {
+        margin: theme.spacing(1),
+      },
     },
     balanceCard: {
       marginBottom: theme.spacing(2),
@@ -43,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.primary.main,
     },
     balanceText: {
-      fontSize: '1.2rem',
+      fontSize: '1rem',
       fontWeight: 'bold',
     },
   }));
@@ -54,15 +59,15 @@ const useStyles = makeStyles((theme) => ({
     BONE_TOKEN_ADDRESS,
     MASTER_CHEF_ADDRESS,
     poolId,
+    lpTokenAddress,
   }) => {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [claimMessage, setClaimMessage] = useState('');
     const [stakingAmount, setStakingAmount] = useState('');
-    const [totalTokens, setTotalTokens] = useState('0');
-    const [walletTokens, setWalletTokens] = useState('0');
+    const [totalLpTokens, setTotalLpTokens] = useState('0');
+    const [stakedLpTokens, setStakedLpTokens] = useState('0');
     const [pendingBone, setPendingBone] = useState('0');
-    const [stakedAmount, setStakedAmount] = useState('0');
 
   useEffect(() => {
     // Fetch and set balances
@@ -74,28 +79,23 @@ const useStyles = makeStyles((theme) => ({
       const provider = getProvider();
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
-      const boneTokenContract = getBoneTokenInstance(networkId, signer);
+      const lpTokenContract = getLpTokenInstance(networkId, signer, lpTokenAddress);
       const masterChefContract = getMasterChefInstance(networkId, signer);
 
-      // Fetch the balance of the user's wallet
-      const walletBalance = await boneTokenContract.balanceOf(signer.getAddress());
-      const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18);
-      setWalletTokens(parseFloat(formattedWalletBalance).toFixed(5));
-
-      // Fetch total token supply
-      const totalSupply = await boneTokenContract.totalSupply();
+      // Fetch the total LP token supply
+      const totalSupply = await lpTokenContract.totalSupply();
       const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18);
-      setTotalTokens(parseFloat(formattedTotalSupply).toFixed(5));
+      setTotalLpTokens(parseFloat(formattedTotalSupply).toFixed(5));
+
+      // Fetch staked LP tokens
+      const userInfo = await masterChefContract.userInfo(poolId, signer.getAddress());
+      const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18);
+      setStakedLpTokens(parseFloat(formattedStakedAmount).toFixed(5));
 
       // Fetch pending rewards
       const pendingRewards = await masterChefContract.pendingBone(poolId, signer.getAddress());
       const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18);
       setPendingBone(parseFloat(formattedPendingRewards).toFixed(5));
-
-      // Fetch staked amount
-      const userInfo = await masterChefContract.userInfo(poolId, signer.getAddress());
-      const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18);
-      setStakedAmount(parseFloat(formattedStakedAmount).toFixed(5));
     } catch (error) {
       console.error('Error fetching balances:', error);
     }
@@ -176,6 +176,10 @@ const useStyles = makeStyles((theme) => ({
     }
   };
 
+  const getLpTokenInstance = (networkId, signer, lpTokenAddress) => {
+    return new Contract(lpTokenAddress, boneTokenABI, signer);
+  };
+
   const getBoneTokenInstance = (networkId, signer) => {
     return new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
   };
@@ -193,35 +197,27 @@ const useStyles = makeStyles((theme) => ({
         {subTitle}
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card className={classes.balanceCard}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faCoins} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Total $BONE: {totalTokens}</Typography>
+              <Typography variant="body1" className={classes.balanceText}>Total LP Tokens: {totalLpTokens}</Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className={classes.balanceCard}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faWallet} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Your $BONE: {walletTokens}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card className={classes.balanceCard}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faHandHoldingUsd} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Staked $BONE: {stakedAmount}</Typography>
+              <Typography variant="body1" className={classes.balanceText}>Staked LP Tokens: {stakedLpTokens}</Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={4}>
           <Card className={classes.balanceCard}>
             <CardContent className={classes.cardContent}>
               <FontAwesomeIcon icon={faClock} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Pending $BONE: {pendingBone}</Typography>
+              <Typography variant="body1" className={classes.balanceText}>Pending $BONE: {pendingBone}</Typography>
             </CardContent>
           </Card>
         </Grid>
