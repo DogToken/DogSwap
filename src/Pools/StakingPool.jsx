@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     const [claimMessage, setClaimMessage] = useState('');
     const [stakingAmount, setStakingAmount] = useState('');
     const [totalLpTokens, setTotalLpTokens] = useState('0');
-    const [walletBalance, setwalletBalance] = useState('0');
+    const [walletBalance, setWalletBalance] = useState('0');
     const [stakedLpTokens, setStakedLpTokens] = useState('0');
     const [pendingBone, setPendingBone] = useState('0');
   
