@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
     const [claimMessage, setClaimMessage] = useState('');
     const [stakingAmount, setStakingAmount] = useState('');
     const [totalLpTokens, setTotalLpTokens] = useState('0');
+    const [walletBalance, setwalletBalance] = useState('0');
     const [stakedLpTokens, setStakedLpTokens] = useState('0');
     const [pendingBone, setPendingBone] = useState('0');
   
@@ -88,6 +89,11 @@ const useStyles = makeStyles((theme) => ({
         const lpTokenContract = getLpTokenInstance(networkId, signer, lpTokenAddress);
         const masterChefContract = getMasterChefInstance(networkId, signer);
   
+      // Fetch the balance of the user's wallet
+        const walletBalance = await lpTokenContract.balanceOf(signer.getAddress());
+        const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
+        setWalletBalance(parseFloat(formattedWalletBalance).toFixed(5));
+
         // Fetch the total LP token supply
         const totalSupply = await lpTokenContract.totalSupply();
         const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18);
@@ -205,11 +211,11 @@ const useStyles = makeStyles((theme) => ({
       <div className={classes.balanceContainer}>
         <div className={classes.balanceItem}>
           <FontAwesomeIcon icon={faCoins} size="1x" className={classes.balanceIcon} />
-          <Typography variant="body2" className={classes.balanceText}>Total LP Tokens: {totalLpTokens}</Typography>
+          <Typography variant="body2" className={classes.balanceText}>My Balance: {walletBalance}</Typography>
         </div>
         <div className={classes.balanceItem}>
           <FontAwesomeIcon icon={faHandHoldingUsd} size="1x" className={classes.balanceIcon} />
-          <Typography variant="body2" className={classes.balanceText}>Staked LP Tokens: {stakedLpTokens}</Typography>
+          <Typography variant="body2" className={classes.balanceText}>Staked: {stakedLpTokens}</Typography>
         </div>
         <div className={classes.balanceItem}>
           <FontAwesomeIcon icon={faClock} size="1x" className={classes.balanceIcon} />
@@ -218,7 +224,7 @@ const useStyles = makeStyles((theme) => ({
       </div>
       <div className={classes.stakingContainer}>
         <TextField
-          label="Amount to Stake/Withdraw"
+          label="Amount to Deposit/Withdraw"
           variant="outlined"
           fullWidth
           margin="normal"
@@ -233,7 +239,7 @@ const useStyles = makeStyles((theme) => ({
             onClick={handleStakeTokens}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Stake $BONE 💰"}
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Deposit"}
           </Button>
           <Button
             variant="contained"
@@ -242,7 +248,7 @@ const useStyles = makeStyles((theme) => ({
             onClick={handleWithdrawTokens}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Withdraw $BONE 💰"}
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Withdraw"}
           </Button>
         </div>
       </div>
