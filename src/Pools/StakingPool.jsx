@@ -48,21 +48,21 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const StakingPool = ({
-  title,
-  subTitle,
-  BONE_TOKEN_ADDRESS,
-  MASTER_CHEF_ADDRESS,
-  poolId,
-}) => {
-  const classes = useStyles();
-  const [loading, setLoading] = useState(false);
-  const [claimMessage, setClaimMessage] = useState('');
-  const [stakingAmount, setStakingAmount] = useState('');
-  const [totalTokens, setTotalTokens] = useState('0');
-  const [walletTokens, setWalletTokens] = useState('0');
-  const [pendingBone, setPendingBone] = useState('0');
-  const [stakedAmount, setStakedAmount] = useState('0');
+  const StakingPool = ({
+    title,
+    subTitle,
+    BONE_TOKEN_ADDRESS,
+    MASTER_CHEF_ADDRESS,
+    poolId,
+  }) => {
+    const classes = useStyles();
+    const [loading, setLoading] = useState(false);
+    const [claimMessage, setClaimMessage] = useState('');
+    const [stakingAmount, setStakingAmount] = useState('');
+    const [totalTokens, setTotalTokens] = useState('0');
+    const [walletTokens, setWalletTokens] = useState('0');
+    const [pendingBone, setPendingBone] = useState('0');
+    const [stakedAmount, setStakedAmount] = useState('0');
 
   useEffect(() => {
     // Fetch and set balances
@@ -193,7 +193,38 @@ const StakingPool = ({
         {subTitle}
       </Typography>
       <Grid container spacing={2}>
-        {/* ... Balance cards */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.balanceCard}>
+            <CardContent className={classes.cardContent}>
+              <FontAwesomeIcon icon={faCoins} size="2x" className={classes.balanceIcon} />
+              <Typography variant="h6" className={classes.balanceText}>Total $BONE: {totalTokens}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.balanceCard}>
+            <CardContent className={classes.cardContent}>
+              <FontAwesomeIcon icon={faWallet} size="2x" className={classes.balanceIcon} />
+              <Typography variant="h6" className={classes.balanceText}>Your $BONE: {walletTokens}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.balanceCard}>
+            <CardContent className={classes.cardContent}>
+              <FontAwesomeIcon icon={faHandHoldingUsd} size="2x" className={classes.balanceIcon} />
+              <Typography variant="h6" className={classes.balanceText}>Staked $BONE: {stakedAmount}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={classes.balanceCard}>
+            <CardContent className={classes.cardContent}>
+              <FontAwesomeIcon icon={faClock} size="2x" className={classes.balanceIcon} />
+              <Typography variant="h6" className={classes.balanceText}>Pending $BONE: {pendingBone}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
       <div className={classes.stakingContainer}>
         <TextField
