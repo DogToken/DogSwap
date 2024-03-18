@@ -107,46 +107,46 @@ const useStyles = makeStyles((theme) => ({
       }
     };  
 
-  const handleStakeTokens = async () => {
-    try {
-      setLoading(true);
-
-      // Parse staking amount
-      const amountToStake = ethers.utils.parseUnits(stakingAmount, 18);
-
-      // Ensure the amount to stake is greater than zero
-      if (amountToStake.lte(0)) {
-        throw new Error('Please enter a valid amount to stake.');
-      }
-
-      // Get the network ID
-      const provider = getProvider();
-      const networkId = await getNetwork(provider);
-      const signer = getSigner(provider);
-
-      // Get Bone token instance
-      const boneTokenContract = getBoneTokenInstance(networkId, signer);
-
-      // Approve spending tokens
-      const approveTx = await boneTokenContract.approve(MASTER_CHEF_ADDRESS, amountToStake);
-      await approveTx.wait();
-
-      // Deposit tokens
-      const masterChefContract = getMasterChefInstance(networkId, signer);
-      const transaction = await masterChefContract.deposit(poolId, amountToStake, { value: 0 });
-      await transaction.wait();
-
-      setClaimMessage('Tokens staked successfully!');
-
-      // Refresh balances after staking
-      fetchBalances();
-    } catch (error) {
-      console.error('Error staking tokens:', error);
-      setClaimMessage('Failed to stake tokens. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleStakeTokens = async () => {
+        try {
+          setLoading(true);
+      
+          // Parse staking amount
+          const amountToStake = ethers.utils.parseUnits(stakingAmount, 18);
+      
+          // Ensure the amount to stake is greater than zero
+          if (amountToStake.lte(0)) {
+            throw new Error('Please enter a valid amount to stake.');
+          }
+      
+          // Get the network ID
+          const provider = getProvider();
+          const networkId = await getNetwork(provider);
+          const signer = getSigner(provider);
+      
+          // Get LP token instance
+          const lpTokenContract = getLpTokenInstance(networkId, signer, lpTokenAddress);
+      
+          // Approve spending LP tokens
+          const approveTx = await lpTokenContract.approve(MASTER_CHEF_ADDRESS, amountToStake);
+          await approveTx.wait();
+      
+          // Deposit LP tokens
+          const masterChefContract = getMasterChefInstance(networkId, signer);
+          const transaction = await masterChefContract.deposit(poolId, amountToStake, { value: 0 });
+          await transaction.wait();
+      
+          setClaimMessage('Tokens staked successfully!');
+      
+          // Refresh balances after staking
+          fetchBalances();
+        } catch (error) {
+          console.error('Error staking tokens:', error);
+          setClaimMessage('Failed to stake tokens. Please try again later.');
+        } finally {
+          setLoading(false);
+        }
+      };
 
   const handleWithdrawTokens = async () => {
     try {
