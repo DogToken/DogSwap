@@ -133,7 +133,7 @@ const useStyles = makeStyles((theme) => ({
       
           // Deposit LP tokens
           const masterChefContract = getMasterChefInstance(networkId, signer);
-          const transaction = await masterChefContract.deposit(lpTokenAddress, amountToStake, { value: 0 });
+          const transaction = await masterChefContract.deposit(poolId, amountToStake, { value: 0 });
           await transaction.wait();
       
           setClaimMessage('Tokens staked successfully!');
@@ -167,7 +167,7 @@ const useStyles = makeStyles((theme) => ({
 
       // Withdraw tokens
       const masterChefContract = getMasterChefInstance(networkId, signer);
-      const transaction = await masterChefContract.withdraw(lpTokenAddress, amountToWithdraw);
+      const transaction = await masterChefContract.withdraw(poolId, amountToWithdraw);
       await transaction.wait();
 
       setClaimMessage('Tokens withdrawn successfully!');
