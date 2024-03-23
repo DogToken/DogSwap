@@ -52,6 +52,7 @@ const TVLPage = () => {
   const [tvlData, setTVLData] = useState(null);
   const [mintmePrice, setMintmePrice] = useState(null);
   const [bonePrice, setBonePrice] = useState(null);
+  const [bonePriceInUSD, setBonePriceInUSD] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -81,6 +82,8 @@ const TVLPage = () => {
       const boneReserve1 = boneReserves[1] / 10 ** 18; // Adjusting the decimal precision for WMINT
       const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1);
       const bonePriceInMintMe = 1 / boneInWMINT;
+      const bonePriceInUSDTemp = bonePriceInMintMe * mintmePrice;
+      setBonePriceInUSD(bonePriceInUSDTemp.toFixed(8)); // Limiting to 8 digits after the comma
       setBonePrice(bonePriceInMintMe.toFixed(8)); // Limiting to 8 digits after the comma
 
       // Calculate TVL using the MintMe price
@@ -114,8 +117,8 @@ const TVLPage = () => {
         }
 
         // Sum the values of the two token reserves in MintMe
-        const poolTVL = token0ValueInMintMe + token1ValueInMintMe;
-        tvl += poolTVL * mintmePrice; // Convert to USD
+        const poolTVL = (token0ValueInMintMe + token1ValueInMintMe) * mintmePrice; // Convert to USD
+        tvl += poolTVL;
       }
 
       setTVLData(tvl.toFixed(8)); // Limiting to 8 digits after the comma
@@ -149,7 +152,7 @@ const TVLPage = () => {
             1 MintMe = ${mintmePrice} USD
           </Typography>
           <Typography variant="subtitle1" className={classes.priceInfo}>
-            1 🦴 BONE = {bonePrice} MintMe
+            1 🦴 BONE = {bonePrice} MintMe (${bonePriceInUSD} USD)
           </Typography>
         </>
       )}
