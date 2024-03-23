@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LOTTERY_CONTRACT_ADDRESS = "0x..."; // Update with the Lottery contract address
+const LOTTERY_CONTRACT_ADDRESS = "0x70360f7c6ca76B81AF0B38C7aD8ee0e625190804"; // Update with the Lottery contract address
 
 const getLotteryInstance = (networkId, signer) => {
   return new Contract(LOTTERY_CONTRACT_ADDRESS, lotteryABI, signer);
