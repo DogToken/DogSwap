@@ -1,6 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { Container, Typography, CircularProgress, Box } from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    textAlign: "center",
+    padding: theme.spacing(2),
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+    borderRadius: theme.spacing(2),
+    background: "#FFFFFF",
+    maxWidth: 600,
+    margin: "auto",
+  },
+  space: {
+    height: theme.spacing(4),
+  },
+  tvlValue: {
+    fontWeight: "bold",
+    fontSize: "1.5rem",
+    marginTop: theme.spacing(2),
+  },
+  priceInfo: {
+    marginTop: theme.spacing(2),
+  },
+}));
 
 const TVLPage = () => {
+  const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [mintmePrice, setMintmePrice] = useState(null);
 
@@ -29,15 +55,24 @@ const TVLPage = () => {
   };
 
   return (
-    <div>
+    <Container className={classes.container}>
+      <Typography variant="h4">Total Value Locked (TVL)</Typography>
       {loading ? (
-        <p>Loading...</p>
+        <CircularProgress />
       ) : mintmePrice ? (
-        <p>1 MINTME = ${mintmePrice} USD</p>
+        <>
+          <Box className={classes.space}></Box>
+          <Typography variant="subtitle1" className={classes.priceInfo}>
+            1 MINTME = ${mintmePrice} USD
+          </Typography>
+          <Box className={classes.space}></Box>
+        </>
       ) : (
-        <p>Failed to fetch MINTME price</p>
+        <Typography variant="subtitle1" className={classes.priceInfo}>
+          Failed to fetch MINTME price
+        </Typography>
       )}
-    </div>
+    </Container>
   );
 };
 
