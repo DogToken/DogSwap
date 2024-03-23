@@ -41,18 +41,15 @@ const TVLPage = () => {
       setLoading(true);
       const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=mintme&vs_currencies=usd', {
         headers: {
-          'X-CoinAPI-Key': API_KEY
+          'X-CMC_PRO_API_KEY': API_KEY
         }
       });
-      
       const mintmePriceData = response.data?.mintme?.usd;
-
       if (mintmePriceData !== undefined) {
         setMintmePrice(mintmePriceData);
       } else {
         throw new Error('MINTME price data is unavailable');
       }
-
       setLoading(false);
     } catch (error) {
       console.error('Error fetching MINTME price:', error);
