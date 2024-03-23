@@ -7,49 +7,50 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTicketAlt, faWallet, faCoins, faTrophy, faCog } from '@fortawesome/free-solid-svg-icons';
 import lotteryABI from "./abis/Lottery.json";
 
+
 const useStyles = makeStyles((theme) => ({
-  container: {
-    marginTop: theme.spacing(4),
-    padding: theme.spacing(4),
-    textAlign: "center",
-    border: `2px solid ${theme.palette.primary.main}`,
-    borderRadius: theme.spacing(2),
-    background: theme.palette.background.default,
-    boxShadow: theme.shadows[3],
-  },
-  button: {
-    margin: theme.spacing(2),
-  },
-  loading: {
-    marginTop: theme.spacing(2),
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-    fontWeight: "bold",
-    color: theme.palette.primary.main,
-  },
-  subTitle: {
-    color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(2),
-  },
-  card: {
-    margin: theme.spacing(1),
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.secondary.light,
-  },
-  cardContent: {
-    textAlign: "left",
-    display: "flex",
-    alignItems: "center",
-  },
-  balanceIcon: {
-    marginRight: theme.spacing(1),
-  },
-  balanceText: {
-    fontSize: "1.2rem",
-    marginLeft: theme.spacing(1),
-  },
-}));
+    container: {
+      marginTop: theme.spacing(4),
+      padding: theme.spacing(4),
+      textAlign: "center",
+      border: `2px solid ${theme.palette.primary.main}`,
+      borderRadius: theme.spacing(2),
+      background: theme.palette.background.default,
+      boxShadow: theme.shadows[3],
+    },
+    button: {
+      margin: theme.spacing(2),
+    },
+    loading: {
+      marginTop: theme.spacing(2),
+    },
+    title: {
+      marginBottom: theme.spacing(2),
+      fontWeight: "bold",
+      color: theme.palette.primary.main,
+    },
+    subTitle: {
+      color: theme.palette.text.secondary,
+      marginBottom: theme.spacing(2),
+    },
+    card: {
+      margin: theme.spacing(1),
+      padding: theme.spacing(2),
+      backgroundColor: theme.palette.secondary.light,
+    },
+    cardContent: {
+      textAlign: "left",
+      display: "flex",
+      alignItems: "center",
+    },
+    balanceIcon: {
+      marginRight: theme.spacing(1),
+    },
+    balanceText: {
+      fontSize: "1.2rem",
+      marginLeft: theme.spacing(1),
+    },
+  }));
 
 const LOTTERY_CONTRACT_ADDRESS = "0x70360f7c6ca76B81AF0B38C7aD8ee0e625190804"; // Update with the Lottery contract address
 
@@ -61,8 +62,8 @@ const Lottery = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [ticketAmount, setTicketAmount] = useState("");
-  const [numbers, setNumbers] = useState(["", "", "", ""]);
+  const [ticketPrice, setTicketPrice] = useState("");
+  const [ticketNumbers, setTicketNumbers] = useState(["", "", "", ""]);
   const [walletBalance, setWalletBalance] = useState("0");
   const [totalTickets, setTotalTickets] = useState("0");
   const [jackpotAmount, setJackpotAmount] = useState("0");
@@ -70,8 +71,9 @@ const Lottery = () => {
   const [minPrice, setMinPrice] = useState("0");
   const [isAdmin, setIsAdmin] = useState(false);
   const [allocation, setAllocation] = useState([0, 0, 0]);
-  const [drawingPhase, setDrawingPhase] = useState(false);
   const [drawed, setDrawed] = useState(false);
+  const [winningNumbers, setWinningNumbers] = useState(["", "", "", ""]);
+  const [issueIndex, setIssueIndex] = useState(0);
 
   useEffect(() => {
     // Fetch and set initial data
@@ -113,13 +115,17 @@ const Lottery = () => {
       const allocationData = await lotteryContract.allocation();
       setAllocation(allocationData);
 
-      // Check if the drawing phase is active
-      const drawingPhaseStatus = await lotteryContract.drawingPhase();
-      setDrawingPhase(drawingPhaseStatus);
-
       // Check if the lottery is already drawn
       const drawedStatus = await lotteryContract.drawed();
       setDrawed(drawedStatus);
+
+      // Fetch winning numbers and issue index if drawn
+      if (drawedStatus) {
+        const winningNumbersData = await lotteryContract.winningNumbers();
+        setWinningNumbers(winningNumbersData.map(num => num.toString()));
+        const currentIssueIndex = await lotteryContract.issueIndex();
+        setIssueIndex(currentIssueIndex.toNumber());
+      }
     } catch (error) {
       console.error("Error fetching initial data:", error);
     }
@@ -137,13 +143,13 @@ const Lottery = () => {
     try {
       setLoading(true);
 
-      // Parse the ticket amount and numbers
-      const numTickets = parseInt(ticketAmount, 10);
-      const parsedNumbers = numbers.map(num => parseInt(num, 10));
+      // Parse the ticket price and numbers
+      const parsedPrice = ethers.utils.parseUnits(ticketPrice, 18);
+      const parsedNumbers = ticketNumbers.map(num => parseInt(num, 10));
 
-      // Ensure the ticket amount and numbers are valid
-      if (isNaN(numTickets) || numTickets <= 0) {
-        throw new Error("Please enter a valid number of tickets to buy.");
+      // Ensure the ticket price and numbers are valid
+      if (parsedPrice.lt(ethers.utils.parseUnits(minPrice, 18))) {
+        throw new Error("The ticket price must be greater than or equal to the minimum price.");
       }
       for (let i = 0; i < parsedNumbers.length; i++) {
         if (isNaN(parsedNumbers[i]) || parsedNumbers[i] > maxNumber || parsedNumbers[i] < 1) {
@@ -159,26 +165,23 @@ const Lottery = () => {
       // Get the Lottery contract instance
       const lotteryContract = getLotteryInstance(networkId, signer);
 
-      // Calculate the total price
-      const totalPrice = ethers.utils.parseUnits(String(numTickets * parseFloat(minPrice)), 18);
-
       // Call the buy function on the Lottery contract
-      const tx = await lotteryContract.buy(totalPrice, parsedNumbers, { value: totalPrice });
+      const tx = await lotteryContract.buy(parsedPrice, parsedNumbers, { value: parsedPrice });
       await tx.wait();
 
-      setMessage("Tickets purchased successfully!");
+      setMessage("Ticket purchased successfully!");
 
-      // Refresh data after buying tickets
+      // Refresh data after buying the ticket
       fetchInitialData();
     } catch (error) {
-      console.error("Error buying tickets:", error);
-      setMessage("Failed to buy tickets. Please try again later.");
+      console.error("Error buying ticket:", error);
+      setMessage("Failed to buy ticket. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
-  const claimJackpot = async () => {
+  const claimReward = async () => {
     try {
       setLoading(true);
 
@@ -198,41 +201,13 @@ const Lottery = () => {
       });
       await Promise.all(claimPromises);
 
-      setMessage("Jackpot claimed successfully!");
+      setMessage("Rewards claimed successfully!");
 
-      // Refresh data after claiming the jackpot
+      // Refresh data after claiming rewards
       fetchInitialData();
     } catch (error) {
-      console.error("Error claiming jackpot:", error);
-      setMessage("Failed to claim the jackpot. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const enterDrawingPhase = async () => {
-    try {
-      setLoading(true);
-
-      // Get the network ID
-      const provider = getProvider();
-      const networkId = await getNetwork(provider);
-      const signer = getSigner(provider);
-
-      // Get the Lottery contract instance
-      const lotteryContract = getLotteryInstance(networkId, signer);
-
-      // Call the enterDrawingPhase function on the Lottery contract
-      const tx = await lotteryContract.enterDrawingPhase();
-      await tx.wait();
-
-      setMessage("Drawing phase entered successfully!");
-
-      // Refresh data after entering the drawing phase
-      fetchInitialData();
-    } catch (error) {
-      console.error("Error entering drawing phase:", error);
-      setMessage("Failed to enter the drawing phase. Please try again later.");
+      console.error("Error claiming rewards:", error);
+      setMessage("Failed to claim rewards. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -422,13 +397,28 @@ const Lottery = () => {
         </Grid>
       </Grid>
       <TextField
-        label="Number of Tickets"
+        label="Ticket Price"
         variant="outlined"
         fullWidth
         margin="normal"
-        value={ticketAmount}
-        onChange={(e) => setTicketAmount(e.target.value)}
+        value={ticketPrice}
+        onChange={(e) => setTicketPrice(e.target.value)}
       />
+      {[0, 1, 2, 3].map((index) => (
+        <TextField
+          key={index}
+          label={`Number ${index + 1}`}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={ticketNumbers[index]}
+          onChange={(e) => {
+            const newNumbers = [...ticketNumbers];
+            newNumbers[index] = e.target.value;
+            setTicketNumbers(newNumbers);
+          }}
+        />
+      ))}
       <Button
         variant="contained"
         color="primary"
@@ -436,17 +426,122 @@ const Lottery = () => {
         onClick={buyTickets}
         disabled={loading}
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Buy Tickets 🎟️"}
+        {loading ? <CircularProgress size={24} color="inherit" /> : "Buy Ticket 🎟️"}
       </Button>
       <Button
         variant="contained"
         color="secondary"
         className={classes.button}
-        onClick={claimJackpot}
+        onClick={claimReward}
         disabled={loading}
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Claim Jackpot 🏆"}
+        {loading ? <CircularProgress size={24} color="inherit" /> : "Claim Reward 💰"}
       </Button>
+      {drawed && (
+        <Typography variant="body1" className={classes.loading}>
+          Winning Numbers: {winningNumbers.join(", ")} (Issue {issueIndex})
+        </Typography>
+      )}
+      {isAdmin && (
+        <>
+          <TextField
+            label="External Random Number"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={() => drawWinningNumbers(0)} // Replace 0 with the external random number
+            disabled={loading}>
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Draw Winning Numbers 🎰"
+            )}
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            onClick={resetLottery}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Reset Lottery 🔄"}
+          </Button>
+          <TextField
+            label="New Minimum Price"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={() => updateMinPrice("0.1")} // Replace "0.1" with the desired new minimum price
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Update Minimum Price 💰"
+            )}
+          </Button>
+          <TextField
+            label="New Maximum Number"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={() => updateMaxNumber(100)} // Replace 100 with the desired new maximum number
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Update Maximum Number 🔢"
+            )}
+          </Button>
+          <TextField
+            label="Allocation 1 (%)"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Allocation 2 (%)"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Allocation 3 (%)"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={() => updateAllocation(70, 20, 10)} // Replace 70, 20, 10 with the desired allocation percentages
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Update Allocation 📈"
+            )}
+          </Button>
+        </>
+      )}
       {message && (
         <Typography variant="body1" className={classes.loading}>
           {message}
@@ -454,6 +549,6 @@ const Lottery = () => {
       )}
     </Container>
   );
-};
-
-export default Lottery;
+ };
+ 
+ export default Lottery;
