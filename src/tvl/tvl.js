@@ -30,7 +30,7 @@ const TVLPage = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [coinPrice, setCoinPrice] = useState(null);
-  const coinId = 'mintme-com-coin'; // Replace with the desired cryptocurrency ID or symbol
+  const coinId = 'webchain'; // Replace with the desired cryptocurrency ID or symbol
 
   useEffect(() => {
     fetchCoinPrice();
