@@ -6,6 +6,7 @@ import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTicketAlt, faWallet, faCoins, faTrophy, faCog } from '@fortawesome/free-solid-svg-icons';
 import lotteryABI from "./abis/Lottery.json";
+import boneTokenABI from "./abis/BoneToken.json";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -53,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 const LOTTERY_CONTRACT_ADDRESS = "0x70360f7c6ca76B81AF0B38C7aD8ee0e625190804"; // Update with the Lottery contract address
+const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
 
 const getLotteryInstance = (networkId, signer) => {
   return new Contract(LOTTERY_CONTRACT_ADDRESS, lotteryABI, signer);
