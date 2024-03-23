@@ -44,8 +44,10 @@ const TVLPage = () => {
           'X-CoinAPI-Key': API_KEY
         }
       });
-      console.log('Response data:', response.data); // Log the response data
-      const price = response.data?.mintme?.usd;
+      console.log('Response data:', response.data); // Log the entire response data
+
+      // Adjust logic to access the correct properties from the response data
+      const price = response.data?.mintme;
 
       if (price !== undefined) {
         setMintmePrice(price);
