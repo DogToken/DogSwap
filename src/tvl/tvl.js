@@ -44,12 +44,12 @@ const TVLPage = () => {
           'X-CoinAPI-Key': API_KEY
         }
       });
-      const price = response.data.mintme.usd;
+      const price = response.data?.mintme?.usd;
 
-      if (price) {
+      if (price !== undefined) {
         setMintmePrice(price);
       } else {
-        throw new Error('Failed to fetch MINTME price');
+        throw new Error('MINTME price data is unavailable');
       }
 
       setLoading(false);
@@ -64,7 +64,7 @@ const TVLPage = () => {
       <Typography variant="h4">Total Value Locked (TVL)</Typography>
       {loading ? (
         <CircularProgress />
-      ) : mintmePrice ? (
+      ) : mintmePrice !== null ? (
         <>
           <Box className={classes.space}></Box>
           <Typography variant="subtitle1" className={classes.priceInfo}>
