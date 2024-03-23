@@ -29,50 +29,46 @@ const useStyles = makeStyles((theme) => ({
 const TVLPage = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
-  const [mintmePrice, setMintmePrice] = useState(null);
-  const API_KEY = 'CG-Mo5o1cwWq1sTrhHMJ9pKe4P5'; // Your API key
+  const [coinPrice, setCoinPrice] = useState(null);
+  const coinId = 'mintme-com-coin'; // Replace with the desired cryptocurrency ID or symbol
 
   useEffect(() => {
-    fetchMintmePrice();
+    fetchCoinPrice();
   }, []);
 
-  const fetchMintmePrice = async () => {
+  const fetchCoinPrice = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=mintme&vs_currencies=usd', {
-        headers: {
-          'X-CMC_PRO_API_KEY': API_KEY
-        }
-      });
-      const mintmePriceData = response.data?.mintme?.usd;
-      if (mintmePriceData !== undefined) {
-        setMintmePrice(mintmePriceData);
+      const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
+      const coinPriceData = response.data[coinId]?.usd;
+      if (coinPriceData !== undefined) {
+        setCoinPrice(coinPriceData);
       } else {
-        throw new Error('MINTME price data is unavailable');
+        throw new Error(`${coinId} price data is unavailable`);
       }
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching MINTME price:', error);
+      console.error(`Error fetching ${coinId} price:`, error);
       setLoading(false);
     }
   };
 
   return (
     <Container className={classes.container}>
-      <Typography variant="h4">Total Value Locked (TVL)</Typography>
+      <Typography variant="h4">Current Coin Price</Typography>
       {loading ? (
         <CircularProgress />
-      ) : mintmePrice !== null ? (
+      ) : coinPrice !== null ? (
         <>
           <Box className={classes.space}></Box>
           <Typography variant="subtitle1" className={classes.priceInfo}>
-            1 MINTME = ${mintmePrice} USD
+            1 {coinId.toUpperCase()} = ${coinPrice} USD
           </Typography>
           <Box className={classes.space}></Box>
         </>
       ) : (
         <Typography variant="subtitle1" className={classes.priceInfo}>
-          Failed to fetch MINTME price
+          Failed to fetch {coinId.toUpperCase()} price
         </Typography>
       )}
     </Container>
