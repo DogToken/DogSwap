@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Container, Typography, CircularProgress, Box } from "@material-ui/core";
+import { CoinGeckoClient } from 'coingecko-api-v3';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -25,6 +26,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const client = new CoinGeckoClient({
+  timeout: 10000,
+  autoRetry: true,
+});
+
 const TVLPage = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
@@ -37,9 +43,12 @@ const TVLPage = () => {
   const fetchMintmePrice = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=mintme&vs_currencies=usd');
-      const data = await response.json();
-      const price = data?.mintme?.usd;
+      const response = await client.simplePrice({
+        ids: ['mintme'],
+        vs_currencies: ['usd']
+      });
+
+      const price = response.data.mintme.usd;
 
       if (price) {
         setMintmePrice(price);
