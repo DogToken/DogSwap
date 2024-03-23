@@ -123,7 +123,7 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
             onClick={handleClaimTokens}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Claim $BONE 🦴"}
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Claim!"}
           </Button>
         )}
         {countdown > 0 && renderTimer()}
@@ -140,7 +140,7 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
 const FaucetPage = () => {
   const faucets = [
     { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "The $BONE Faucet", description: "Claim 0.1 $BONE each 30 minutes. Stake, trade or hodl your tokens to support the DogSwap ecosystem", claimInterval: 1800 },
-    { id: 2, address: "0x04AC8520F67a96a1f2c843e4866E9630d9c2f908", title: "Zenny Faucet", description: "Zenny is giving away alot of tokens!", claimInterval: 300 },
+    { id: 2, address: "0x04AC8520F67a96a1f2c843e4866E9630d9c2f908", title: "Zenny Faucet", description: "The Zenny Community is giving away alot of free tokens! Get yours now and be one of the early birds to start trading! Each 5 minutes, you'll get 0.25 Zenny.", claimInterval: 300 },
     { id: 3, address: "0x2222222222222222222222222222222222222222", title: "Dummy Faucet", description: "Interested in having your own faucet? Contact Doggo!", claimInterval: 5400 },
     { id: 4, address: "0x3333333333333333333333333333333333333333", title: "Dummy Faucet", description: "Interested in having your own faucet? Contact Doggo!", claimInterval: 7200 },
   ];
