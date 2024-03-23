@@ -37,8 +37,7 @@
     "@vercel/analytics": "1.0.1",
     "lightweight-charts": "4.0.1",
     "@ethersproject/providers": "5.7.2",
-    "@web3-react/core": "8.2.0",
-    "@coingecko-api-v3": "0.0.29"
+    "@web3-react/core": "8.2.0"
   },
   "homepage": "https://dogswap.online/",
   "scripts": {
