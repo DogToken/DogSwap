@@ -32,29 +32,31 @@ const TVLPage = () => {
   const fetchMintmePrice = async () => {
     try {
       setLoading(true);
-
-      // Fetch MINTME price
-      const response = await fetch("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=MINTME", {
+  
+      const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Replace with your proxy server URL
+      const apiUrl = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=MINTME';
+      const response = await fetch(proxyUrl + apiUrl, {
         headers: {
           "X-CMC_PRO_API_KEY": "62467a6a-a3a9-4cc4-9fbf-c2a382627596", // Replace with your API key
           "Accept": "application/json"
         }
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to fetch MINTME price');
       }
-
+  
       const data = await response.json();
       const mintmePrice = data.data.MINTME.quote.USD.price;
       setMintmePrice(mintmePrice);
-
+  
       setLoading(false);
     } catch (error) {
       console.error("Error fetching MINTME price:", error);
       setLoading(false);
     }
   };
+  
 
   return (
     <Container className={classes.container}>
