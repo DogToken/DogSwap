@@ -30,7 +30,7 @@ const TVLPage = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [mintmePrice, setMintmePrice] = useState(null);
-  const API_KEY = 'CG-Mo5o1cwWq1sTrhHMJ9pKe4P5'; // Replace 'YOUR_API_KEY' with your actual API key
+  const API_KEY = 'CG-Mo5o1cwWq1sTrhHMJ9pKe4P5'; // Your API key
 
   useEffect(() => {
     fetchMintmePrice();
@@ -47,7 +47,7 @@ const TVLPage = () => {
       console.log('Response data:', response.data); // Log the entire response data
 
       // Adjust logic to access the correct properties from the response data
-      const price = response.data?.mintme;
+      const price = response.data?.mintme?.usd;
 
       if (price !== undefined) {
         setMintmePrice(price);
