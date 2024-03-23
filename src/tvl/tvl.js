@@ -45,8 +45,10 @@ const TVLPage = () => {
         }
       });
       
-      if (response.status === 200 && response.data && response.data.mintme && response.data.mintme.usd !== undefined) {
-        setMintmePrice(response.data.mintme.usd);
+      const mintmePriceData = response.data?.mintme?.usd;
+
+      if (mintmePriceData !== undefined) {
+        setMintmePrice(mintmePriceData);
       } else {
         throw new Error('MINTME price data is unavailable');
       }
