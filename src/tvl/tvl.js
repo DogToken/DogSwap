@@ -82,7 +82,7 @@ const TVLPage = () => {
       const boneReserve1 = boneReserves[1] / 10 ** 18; // Adjusting the decimal precision for WMINT
       const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1);
       const bonePriceInMintMe = 1 / boneInWMINT;
-      const bonePriceInUSDTemp = bonePriceInMintMe * mintmePrice;
+      const bonePriceInUSDTemp = bonePriceInMintMe * mintmePriceData;
       setBonePriceInUSD(bonePriceInUSDTemp.toFixed(8)); // Limiting to 8 digits after the comma
       setBonePrice(bonePriceInMintMe.toFixed(8)); // Limiting to 8 digits after the comma
 
@@ -98,26 +98,26 @@ const TVLPage = () => {
         const token1 = pool.name.split("-")[1];
 
         // Calculate the value of each token reserve in MintMe
-        let token0ValueInMintMe;
-        let token1ValueInMintMe;
+        let token0ValueInUSD;
+        let token1ValueInUSD;
         if (token0 === "WMINT") {
-          token0ValueInMintMe = reserve0;
+          token0ValueInUSD = reserve0 * mintmePriceData;
         } else if (token0 === "$BONE") {
-          token0ValueInMintMe = reserve0 * bonePriceInMintMe;
+          token0ValueInUSD = reserve0 * bonePriceInUSDTemp;
         } else {
-          token0ValueInMintMe = reserve0 * mintmePrice; // Assuming token0 is already in USDC
+          token0ValueInUSD = reserve0; // Assuming token0 is already in USD
         }
 
         if (token1 === "WMINT") {
-          token1ValueInMintMe = reserve1;
+          token1ValueInUSD = reserve1 * mintmePriceData;
         } else if (token1 === "$BONE") {
-          token1ValueInMintMe = reserve1 * bonePriceInMintMe;
+          token1ValueInUSD = reserve1 * bonePriceInUSDTemp;
         } else {
-          token1ValueInMintMe = reserve1 * mintmePrice; // Assuming token1 is already in USDC
+          token1ValueInUSD = reserve1; // Assuming token1 is already in USD
         }
 
-        // Sum the values of the two token reserves in MintMe
-        const poolTVL = (token0ValueInMintMe + token1ValueInMintMe) * mintmePrice; // Convert to USD
+        // Sum the values of the two token reserves in USD
+        const poolTVL = token0ValueInUSD + token1ValueInUSD;
         tvl += poolTVL;
       }
 
