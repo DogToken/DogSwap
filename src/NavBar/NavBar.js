@@ -6,6 +6,19 @@ import { ethers } from 'ethers';
 import { FaUserCircle, FaBars, FaTimes, FaCaretDown } from 'react-icons/fa';
 import Tooltip from '@mui/material/Tooltip';
 import boneTokenABI from "./abis/BoneToken.json";
+import pairABI from "../build/IUniswapV2Pair.json";
+import axios from 'axios';
+
+const POOLS = [
+  { id: 0, name: "$BONE-WMINT", address: "0x21D897515b2C4393F7a23BBa210b271D13CCdF10" },
+  { id: 1, name: "$BONE-USDC", address: "0x0BA7216BD34CAF32d1FBCb9341997328b38a03a3" },
+  { id: 2, name: "WMINT-USDC", address: "0x1Ea95048A66455C3852dBE4620A3970831564189" },
+  { id: 3, name: "WMINT-DOGSP", address: "0x07Da7DA47b3C71a023d194ff623ab3a737c46393" },
+  { id: 5, name: "$BONE-DOGSP", address: "0xCfFF901398cB001D740FFf564D2dcc9Dbd898a11" },
+];
+
+const BONE_TOKEN_DECIMALS = 18;
+
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
