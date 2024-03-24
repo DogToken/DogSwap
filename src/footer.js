@@ -3,7 +3,7 @@ import { FaDiscord, FaTwitter, FaRobot, FaHeart, FaGlobe, FaEnvelope, FaPhoneAlt
 import Button from "@mui/material/Button";
 import "./footer.css";
 
-const Footer = ({ bonePriceInUSD }) => {
+const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
