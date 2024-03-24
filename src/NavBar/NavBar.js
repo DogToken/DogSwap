@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MenuItems } from './MenuItems';
 import './NavBar.css';
 import { ethers } from 'ethers';
-import { FaUserCircle, FaBars, FaTimes, FaQuestionCircle } from 'react-icons/fa';
+import { FaUserCircle, FaBars, FaTimes, FaCaretDown } from 'react-icons/fa';
 import Tooltip from '@mui/material/Tooltip';
 import boneTokenABI from "./abis/BoneToken.json";
 
@@ -12,6 +12,8 @@ const NavBar = () => {
   const [boneBalance, setBoneBalance] = useState(0);
   const [mintmeBalance, setMintmeBalance] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
+  const [showBalances, setShowBalances] = useState(false);
+  const balancesDropdownRef = useRef(null);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -32,7 +34,7 @@ const NavBar = () => {
         signer
       );
       const boneBalance = await boneContract.balanceOf(address);
-      setBoneBalance(ethers.utils.formatUnits(boneBalance, 2));
+      setBoneBalance(ethers.utils.formatUnits(boneBalance, 4));
 
       // Native token (MintMe) balance
       const mintmeBalance = await provider.getBalance(address);
@@ -48,6 +50,7 @@ const NavBar = () => {
     setIsConnected(false);
     setBoneBalance(0);
     setMintmeBalance(0);
+    setShowBalances(false);
   };
 
   useEffect(() => {
@@ -66,14 +69,28 @@ const NavBar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (balancesDropdownRef.current && !balancesDropdownRef.current.contains(event.target)) {
+        setShowBalances(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [balancesDropdownRef]);
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
           <Link to="/" className="logo-link">
             <span role="img" aria-label="dog">
-              🐶
-            </span>{' '}
+              🐶 &nbsp;
+            </span>
             DogSwap
           </Link>
         </div>
@@ -90,17 +107,22 @@ const NavBar = () => {
           ))}
           <li className="nav-item">
             {isConnected ? (
-              <div className="connected-wallet">
+              <div className="connected-wallet" ref={balancesDropdownRef}>
                 <FaUserCircle />
-                <Tooltip
-                  title={`MintMe Balance: ${mintmeBalance}`}
-                  arrow
-                  placement="bottom"
+                <button
+                  className="wallet-button"
+                  onClick={() => setShowBalances((prevState) => !prevState)}
                 >
-                  <span className="bone-balance">
-                    {boneBalance} $BONE <FaQuestionCircle />
-                  </span>
-                </Tooltip>
+                  {boneBalance} $BONE <FaCaretDown />
+                </button>
+                {showBalances && (
+                  <div className="balances-dropdown">
+                    <p>
+                      $BONE: {boneBalance}
+                    </p>
+                    <p>MintMe: {mintmeBalance}</p>
+                  </div>
+                )}
                 <button className="disconnect-button" onClick={disconnectWallet}>
                   Disconnect
                 </button>

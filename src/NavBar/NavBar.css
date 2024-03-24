@@ -63,9 +63,9 @@
 
 .connect-button,
 .disconnect-button {
-  padding: 10px 20px;
+  padding: 6px 12px;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -94,20 +94,38 @@
 .connected-wallet {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
-.bone-balance {
-  margin-left: 10px;
+.wallet-button {
+  background-color: transparent;
+  border: none;
+  font-size: 1rem;
   font-weight: 600;
+  color: #333;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  padding: 0;
 }
 
-.bone-balance svg {
+.wallet-button svg {
   margin-left: 5px;
-  font-size: 1rem;
-  color: #26a7de;
-  cursor: pointer;
+}
+
+.balances-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 10px;
+  z-index: 1;
+}
+
+.balances-dropdown p {
+  margin: 5px 0;
 }
 
 /* Media query for smaller screens */
