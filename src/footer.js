@@ -1,7 +1,7 @@
 import React from "react";
 import { FaDiscord, FaTwitter, FaRobot, FaHeart, FaGlobe, FaEnvelope, FaPhoneAlt } from "react-icons/fa";
 import Button from "@mui/material/Button";
-import "./Footer.css";
+import "./footer.css";
 
 const Footer = ({ bonePriceInUSD }) => {
   return (
