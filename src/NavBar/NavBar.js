@@ -13,6 +13,7 @@ const NavBar = () => {
   const [mintmeBalance, setMintmeBalance] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
   const [showBalances, setShowBalances] = useState(false);
+  const [bonePriceInUSD, setBonePriceInUSD] = useState(0);
   const balancesDropdownRef = useRef(null);
 
   const toggleMenu = () => {
@@ -40,6 +41,12 @@ const NavBar = () => {
       const mintmeBalance = await provider.getBalance(address);
       setMintmeBalance(ethers.utils.formatEther(mintmeBalance));
 
+      // Calculate $BONE price in USD
+      const bonePriceInMintMe = await getBonePriceInMintMe(boneContract, provider);
+      const mintmePriceInUSD = await getMintmePriceInUSD();
+      const bonePriceInUSDTemp = bonePriceInMintMe * mintmePriceInUSD;
+      setBonePriceInUSD(bonePriceInUSDTemp.toFixed(4));
+
       setIsConnected(true);
     } catch (error) {
       console.error('Error connecting wallet:', error);
@@ -50,6 +57,7 @@ const NavBar = () => {
     setIsConnected(false);
     setBoneBalance(0);
     setMintmeBalance(0);
+    setBonePriceInUSD(0);
     setShowBalances(false);
   };
 
@@ -83,6 +91,32 @@ const NavBar = () => {
     };
   }, [balancesDropdownRef]);
 
+  const getBonePriceInMintMe = async (boneContract, provider) => {
+    const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
+    const boneReserves = await new ethers.Contract(bonePool.address, pairABI.abi, provider).getReserves();
+    const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS;
+    const boneReserve1 = boneReserves[1] / 10 ** 18;
+    const boneInWMINT = boneReserve1 / boneReserve0;
+    const bonePriceInMintMe = 1 / boneInWMINT;
+    return bonePriceInMintMe.toFixed(8);
+  };
+
+  const getMintmePriceInUSD = async () => {
+    const coinId = 'webchain';
+    try {
+      const mintmePriceResponse = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
+      const mintmePriceData = mintmePriceResponse.data[coinId]?.usd;
+      if (mintmePriceData !== undefined) {
+        return mintmePriceData;
+      } else {
+        throw new Error(`${coinId} price data is unavailable`);
+      }
+    } catch (error) {
+      console.error('Error fetching MintMe price:', error);
+      return 0;
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -113,13 +147,10 @@ const NavBar = () => {
                   className="wallet-button"
                   onClick={() => setShowBalances((prevState) => !prevState)}
                 >
-                  {boneBalance} $BONE <FaCaretDown />
+                  1 🦴 = ${bonePriceInUSD} USD <FaCaretDown />
                 </button>
                 {showBalances && (
                   <div className="balances-dropdown">
-                    <p>
-                      $BONE: {boneBalance}
-                    </p>
                     <p>MintMe: {mintmeBalance}</p>
                   </div>
                 )}
