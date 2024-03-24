@@ -1,71 +1,139 @@
 /* NavBar.css */
-
-.Title {
-  background: #f4f4f4;
-  height: 50px;
-  text-align: left;
-  font-size: 1rem;
-  padding: 10px;
+.navbar {
+  background-color: #f4f4f4;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.NavbarItems {
-  background: #f4f4f4;
+  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1.2rem;
-  padding: 0 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .navbar-logo {
-  color: green;
-  cursor: pointer;
   font-size: 1.5rem;
-  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
 }
 
 .nav-menu {
   display: flex;
   list-style: none;
-  text-align: left;
+  margin: 0;
+  padding: 0;
 }
 
-.nav-links {
-  color: rgb(73, 73, 73);
+.nav-item {
+  margin-left: 20px;
+}
+
+.nav-link {
   text-decoration: none;
-  padding: 10px 15px;
+  color: #333;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #26a7de;
+}
+
+.menu-icon {
+  display: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.connect-button,
+.disconnect-button {
+  padding: 8px 16px;
   border-radius: 4px;
-  transition: all 0.2s ease-out;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.nav-links:hover {
-  color: white;
-  background-color: green;
+.connect-button {
+  background-color: #26a7de;
+  color: #fff;
+  border: none;
 }
 
-/* Adding media query to make the navbar responsive */
+.connect-button:hover {
+  background-color: #1e89bc;
+}
+
+.disconnect-button {
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+}
+
+.disconnect-button:hover {
+  background-color: #d32f2f;
+}
+
+.connected-wallet {
+  display: flex;
+  align-items: center;
+}
+
+.bone-balance {
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+/* Media query for smaller screens */
 @media screen and (max-width: 768px) {
-  .NavbarItems {
+  .navbar {
     flex-direction: column;
-    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .navbar-container {
+    width: 100%;
+  }
+
+  .menu-icon {
+    display: block;
+    position: absolute;
+    top: 20px;
+    right: 20px;
   }
 
   .nav-menu {
-    margin-top: 20px;
+    display: none;
+    flex-direction: column;
+    width: 100%;
   }
-}
 
-/* Add some space after the navbar */
-.NavbarContainer {
-  margin-top: 20px;
-}
+  .nav-menu.open {
+    display: flex;
+  }
 
-/* Optionally, you can add a footer styles for a better layout */
-.Footer {
-  background-color: #f4f4f4;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  .nav-item {
+    margin: 10px 0;
+  }
+
+  .nav-link {
+    font-size: 1.2rem;
+  }
+
+  .connect-button,
+  .disconnect-button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+  }
 }
