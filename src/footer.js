@@ -1,16 +1,13 @@
 import React from "react";
 import { FaDiscord, FaTwitter, FaRobot, FaHeart } from "react-icons/fa";
 import Button from "@mui/material/Button";
+import bonePriceInUSD from "./tvl/tvl"
 
-const Footer = ({ bonePriceInUSD, toggleTVLPage }) => {
+const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
         <div className="backlinks">
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
-          <a href="/privacy">Privacy</a>
           BONE Price:{" "}
               <span
                 className="bone-price"
@@ -19,6 +16,11 @@ const Footer = ({ bonePriceInUSD, toggleTVLPage }) => {
               >
                 🦴 {bonePriceInUSD !== null ? `$${bonePriceInUSD}` : "Loading..."}
               </span>
+              
+          <a href="/">Home</a>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+          <a href="/privacy">Privacy</a>
         </div>
         <div className="company-info">
           {/* Styled buttons for Discord and Twitter */}
