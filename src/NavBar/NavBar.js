@@ -19,7 +19,6 @@ const POOLS = [
 
 const BONE_TOKEN_DECIMALS = 18;
 
-
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [boneBalance, setBoneBalance] = useState(0);
@@ -82,6 +81,19 @@ const NavBar = () => {
         connectWallet();
       }
     };
+
+    const checkWalletConnection = async () => {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accounts.length > 0) {
+          await connectWallet();
+        }
+      } catch (error) {
+        console.error('Error checking wallet connection:', error);
+      }
+    };
+
+    checkWalletConnection();
 
     window.ethereum.on('accountsChanged', handleAccountsChanged);
 
