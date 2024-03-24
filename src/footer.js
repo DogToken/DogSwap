@@ -14,6 +14,7 @@ const Footer = () => {
             <a href="/about">About</a>
             <a href="/contact">Contact</a>
             <a href="/privacy">Privacy</a>
+            <a href="https://1000x.ch">1000x</a>
             <a href="/tvl">TVL</a>
           </div>
         </div>
