@@ -1,11 +1,14 @@
 /* NavBar.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
 .navbar {
-  background-color: #f4f4f4;
+  background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 .navbar-container {
@@ -13,11 +16,13 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .navbar-logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
 .logo-link {
@@ -35,13 +40,14 @@
 }
 
 .nav-item {
-  margin-left: 20px;
+  margin-left: 30px;
 }
 
 .nav-link {
   text-decoration: none;
   color: #333;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
   transition: color 0.3s ease;
 }
 
@@ -57,10 +63,10 @@
 
 .connect-button,
 .disconnect-button {
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-radius: 4px;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -92,7 +98,16 @@
 
 .bone-balance {
   margin-left: 10px;
-  font-weight: bold;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.bone-balance svg {
+  margin-left: 5px;
+  font-size: 1rem;
+  color: #26a7de;
+  cursor: pointer;
 }
 
 /* Media query for smaller screens */
@@ -100,6 +115,7 @@
   .navbar {
     flex-direction: column;
     align-items: flex-start;
+    padding: 10px;
   }
 
   .navbar-container {
@@ -121,6 +137,7 @@
 
   .nav-menu.open {
     display: flex;
+    margin-top: 20px;
   }
 
   .nav-item {
@@ -136,4 +153,9 @@
     font-size: 1.2rem;
     padding: 10px 20px;
   }
+}
+
+/* Add spacing between navbar and content */
+.navbar + * {
+  margin-top: 40px;
 }

@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { MenuItems } from './MenuItems';
 import './NavBar.css';
 import { ethers } from 'ethers';
-import { FaUserCircle, FaBars, FaTimes } from 'react-icons/fa';
+import { FaUserCircle, FaBars, FaTimes, FaQuestionCircle } from 'react-icons/fa';
+import Tooltip from '@mui/material/Tooltip';
 import boneTokenABI from "./abis/BoneToken.json";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [boneBalance, setBoneBalance] = useState(0);
+  const [mintmeBalance, setMintmeBalance] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
 
   const toggleMenu = () => {
@@ -17,19 +19,25 @@ const NavBar = () => {
 
   const connectWallet = async () => {
     try {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
       const signer = provider.getSigner();
       const address = await signer.getAddress();
+
+      // $BONE token contract
       const boneContract = new ethers.Contract(
         // Replace with your $BONE token contract address
-        '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF', 
-        // Replace with your $BONE token ABI
+        '0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF',
         boneTokenABI,
         signer
       );
-      const balance = await boneContract.balanceOf(address);
-      setBoneBalance(ethers.utils.formatEther(balance));
+      const boneBalance = await boneContract.balanceOf(address);
+      setBoneBalance(ethers.utils.formatUnits(boneBalance, 2));
+
+      // Native token (MintMe) balance
+      const mintmeBalance = await provider.getBalance(address);
+      setMintmeBalance(ethers.utils.formatEther(mintmeBalance));
+
       setIsConnected(true);
     } catch (error) {
       console.error('Error connecting wallet:', error);
@@ -39,6 +47,7 @@ const NavBar = () => {
   const disconnectWallet = () => {
     setIsConnected(false);
     setBoneBalance(0);
+    setMintmeBalance(0);
   };
 
   useEffect(() => {
@@ -83,7 +92,15 @@ const NavBar = () => {
             {isConnected ? (
               <div className="connected-wallet">
                 <FaUserCircle />
-                <span className="bone-balance">{boneBalance} $BONE</span>
+                <Tooltip
+                  title={`MintMe Balance: ${mintmeBalance}`}
+                  arrow
+                  placement="bottom"
+                >
+                  <span className="bone-balance">
+                    {boneBalance} $BONE <FaQuestionCircle />
+                  </span>
+                </Tooltip>
                 <button className="disconnect-button" onClick={disconnectWallet}>
                   Disconnect
                 </button>
