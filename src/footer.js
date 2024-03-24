@@ -1,19 +1,24 @@
 import React from "react";
-import { FaDiscord, FaTwitter, FaRobot, FaHeart } from "react-icons/fa";
+import { FaDiscord, FaTwitter, FaRobot, FaHeart, FaGlobe, FaEnvelope, FaPhoneAlt } from "react-icons/fa";
 import Button from "@mui/material/Button";
+import "./Footer.css";
 
-const Footer = () => {
+const Footer = ({ bonePriceInUSD }) => {
   return (
     <footer className="footer">
       <div className="footer-content">
-        <div className="backlinks">
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
-          <a href="/privacy">Privacy</a>
+        <div className="footer-section">
+          <h3>Navigation</h3>
+          <div className="backlinks">
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/tvl">TVL</a>
+          </div>
         </div>
-        <div className="company-info">
-          {/* Styled buttons for Discord and Twitter */}
+        <div className="footer-section">
+          <h3>Social Media</h3>
           <div className="button-container">
             <Button
               variant="contained"
@@ -24,7 +29,7 @@ const Footer = () => {
               rel="noopener noreferrer"
             >
               Discord
-            </Button>  
+            </Button>
             <Button
               variant="contained"
               color="secondary"
@@ -38,11 +43,31 @@ const Footer = () => {
             </Button>
           </div>
         </div>
-        <div className="copyright">
+        <div className="footer-section">
+          <h3>Contact</h3>
+          <div className="contact-info">
+            <p>
+              <FaGlobe /> dogswap.online
+            </p>
+            <p>
+              <FaEnvelope /> info@dogswap.online
+            </p>
+            <p>
+              <FaPhoneAlt /> +1 (555) 555-5555
+            </p>
+          </div>
+        </div>
+        <div className="footer-section">
+          <h3>Current $BONE Price</h3>
+          <div className="bone-price">
+            <span>1 🦴 = ${bonePriceInUSD}</span>
+          </div>
+        </div>
+      </div>
+      <div className="copyright">
         <p>
           <FaHeart /> © DogSwap 2023 &nbsp;&nbsp; Created with the help of AI <FaRobot />
         </p>
-      </div>
       </div>
     </footer>
   );

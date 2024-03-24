@@ -6,6 +6,7 @@ import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
 import pairABI from "../build/IUniswapV2Pair.json";
 import boneTokenABI from "./abis/BoneToken.json";
 import axios from 'axios';
+import Footer from "../footer";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -145,6 +146,7 @@ const TVLPage = () => {
       ) : (
         <>
           <Box className={classes.space}></Box>
+          <Footer bonePriceInUSD={bonePriceInUSD} />
           <Typography variant="subtitle1" className={classes.priceInfo}>
             TVL = ${tvlData} USD
           </Typography>
