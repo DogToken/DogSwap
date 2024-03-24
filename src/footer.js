@@ -11,12 +11,12 @@ const Footer = () => {
           BONE Price:{" "}
               <span
                 className="bone-price"
-                onClick={toggleTVLPage}
+                onclick="location.href='tvl';"
                 style={{ cursor: "pointer" }}
               >
                 🦴 {bonePriceInUSD !== null ? `$${bonePriceInUSD}` : "Loading..."}
               </span>
-              
+
           <a href="/">Home</a>
           <a href="/about">About</a>
           <a href="/contact">Contact</a>
