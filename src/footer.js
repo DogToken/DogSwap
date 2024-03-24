@@ -1,20 +1,12 @@
 import React from "react";
 import { FaDiscord, FaTwitter, FaRobot, FaHeart } from "react-icons/fa";
 import Button from "@mui/material/Button";
-import bonePriceInUSD from "./tvl/tvl"
 
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
         <div className="backlinks">
-          BONE Price:{" "}
-              <span
-                className="bone-price"
-                style={{ cursor: "pointer" }}
-              >
-                🦴 {bonePriceInUSD !== null ? `$${bonePriceInUSD}` : "Loading..."}
-              </span>
           <a href="/">Home</a>
           <a href="/about">About</a>
           <a href="/contact">Contact</a>
