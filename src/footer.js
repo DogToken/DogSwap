@@ -57,12 +57,6 @@ const Footer = ({ bonePriceInUSD }) => {
             </p>
           </div>
         </div>
-        <div className="footer-section">
-          <h3>Current $BONE Price</h3>
-          <div className="bone-price">
-            <span>1 🦴 = ${bonePriceInUSD}</span>
-          </div>
-        </div>
       </div>
       <div className="copyright">
         <p>
