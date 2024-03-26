@@ -81,7 +81,10 @@ const FaucetPage = () => {
     const result = await claimTokensFromFaucet(faucetAddress);
     setLoading(false);
     setClaimMessage(result.message);
-    setCountdown(claimInterval);
+    setCountdown((prevCountdown) => ({
+      ...prevCountdown,
+      [faucetAddress]: claimInterval,
+    }));
   };
 
   const claimTokensFromFaucet = async (faucetAddress) => {
