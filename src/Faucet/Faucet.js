@@ -87,6 +87,13 @@ const FaucetPage = () => {
     }));
   };
 
+  const handleCountdownComplete = (faucetAddress) => {
+    setCountdown((prevCountdown) => ({
+      ...prevCountdown,
+      [faucetAddress]: 0,
+    }));
+  };
+
   const claimTokensFromFaucet = async (faucetAddress) => {
     try {
       const provider = getProvider();
@@ -159,7 +166,10 @@ const FaucetPage = () => {
                     classes={classes}
                   />
                 ) : (
-                  <FaucetTimer countdown={countdown[faucet.address]} />
+                  <FaucetTimer
+                    countdown={countdown[faucet.address]}
+                    onCountdownComplete={() => handleCountdownComplete(faucet.address)}
+                  />
                 )}
                 {claimMessage && (
                   <Typography variant="body1" style={{ marginTop: '1rem' }}>
