@@ -2,14 +2,24 @@
 import React, { useEffect, useState } from 'react';
 import { Typography } from '@material-ui/core';
 
-const FaucetTimer = ({ countdown }) => {
+const FaucetTimer = ({ countdown, onCountdownComplete }) => {
   const [formattedTime, setFormattedTime] = useState('');
 
   useEffect(() => {
-    const minutes = Math.floor(countdown / 60);
-    const seconds = countdown % 60;
-    setFormattedTime(`${minutes}:${seconds < 10 ? '0' + seconds : seconds}`);
-  }, [countdown]);
+    const interval = setInterval(() => {
+      const minutes = Math.floor(countdown / 60);
+      const seconds = countdown % 60;
+      const formattedCountdown = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+      setFormattedTime(formattedCountdown);
+
+      if (countdown === 0) {
+        clearInterval(interval);
+        onCountdownComplete();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [countdown, onCountdownComplete]);
 
   return (
     <Typography variant="body1">
