@@ -8,7 +8,6 @@ import Tooltip from '@mui/material/Tooltip';
 import boneTokenABI from "./abis/BoneToken.json";
 import pairABI from "../build/IUniswapV2Pair.json";
 import axios from 'axios';
-import Sidebar from './Sidebar';
 
 const POOLS = [
   { id: 0, name: "$BONE-WMINT", address: "0x21D897515b2C4393F7a23BBa210b271D13CCdF10" },
@@ -146,57 +145,50 @@ const NavBar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <div className="navbar-content">
-          <div className="navbar-logo">
-            <Link to="/" className="logo-link">
-              <span role="img" aria-label="dog">
-                🐶 &nbsp;
-              </span>
-              DogSwap
-            </Link>
-          </div>
-          <div className="menu-icon" onClick={toggleMenu}>
-            {isOpen ? <FaTimes /> : <FaBars />}
-          </div>
-          <ul className={`nav-menu ${isOpen ? 'open' : ''}`}>
-            {MenuItems.map((item, index) => (
-              <li key={index} className="nav-item">
-                <Link className="nav-link" to={item.url}>
-                  {item.title}
-                </Link>
-              </li>
-            ))}
-            <li className="nav-item">
-              {isConnected ? (
-                <div className="connected-wallet" ref={balancesDropdownRef}>
-                  <button
-                    className="wallet-button"
-                    onClick={() => setShowBalances((prevState) => !prevState)}
-                  >
-                    1 🦴 = ${bonePriceInUSD} USD <FaCaretDown />
-                  </button>
-                  {showBalances && (
-                    <div className="balances-dropdown">
-                      <p>MintMe: {mintmeBalance}</p>
-                    </div>
-                  )}
-                  <button className="disconnect-button" onClick={disconnectWallet}>
-                    Disconnect
-                  </button>
-                </div>
-              ) : (
-                <button className="connect-button" onClick={connectWallet}>
-                  Connect Wallet
-                </button>
-              )}
+        <div className="navbar-logo">
+          <Link to="/" className="logo-link">
+            <span role="img" aria-label="dog">
+              🐶 &nbsp;
+            </span>
+            DogSwap
+          </Link>
+        </div>
+        <div className="menu-icon" onClick={toggleMenu}>
+          {isOpen ? <FaTimes /> : <FaBars />}
+        </div>
+        <ul className={`nav-menu ${isOpen ? 'open' : ''}`}>
+          {MenuItems.map((item, index) => (
+            <li key={index} className="nav-item">
+              <Link className="nav-link" to={item.url}>
+                {item.title}
+              </Link>
             </li>
-          </ul>
-        </div>
-
-        {/* Add the Sidebar component */}
-        <div className="sidebar-container">
-          <Sidebar />
-        </div>
+          ))}
+          <li className="nav-item">
+            {isConnected ? (
+              <div className="connected-wallet" ref={balancesDropdownRef}>
+                <button
+                  className="wallet-button"
+                  onClick={() => setShowBalances((prevState) => !prevState)}
+                >
+                  1 🦴 = ${bonePriceInUSD} USD <FaCaretDown />
+                </button>
+                {showBalances && (
+                  <div className="balances-dropdown">
+                    <p>MintMe: {mintmeBalance}</p>
+                  </div>
+                )}
+                <button className="disconnect-button" onClick={disconnectWallet}>
+                  Disconnect
+                </button>
+              </div>
+            ) : (
+              <button className="connect-button" onClick={connectWallet}>
+                Connect Wallet
+              </button>
+            )}
+          </li>
+        </ul>
       </div>
     </nav>
   );
