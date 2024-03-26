@@ -1,28 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button,
   Container,
   Typography,
   CircularProgress,
   Grid,
   Card,
   CardContent,
+  Button,
+  Box,
+  Divider,
 } from '@material-ui/core';
 import { Contract } from 'ethers';
 import { getProvider, getSigner, getNetwork } from '../ethereumFunctions';
 import boneABI from './abis/bone.json';
 import faucetABI from './abis/faucet.json';
+import FaucetTimer from './FaucetTimer';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    textAlign: 'center',
-    padding: theme.spacing(2),
-    borderRadius: theme.spacing(2),
-    maxWidth: 400,
-    margin: 'auto',
+    padding: theme.spacing(4),
   },
-  button: {
+  faucetCard: {
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+    padding: theme.spacing(3),
+    textAlign: 'center',
+  },
+  title: {
+    fontWeight: 'bold',
+    color: theme.palette.primary.main,
+    marginBottom: theme.spacing(2),
+  },
+  description: {
+    marginBottom: theme.spacing(3),
+  },
+  claimButton: {
     marginTop: theme.spacing(2),
     backgroundColor: theme.palette.primary.main,
     color: '#FFFFFF',
@@ -30,26 +43,8 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.primary.dark,
     },
   },
-  loading: {
-    marginTop: theme.spacing(2),
-  },
-  title: {
-    marginBottom: theme.spacing(1),
-    fontWeight: 'bold',
-    color: theme.palette.primary.main,
-    textAlign: 'center',
-  },
-  description: {
-    marginBottom: theme.spacing(2),
-    textAlign: 'center',
-  },
-  claimButtonContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  faucetCard: {
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+  faucetDivider: {
+    margin: theme.spacing(4, 0),
   },
 }));
 
@@ -57,79 +52,38 @@ const getFaucetContractInstance = (networkId, signer, faucetAddress) => {
   return new Contract(faucetAddress, faucetABI, signer);
 };
 
-const FaucetTimer = ({ countdown }) => {
-  const minutes = Math.floor(countdown / 60);
-  const seconds = countdown % 60;
-  return (
-    <Typography variant="body1">
-      Next claim available in: {`${minutes}:${seconds < 10 ? '0' + seconds : seconds}`}
-    </Typography>
-  );
-};
+const FaucetClaimButton = ({ loading, handleClaimTokens, classes }) => (
+  <Button
+    variant="contained"
+    className={classes.claimButton}
+    onClick={handleClaimTokens}
+    disabled={loading}
+  >
+    {loading ? <CircularProgress size={24} color="inherit" /> : 'Claim!'}
+  </Button>
+);
 
-const FaucetClaimButton = ({ loading, handleClaimTokens }) => {
+const FaucetPage = () => {
   const classes = useStyles();
-  return (
-    <Button
-      variant="contained"
-      className={classes.button}
-      onClick={handleClaimTokens}
-      disabled={loading}
-    >
-      {loading ? <CircularProgress size={24} color="inherit" /> : 'Claim!'}
-    </Button>
-  );
-};
+  const faucets = [
+    {
+      id: 1,
+      address: '0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250',
+      title: 'The $BONE Faucet',
+      description: 'Claim 0.1 $BONE each 30 minutes. Stake, trade or hodl your tokens to support the DogSwap ecosystem',
+      claimInterval: 1800,
+    },
+  ];
 
-const FaucetMessage = ({ message }) => {
-  const classes = useStyles();
-  return (
-    <Typography variant="body1" className={classes.loading}>
-      {message}
-    </Typography>
-  );
-};
-
-const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
-  const classes = useStyles();
-  const [loading, setLoading] = useState(false);
-  const [claimMessage, setClaimMessage] = useState('');
-  const [countdown, setCountdown] = useState(() => {
-    const storedCountdown = localStorage.getItem(`countdown_${faucetAddress}`);
-    return storedCountdown ? parseInt(storedCountdown, 10) : 0;
-  });
-
-  useEffect(() => {
-    const storedCountdown = localStorage.getItem(`countdown_${faucetAddress}`);
-    const initialCountdown = storedCountdown ? parseInt(storedCountdown, 10) : claimInterval;
-    setCountdown(initialCountdown);
-
-    const interval = setInterval(() => {
-      setCountdown((prevCountdown) => {
-        const newCountdown = prevCountdown > 0 ? prevCountdown - 1 : 0;
-        localStorage.setItem(`countdown_${faucetAddress}`, newCountdown.toString());
-        return newCountdown;
-      });
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [faucetAddress, claimInterval]);
-
-  useEffect(() => {
-    localStorage.setItem(`countdown_${faucetAddress}`, countdown.toString());
-  }, [countdown, faucetAddress]);
-
-  const handleClaimTokens = async () => {
+  const handleClaimTokens = async (faucetAddress, claimInterval) => {
     setLoading(true);
-    const result = await claimTokensFromFaucet();
+    const result = await claimTokensFromFaucet(faucetAddress);
     setLoading(false);
     setClaimMessage(result.message);
     setCountdown(claimInterval);
   };
 
-  const claimTokensFromFaucet = async () => {
+  const claimTokensFromFaucet = async (faucetAddress) => {
     try {
       const provider = getProvider();
       const signer = getSigner(provider);
@@ -150,55 +104,73 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
     }
   };
 
-  return (
-    <Card className={classes.faucetCard}>
-      <CardContent>
-        <Typography variant="h6" className={classes.title}>
-          {title}
-        </Typography>
-        <Typography variant="body1" className={classes.description}>
-          {description}
-        </Typography>
-        <div className={classes.claimButtonContainer}>
-          {countdown === 0 ? (
-            <FaucetClaimButton loading={loading} handleClaimTokens={handleClaimTokens} />
-          ) : (
-            <FaucetTimer countdown={countdown} />
-          )}
-        </div>
-        {claimMessage && <FaucetMessage message={claimMessage} />}
-      </CardContent>
-    </Card>
-  );
-};
+  const [loading, setLoading] = useState(false);
+  const [claimMessage, setClaimMessage] = useState('');
+  const [countdown, setCountdown] = useState({});
 
-const FaucetPage = () => {
-  const faucets = [
-    {
-      id: 1,
-      address: '0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250',
-      title: 'The $BONE Faucet',
-      description: 'Claim 0.1 $BONE each 30 minutes. Stake, trade or hodl your tokens to support the DogSwap ecosystem',
-      claimInterval: 1800,
-    },
-  ];
+  useEffect(() => {
+    const storedCountdowns = {};
+    faucets.forEach((faucet) => {
+      const storedCountdown = localStorage.getItem(`countdown_${faucet.address}`);
+      storedCountdowns[faucet.address] = storedCountdown ? parseInt(storedCountdown, 10) : faucet.claimInterval;
+    });
+    setCountdown(storedCountdowns);
+  }, [faucets]);
 
-  const classes = useStyles();
+  useEffect(() => {
+    const intervals = {};
+    faucets.forEach((faucet) => {
+      intervals[faucet.address] = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          const newCountdown = { ...prevCountdown };
+          newCountdown[faucet.address] = prevCountdown[faucet.address] > 0 ? prevCountdown[faucet.address] - 1 : 0;
+          localStorage.setItem(`countdown_${faucet.address}`, newCountdown[faucet.address].toString());
+          return newCountdown;
+        });
+      }, 1000);
+    });
+
+    return () => {
+      Object.values(intervals).forEach(clearInterval);
+    };
+  }, [faucets]);
 
   return (
     <Container className={classes.container}>
-      <Grid container spacing={3} justify="center">
+      <Grid container spacing={4} justify="center">
         {faucets.map((faucet) => (
           <Grid item xs={12} sm={6} md={4} key={faucet.id}>
-            <Faucet
-              faucetAddress={faucet.address}
-              title={faucet.title}
-              description={faucet.description}
-              claimInterval={faucet.claimInterval}
-            />
+            <Card className={classes.faucetCard}>
+              <CardContent>
+                <Typography variant="h6" className={classes.title}>
+                  {faucet.title}
+                </Typography>
+                <Typography variant="body1" className={classes.description}>
+                  {faucet.description}
+                </Typography>
+                {countdown[faucet.address] === 0 ? (
+                  <FaucetClaimButton
+                    loading={loading}
+                    handleClaimTokens={() => handleClaimTokens(faucet.address, faucet.claimInterval)}
+                    classes={classes}
+                  />
+                ) : (
+                  <FaucetTimer countdown={countdown[faucet.address]} />
+                )}
+                {claimMessage && (
+                  <Typography variant="body1" style={{ marginTop: '1rem' }}>
+                    {claimMessage}
+                  </Typography>
+                )}
+              </CardContent>
+            </Card>
           </Grid>
         ))}
       </Grid>
+      <Box className={classes.faucetDivider}>
+        <Divider />
+      </Box>
+      {/* Additional features can be added here */}
     </Container>
   );
 };
