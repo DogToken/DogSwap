@@ -2,7 +2,7 @@ import React from "react";
 import { ethers } from "ethers";
 import Web3Provider from "./network";
 import NavBar from "./NavBar/NavBar";
-import Sidebar from './Sidebar'; // Import the Sidebar component
+import Sidebar from './NavBar/Sidebar'; // Import the Sidebar component
 import CoinSwapper from "./CoinSwapper/CoinSwapper";
 import { Route } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
