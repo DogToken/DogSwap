@@ -44,9 +44,8 @@ const App = () => {
             <div>
               {/* Include the NavBar component */}
               <NavBar />
-              {/* Include the Sidebar component */}
-              <Sidebar />
               <div className="NavbarContainer">
+              <Sidebar />
                 <Route exact path="/">
                   <CoinSwapper network={network} />
                 </Route>
