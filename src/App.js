@@ -2,7 +2,6 @@ import React from "react";
 import { ethers } from "ethers";
 import Web3Provider from "./network";
 import NavBar from "./NavBar/NavBar";
-import Sidebar from './NavBar/Sidebar'; // Import the Sidebar component
 import CoinSwapper from "./CoinSwapper/CoinSwapper";
 import { Route } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
@@ -45,7 +44,6 @@ const App = () => {
               {/* Include the NavBar component */}
               <NavBar />
               <div className="NavbarContainer">
-              <Sidebar />
                 <Route exact path="/">
                   <CoinSwapper network={network} />
                 </Route>
