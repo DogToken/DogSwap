@@ -1,4 +1,3 @@
-// Faucet.jsx
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -16,7 +15,6 @@ import { Contract } from 'ethers';
 import { getProvider, getSigner, getNetwork } from '../ethereumFunctions';
 import boneABI from './abis/bone.json';
 import faucetABI from './abis/faucet.json';
-import FaucetTimer from './FaucetTimer';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -53,16 +51,47 @@ const getFaucetContractInstance = (networkId, signer, faucetAddress) => {
   return new Contract(faucetAddress, faucetABI, signer);
 };
 
-const FaucetClaimButton = ({ loading, handleClaimTokens, classes }) => (
-  <Button
-    variant="contained"
-    className={classes.claimButton}
-    onClick={handleClaimTokens}
-    disabled={loading}
-  >
-    {loading ? <CircularProgress size={24} color="inherit" /> : 'Claim!'}
-  </Button>
-);
+const FaucetClaimButton = ({ loading, handleClaimTokens, classes }) => {
+  return React.createElement(
+    Button,
+    {
+      variant: 'contained',
+      className: classes.claimButton,
+      onClick: handleClaimTokens,
+      disabled: loading,
+    },
+    loading
+      ? React.createElement(CircularProgress, { size: 24, color: 'inherit' })
+      : 'Claim!'
+  );
+};
+
+const FaucetTimer = ({ countdown, onCountdownComplete }) => {
+  const [formattedTime, setFormattedTime] = useState('');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const minutes = Math.floor(countdown / 60);
+      const seconds = countdown % 60;
+      const formattedCountdown = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+      setFormattedTime(formattedCountdown);
+
+      if (countdown === 0) {
+        clearInterval(interval);
+        onCountdownComplete();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [countdown, onCountdownComplete]);
+
+  return React.createElement(
+    Typography,
+    { variant: 'body1' },
+    'Next claim available in: ',
+    formattedTime
+  );
+};
 
 const FaucetPage = () => {
   const classes = useStyles();
@@ -146,46 +175,47 @@ const FaucetPage = () => {
     };
   }, [faucets]);
 
-  return (
-    <Container className={classes.container}>
-      <Grid container spacing={4} justify="center">
-        {faucets.map((faucet) => (
-          <Grid item xs={12} sm={6} md={4} key={faucet.id}>
-            <Card className={classes.faucetCard}>
-              <CardContent>
-                <Typography variant="h6" className={classes.title}>
-                  {faucet.title}
-                </Typography>
-                <Typography variant="body1" className={classes.description}>
-                  {faucet.description}
-                </Typography>
-                {countdown[faucet.address] === 0 ? (
-                  <FaucetClaimButton
-                    loading={loading}
-                    handleClaimTokens={() => handleClaimTokens(faucet.address, faucet.claimInterval)}
-                    classes={classes}
-                  />
-                ) : (
-                  <FaucetTimer
-                    countdown={countdown[faucet.address]}
-                    onCountdownComplete={() => handleCountdownComplete(faucet.address)}
-                  />
-                )}
-                {claimMessage && (
-                  <Typography variant="body1" style={{ marginTop: '1rem' }}>
-                    {claimMessage}
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-      <Box className={classes.faucetDivider}>
-        <Divider />
-      </Box>
-      {/* Additional features can be added here */}
-    </Container>
+  return React.createElement(
+    Container,
+    { className: classes.container },
+    React.createElement(
+      Grid,
+      { container: true, spacing: 4, justify: 'center' },
+      faucets.map((faucet) =>
+        React.createElement(
+          Grid,
+          { item: true, xs: 12, sm: 6, md: 4, key: faucet.id },
+          React.createElement(
+            Card,
+            { className: classes.faucetCard },
+            React.createElement(
+              CardContent,
+              null,
+              React.createElement(Typography, { variant: 'h6', className: classes.title }, faucet.title),
+              React.createElement(Typography, { variant: 'body1', className: classes.description }, faucet.description),
+              countdown[faucet.address] === 0
+                ? React.createElement(FaucetClaimButton, {
+                    loading: loading,
+                    handleClaimTokens: () => handleClaimTokens(faucet.address, faucet.claimInterval),
+                    classes: classes,
+                  })
+                : React.createElement(FaucetTimer, {
+                    countdown: countdown[faucet.address],
+                    onCountdownComplete: () => handleCountdownComplete(faucet.address),
+                  }),
+              claimMessage &&
+                React.createElement(
+                  Typography,
+                  { variant: 'body1', style: { marginTop: '1rem' } },
+                  claimMessage
+                )
+            )
+          )
+        )
+      )
+    ),
+    React.createElement(Box, { className: classes.faucetDivider }, React.createElement(Divider, null)),
+    /* Additional features can be added here */
   );
 };
 
