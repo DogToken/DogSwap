@@ -1,0 +1,70 @@
+.sidebar {
+    position: fixed;
+    top: 60px; /* Adjust this value to match the height of your navbar */
+    left: 0;
+    width: 250px;
+    height: calc(100vh - 60px); /* Adjust this value to match the height of your navbar */
+    background-color: #f1f1f1;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+    z-index: 999;
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+  }
+  
+  .toggle-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .sidebar-nav {
+    padding: 10px;
+  }
+  
+  .sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar-nav li {
+    margin-bottom: 5px;
+  }
+  
+  .sidebar-nav a {
+    display: block;
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar-nav a:hover {
+    background-color: #ddd;
+  }
+  
+  .submenu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .submenu-items {
+    padding-left: 20px;
+  }
