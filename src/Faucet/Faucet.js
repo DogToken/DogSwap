@@ -60,12 +60,22 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
   });
 
   useEffect(() => {
+    const storedCountdown = localStorage.getItem(`countdown_${faucetAddress}`);
+    const initialCountdown = storedCountdown ? parseInt(storedCountdown, 10) : claimInterval;
+    setCountdown(initialCountdown);
+  
     const interval = setInterval(() => {
-      setCountdown((prevCountdown) => (prevCountdown > 0 ? prevCountdown - 1 : 0));
+      setCountdown((prevCountdown) => {
+        const newCountdown = prevCountdown > 0 ? prevCountdown - 1 : 0;
+        localStorage.setItem(`countdown_${faucetAddress}`, newCountdown.toString());
+        return newCountdown;
+      });
     }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+  
+    return () => {
+      clearInterval(interval);
+    };
+  }, [faucetAddress, claimInterval]);
 
   useEffect(() => {
     localStorage.setItem(`countdown_${faucetAddress}`, countdown.toString());
@@ -84,12 +94,16 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
       const provider = getProvider();
       const signer = getSigner(provider);
       const networkId = await getNetwork(provider);
-
+  
       const faucetContract = getFaucetContractInstance(networkId, signer, faucetAddress);
-      const transaction = await faucetContract.requestTokens();
-
+  
+      // Set a manual gas limit for the transaction
+      const gasLimit = 300000; // Adjust this value as needed
+  
+      const transaction = await faucetContract.requestTokens({ gasLimit });
+  
       await transaction.wait();
-
+  
       return { success: true, message: "Tokens claimed successfully!" };
     } catch (error) {
       console.error("Error claiming tokens:", error);
