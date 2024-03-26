@@ -167,7 +167,6 @@ const NavBar = () => {
           <li className="nav-item">
             {isConnected ? (
               <div className="connected-wallet" ref={balancesDropdownRef}>
-                <FaUserCircle />
                 <button
                   className="wallet-button"
                   onClick={() => setShowBalances((prevState) => !prevState)}

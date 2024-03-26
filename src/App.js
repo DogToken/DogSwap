@@ -2,13 +2,14 @@ import React from "react";
 import { ethers } from "ethers";
 import Web3Provider from "./network";
 import NavBar from "./NavBar/NavBar";
+import Sidebar from './Sidebar'; // Import the Sidebar component
 import CoinSwapper from "./CoinSwapper/CoinSwapper";
 import { Route } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
 import Liquidity from "./Liquidity/Liquidity";
 import { createTheme, ThemeProvider } from "@material-ui/core";
-import Footer from "./footer"; // Import the Footer component
-import "./footer.css"; // Import the Footer styles
+import Footer from "./footer";
+import "./footer.css";
 import { inject } from '@vercel/analytics';
 import About from "./About";
 import Contact from "./Contact";
@@ -21,7 +22,6 @@ import Lottery from "./Lottery/Lottery";
 
 inject();
 
-// Create the theme for Material UI
 const theme = createTheme({
   palette: {
     primary: {
@@ -40,46 +40,46 @@ const App = () => {
     <div className="App">
       <SnackbarProvider maxSnack={3}>
         <ThemeProvider theme={theme}>
-          <Web3Provider
-            render={(network) => (
-              <div>
-                {/* Include the NavBar component */}
-                <NavBar />
-                <div className="NavbarContainer">
-                  <Route exact path="/">
-                    <CoinSwapper network={network} />
-                  </Route>
-                  <Route exact path="/liquidity">
-                    <Liquidity network={network} />
-                  </Route>
-                  <Route exact path="/stake">
-                    <Staking network={network} />
-                  </Route>
-                  <Route exact path="/faucet">
-                    <Faucet network={network} />
-                  </Route>
-                  <Route exact path="/tvl">
-                    <TVL network={network} />
-                  </Route>
-                  <Route exact path="/pools">
-                    <Pools network={network} />
-                  </Route>
-                  <Route exact path="/lottery">
-                    <Lottery network={network} />
-                  </Route>
-                  <Route exact path="/about">
-                    <About />
-                  </Route>
-                  <Route exact path="/contact">
-                    <Contact />
-                  </Route>
-                  <Route exact path="/privacy">
-                    <Privacy />
-                  </Route>
-                </div>
+          <Web3Provider render={(network) => (
+            <div>
+              {/* Include the NavBar component */}
+              <NavBar />
+              {/* Include the Sidebar component */}
+              <Sidebar />
+              <div className="NavbarContainer">
+                <Route exact path="/">
+                  <CoinSwapper network={network} />
+                </Route>
+                <Route exact path="/liquidity">
+                  <Liquidity network={network} />
+                </Route>
+                <Route exact path="/stake">
+                  <Staking network={network} />
+                </Route>
+                <Route exact path="/faucet">
+                  <Faucet network={network} />
+                </Route>
+                <Route exact path="/tvl">
+                  <TVL network={network} />
+                </Route>
+                <Route exact path="/pools">
+                  <Pools network={network} />
+                </Route>
+                <Route exact path="/lottery">
+                  <Lottery network={network} />
+                </Route>
+                <Route exact path="/about">
+                  <About />
+                </Route>
+                <Route exact path="/contact">
+                  <Contact />
+                </Route>
+                <Route exact path="/privacy">
+                  <Privacy />
+                </Route>
               </div>
-            )}
-          ></Web3Provider>
+            </div>
+          )}></Web3Provider>
           {/* Include the Footer component here */}
           <Footer />
         </ThemeProvider>
