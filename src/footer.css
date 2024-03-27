@@ -56,13 +56,12 @@ body {
 .backlinks-column a {
   display: block;
   margin-bottom: 5px;
+  color: #333; /* Added color for links */
+  text-decoration: none; /* Removed underline for links */
+  transition: color 0.3s ease; /* Added transition for hover effect */
 }
 
-.centered-heading {
-  text-align: center;
-}
-
-.backlinks a:hover {
+.backlinks-column a:hover {
   color: #26a7de;
   text-decoration: underline;
 }
