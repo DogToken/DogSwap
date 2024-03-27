@@ -73,7 +73,7 @@ const Footer = () => {
             <Button
               variant="contained"
               color="secondary"
-              startIcon={/images/coins/mintmelogo.png}
+              startIcon="/images/coins/mintmelogo.png"
               href="https://mintme.com/token/DogSwap/invite"
               target="_blank"
               rel="noopener noreferrer"
