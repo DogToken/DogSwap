@@ -45,14 +45,21 @@ body {
 .backlinks {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  justify-content: space-between;
 }
 
-.backlinks a {
-  color: #333;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.3s ease;
+.backlinks-column {
+  flex: 0 0 calc(50% - 10px);
+  margin-bottom: 10px;
+}
+
+.backlinks-column a {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.centered-heading {
+  text-align: center;
 }
 
 .backlinks a:hover {
@@ -111,12 +118,6 @@ body {
 
   .footer-section {
     text-align: center;
-  }
-
-  .backlinks,
-  .button-container,
-  .contact-info {
-    justify-content: center;
   }
 
   .contact-info p {
