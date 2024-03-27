@@ -35,6 +35,7 @@ const Footer = () => {
               href="https://discord.gg/RSQZDGThfU"
               target="_blank"
               rel="noopener noreferrer"
+              size="small"
             >
               Discord
             </Button>
@@ -46,6 +47,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
               style={{ backgroundColor: "#26a7de", color: "#fff" }}
+              size="small"
             >
               Twitter
             </Button>
@@ -57,19 +59,9 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
               style={{ backgroundColor: "#24292e", color: "#fff" }}
+              size="small"
             >
               GitHub
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              startIcon={<FiExternalLink />}
-              href="https://mintme.com/dogswap"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ backgroundColor: "#6c63ff", color: "#fff" }}
-            >
-              MintMe
             </Button>
           </div>
         </div>
@@ -82,6 +74,10 @@ const Footer = () => {
             <p>
               <FaEnvelope /> support@dogswap.online
             </p>
+            <p>
+              <FaPhoneAlt /> +1 (555) 123-4567
+            </p>
+            <p>123 Main Street, Anytown USA</p>
           </div>
         </div>
       </div>
