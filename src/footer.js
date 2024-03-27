@@ -1,5 +1,6 @@
 import React from "react";
-import { FaDiscord, FaTwitter, FaRobot, FaHeart, FaGlobe, FaEnvelope, FaPhoneAlt } from "react-icons/fa";
+import { FaDiscord, FaTwitter, FaRobot, FaHeart, FaGlobe, FaEnvelope, FaPhoneAlt, FaGithub } from "react-icons/fa";
+import { FiExternalLink } from "react-icons/fi";
 import Button from "@mui/material/Button";
 import "./footer.css";
 
@@ -10,12 +11,18 @@ const Footer = () => {
         <div className="footer-section">
           <h3>Navigation</h3>
           <div className="backlinks">
-            <a href="/">Home</a>
-            <a href="/about">About</a>
-            <a href="/contact">Contact</a>
-            <a href="/privacy">Privacy</a>
-            <a href="https://1000x.ch">1000x</a>
-            <a href="/tvl">TVL</a>
+            <div className="backlinks-column">
+              <a href="/">Home</a>
+              <a href="/about">About</a>
+              <a href="/contact">Contact</a>
+              <a href="/privacy">Privacy</a>
+            </div>
+            <div className="backlinks-column">
+              <a href="https://1000x.ch" target="_blank" rel="noopener noreferrer">
+                1000x <FiExternalLink />
+              </a>
+              <a href="/tvl">TVL</a>
+            </div>
           </div>
         </div>
         <div className="footer-section">
@@ -42,19 +49,38 @@ const Footer = () => {
             >
               Twitter
             </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<FaGithub />}
+              href="https://github.com/DogSwap"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ backgroundColor: "#24292e", color: "#fff" }}
+            >
+              GitHub
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<FiExternalLink />}
+              href="https://mintme.com/dogswap"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ backgroundColor: "#6c63ff", color: "#fff" }}
+            >
+              MintMe
+            </Button>
           </div>
         </div>
         <div className="footer-section">
           <h3>Contact</h3>
           <div className="contact-info">
             <p>
-              <FaGlobe /> dogswap.online
+              <FaGlobe /> www.dogswap.online
             </p>
             <p>
-              <FaEnvelope /> info@dogswap.online
-            </p>
-            <p>
-              <FaPhoneAlt /> +1 (555) 555-5555
+              <FaEnvelope /> support@dogswap.online
             </p>
           </div>
         </div>
