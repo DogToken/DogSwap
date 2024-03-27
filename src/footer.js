@@ -70,18 +70,6 @@ const Footer = () => {
             >
               GitHub
             </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              startIcon="/images/coins/mintmelogo.png"
-              href="https://mintme.com/token/DogSwap/invite"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ backgroundColor: "#212529", color: "#fff" }}
-              size="small"
-            >
-              MintMe
-            </Button>
           </div>
         </div>
 
