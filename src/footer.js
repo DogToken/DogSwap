@@ -1,5 +1,5 @@
 import React from "react";
-import { FaDiscord, FaTwitter, FaRobot, FaHeart, FaGlobe, FaEnvelope, FaPhoneAlt, FaGithub } from "react-icons/fa";
+import { FaDiscord, FaTwitter, FaRobot, FaHeart, FaGlobe, FaEnvelope, FaPhoneAlt, FaGithub, FaMapMarkerAlt } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
 import Button from "@mui/material/Button";
 import "./footer.css";
@@ -27,7 +27,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-section">
-          <h3>Social Media</h3>
+          <h3 className="centered-heading">Social Media</h3>
           <div className="button-container">
             <Button
               variant="contained"
@@ -79,7 +79,9 @@ const Footer = () => {
             <p>
               <FaPhoneAlt /> +1 (555) 123-4567
             </p>
-            <p>123 Main Street, Anytown USA</p>
+            <p>
+              <FaMapMarkerAlt /> 123 Main Street, Anytown USA
+            </p>
           </div>
         </div>
       </div>
