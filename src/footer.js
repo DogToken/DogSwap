@@ -16,12 +16,18 @@ const Footer = () => {
               <a href="/about">About</a>
               <a href="/contact">Contact</a>
               <a href="/privacy">Privacy</a>
+              <a href="/tvl">TVL</a>
             </div>
             <div className="backlinks-column">
-              <a href="https://1000x.ch" target="_blank" rel="noopener noreferrer">
+            <a href="https://1000x.ch" target="_blank" rel="noopener noreferrer">
                 1000x <FiExternalLink />
+              </a> 
+              <a href="https://www.mintme.com/token/DogSwap/invite" target="_blank" rel="noopener noreferrer">
+                MintMe.com <FiExternalLink />
               </a>
-              <a href="/tvl">TVL</a>
+              <a href="https://www.bybit.com/invite?ref=73ARRG" target="_blank" rel="noopener noreferrer">
+                BYBIT <FiExternalLink />
+              </a>
             </div>
           </div>
         </div>
@@ -63,6 +69,18 @@ const Footer = () => {
               size="small"
             >
               GitHub
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={/images/coins/mintmelogo.png}
+              href="https://mintme.com/token/DogSwap/invite"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ backgroundColor: "#212529", color: "#fff" }}
+              size="small"
+            >
+              MintMe
             </Button>
           </div>
         </div>
