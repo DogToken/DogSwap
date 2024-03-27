@@ -25,6 +25,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
+
         <div className="footer-section">
           <h3>Social Media</h3>
           <div className="button-container">
@@ -65,6 +66,7 @@ const Footer = () => {
             </Button>
           </div>
         </div>
+
         <div className="footer-section">
           <h3>Contact</h3>
           <div className="contact-info">
