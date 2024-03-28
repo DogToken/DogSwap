@@ -1,0 +1,4 @@
+This is a Brave Creators publisher verification file.
+
+Domain: dogswap.online
+Token: 351b47b4bbde416ce80ea00dd07bccadb1d378d721122f2d11dd68c5b61cafb9
