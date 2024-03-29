@@ -112,6 +112,47 @@ const posts = [
           profilePicture: '/images/coins/dogswap.png',
         },
     },
+    {
+        id: 6,
+        title: 'List Your Token on DogSwap: Unleash the Power of Decentralized Trading',
+        content: `<p>Are you a project team seeking to list your token on a premier decentralized exchange? Look no further than DogSwap! Our platform is designed to provide a seamless and accessible trading experience for all digital assets, empowering projects and communities alike.</p>
+      
+        <h2>Listing Made Simple</h2>
+        <p>At DogSwap, we understand the challenges faced by project teams when it comes to listing their tokens on decentralized exchanges. That's why we've streamlined the process, making it easy and straightforward for you to get your token listed and trading.</p>
+      
+        <p>Our listing fee is a modest 25 DogSwap tokens, which can be acquired through our Token Market on <a href="https://www.mintme.com/token/DogSwap" target="_blank" rel="noopener noreferrer">MintMe.com</a>. This fee ensures that we maintain a high standard of quality and integrity within our platform, while also contributing to the growth and development of the DogSwap ecosystem.</p>
+      
+        <h2>Requirements for Listing</h2>
+        <p>To list your token on DogSwap, you'll need to provide us with the following:
+      
+        <ol>
+          <li>A verified and audited smart contract address for your token</li>
+          <li>A high-quality logo or brand asset representing your project</li>
+          <li>A willingness to collaborate and share project details with our team</li>
+        </ol>
+      
+        Once these requirements are met, our team will review your submission and work closely with you to ensure a smooth and successful listing process.</p>
+      
+        <h2>Continuous Support and Monitoring</h2>
+        <p>At DogSwap, we're committed to ensuring the longevity and success of listed projects. Our team continuously monitors the listed tokens for any signs of inactivity or potential issues. In cases where a token is deemed inactive or non-compliant, our admins reserve the right to delist the token from our platform. This proactive approach helps maintain the integrity of our ecosystem and protects the interests of our users.</p>
+      
+        <h2>Get in Touch</h2>
+        <p>Are you ready to unlock the potential of decentralized trading and tap into the ever-growing DeFi ecosystem? Reach out to us through our social media channels, and let's embark on this journey together.</p>
+      
+        <ul>
+          <li>Twitter: <a href="https://twitter.com/DogSwapDeFi" target="_blank" rel="noopener noreferrer">@DogSwapDeFi</a></li>
+          <li>Telegram: <a href="https://t.me/DogSwapOfficial" target="_blank" rel="noopener noreferrer">DogSwapOfficial</a></li>
+          <li>Discord: <a href="https://discord.gg/RSQZDGThfU" target="_blank" rel="noopener noreferrer">DogSwap</a></li>
+        </ul>
+      
+        <p>Join the DogSwap community today and experience the power of decentralized trading like never before!</p>`,
+        excerpt: 'Discover how to list your token on DogSwap, our streamlined process, and the benefits of trading on our premier decentralized exchange.',
+        publishedDate: 'March 30, 2024',
+        author: {
+          name: 'Doggo',
+          profilePicture: '/images/coins/doggo.png',
+        },
+      },
     
     // Add more posts here
   ];
