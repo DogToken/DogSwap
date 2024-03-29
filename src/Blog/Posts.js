@@ -77,10 +77,10 @@ const posts = [
       
         <p>Join our community of savvy traders and unlock the full potential of arbitrage trading with DogSwap. Stay ahead of the curve, maximize your returns, and experience the thrill of capitalizing on market inefficiencies like never before.</p>`,
         excerpt: 'Discover the art of arbitrage trading and how DogSwap empowers you to capitalize on price discrepancies across multiple exchanges, maximizing your potential profits.',
-        publishedDate: 'July 1, 2024',
+        publishedDate: 'March 29, 2024',
         author: {
           name: 'DogSwap Team',
-          profilePicture: '/assets/images/dogswap-team.jpg',
+          profilePicture: '/images/coins/dogswap.png',
         },
       },
       {
@@ -103,10 +103,10 @@ const posts = [
       
         <p>Join us on this exciting journey as we build a robust and resilient community, empowering individuals worldwide to take control of their financial future. Together, we can create a decentralized financial ecosystem that is truly inclusive, transparent, and accessible to all.</p>`,
         excerpt: 'Discover how DogSwap is building a robust community, scaling our operations, and seeking passionate volunteers to contribute to our journey of financial empowerment and technological innovation.',
-        publishedDate: 'July 15, 2024',
+        publishedDate: 'March 29, 2024',
         author: {
           name: 'DogSwap Team',
-          profilePicture: '/assets/images/dogswap-team.jpg',
+          profilePicture: '/images/coins/dogswap.png',
         },
     },
     
