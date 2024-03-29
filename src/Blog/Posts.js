@@ -13,7 +13,7 @@ const posts = [
         <h2>MintMe.com: Expanding Our Reach</h2>
         <p>We're thrilled to announce our recent listing on MintMe.com, a leading platform for launching and trading digital assets. This strategic partnership will further expand our reach, providing increased liquidity and accessibility for our growing community. With MintMe.com's cutting-edge technology and user-friendly interface, DogSwap's $BONE token will be available to a wider audience, fostering greater adoption and driving our mission forward.</p>
         <div style="text-align: center;">
-        <img width="800" src="/images/coins/mintmelogo.png" alt="mintme">
+        <img width="600" src="/images/coins/mintmelogo.png" alt="mintme">
         </div>
 
         <h2>Join the Pack</h2>
