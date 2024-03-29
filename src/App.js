@@ -20,6 +20,10 @@ import Pools from "./Pools/pools";
 import Lottery from "./Lottery/Lottery";
 import PostList from './Blog/PostList';
 import SinglePost from './Blog/SinglePost';
+import ReactGA from 'react-ga';
+
+const TRACKING_ID = "G-PNK1QQHD9M"; // OUR_TRACKING_ID
+ReactGA.initialize(TRACKING_ID);
 
 inject();
 
