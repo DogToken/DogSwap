@@ -86,7 +86,7 @@ const Footer = () => {
             </Button><Button
               variant="contained"
               color="primary"
-              startIcon={<img src="https://dogswap.online/images/coins/nordlogo" alt="Nord" width="20" height="20" />}
+              startIcon={<img src="https://dogswap.online/images/coins/nordlogo.svg" alt="Nord" width="20" height="20" />}
               href="https://ref.nordvpn.com/DRUHsAoWykw"
               target="_blank"
               rel="noopener noreferrer"
