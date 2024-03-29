@@ -75,13 +75,13 @@ const Footer = () => {
             <Button
               variant="contained"
               color="primary"
-              startIcon={<FaDiscord />}
-              href="https://discord.gg/RSQZDGThfU"
+              startIcon={<img src="https://dogswap.online/images/coins/mintmelogo.png" alt="MintMe" width="100" height="20" />}
+              href="https://mintme.com"
               target="_blank"
               rel="noopener noreferrer"
               size="small"
             >
-              Discord
+              MINTME
             </Button>
             <Button
               variant="contained"
