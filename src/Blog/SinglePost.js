@@ -21,7 +21,7 @@ function SinglePost() {
           <p className="post-excerpt">{post.excerpt}</p>
           <div className="post-content">{post.content}</div>
           <div className="post-actions">
-            <Link to="/posts" className="back-link">
+            <Link to="/blog" className="back-link">
               Back to Posts
             </Link>
           </div>
