@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import posts from './Posts';
+import './SinglePost.css';
 
 function SinglePost() {
   const { id } = useParams();
@@ -11,10 +12,10 @@ function SinglePost() {
   }
 
   return (
-    <div>
+    <div className="single-post-container">
       <h1>{post.title}</h1>
-      <p>{post.content}</p>
-      {/* Add additional post details here */}
+      <p className="post-excerpt">{post.excerpt}</p>
+      <div className="post-content">{post.content}</div>
     </div>
   );
 }

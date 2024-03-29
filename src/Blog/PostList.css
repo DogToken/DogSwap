@@ -1,0 +1,38 @@
+.post-list-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .post-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .post-item {
+    margin-bottom: 20px;
+  }
+  
+  .post-card {
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .post-card h2 {
+    margin-top: 0;
+  }
+  
+  .post-card h2 a {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .post-card h2 a:hover {
+    text-decoration: underline;
+  }
+  
+  .post-card p {
+    margin-bottom: 0;
+  }
