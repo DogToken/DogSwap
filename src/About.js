@@ -6,6 +6,7 @@ import {
   Paper,
   Link,
 } from "@material-ui/core";
+import { Info as InfoIcon, MailOutline as MailOutlineIcon } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,6 +16,11 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginBottom: theme.spacing(2),
+    display: "flex",
+    alignItems: "center",
+  },
+  icon: {
+    marginRight: theme.spacing(1),
   },
   paragraph: {
     marginBottom: theme.spacing(1),
@@ -35,43 +41,23 @@ function About() {
     <Container maxWidth="sm">
       <Paper className={classes.root}>
         <Typography variant="h4" className={classes.title}>
-          About Us
+          <InfoIcon className={classes.icon} />
+          About DogSwap
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec
-          diam ut nunc facilisis euismod a ac metus. Nulla facilisi. Proin
-          fermentum, elit quis dignissim luctus, velit elit faucibus elit, sit
-          amet hendrerit nisi mauris et dolor. Nulla facilisi. Cras interdum
-          justo et felis eleifend, vel facilisis nunc dignissim. Phasellus
-          auctor aliquam nisi, et rhoncus nibh accumsan nec. Sed consequat ut
-          justo id ultricies. Nullam id lacus id eros varius finibus vel a mi.
+          Welcome to DogSwap, your gateway to decentralized finance (DeFi)! 🐾 $BONE is our native token, powering transactions, liquidity, and governance within our ecosystem.
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          Proin eget libero velit. Nunc tincidunt vel turpis id ullamcorper.
-          Sed id facilisis elit. Nulla facilisi. Cras a nunc augue. Aenean
-          ultrices magna nec tortor ultrices rhoncus. Donec facilisis dolor nec
-          sapien faucibus faucibus. In iaculis libero vel turpis volutpat, non
-          dignissim nunc facilisis. Sed ut auctor nibh. Quisque luctus auctor
-          augue, eu blandit nisi faucibus a. Fusce nec elit id felis ultrices
-          hendrerit sit amet ac sapien. Fusce congue, lectus non cursus
-          tristique, elit ligula hendrerit odio, a suscipit turpis nibh sit
-          amet justo.
+          DogSwap operates on the Ethereum blockchain, providing users with secure and transparent trading experiences. We're thrilled to announce our listing on MintMe.com, offering even more accessibility and liquidity to our community.
         </Typography>
         <Typography variant="body1" className={classes.paragraph}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nec eros
-          vitae nunc tristique interdum. Integer feugiat euismod arcu eu
-          pulvinar. Sed rhoncus et odio et placerat. Sed in felis consectetur,
-          cursus arcu id, laoreet nunc. Vivamus ullamcorper finibus nunc, eget
-          aliquet risus rhoncus sit amet. Praesent sodales vel elit id
-          tincidunt. Suspendisse faucibus vel velit a cursus.
-        </Typography>
-        <Typography variant="body1" className={classes.paragraph}>
-          If you have any questions or feedback, feel free to contact us at{" "}
+          Have questions or feedback? Reach out to us at{" "}
           <Link
             href="mailto:contact@example.com"
             className={classes.link}
             underline="none"
           >
+            <MailOutlineIcon />
             contact@example.com
           </Link>
           .
