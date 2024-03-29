@@ -26,7 +26,7 @@ const posts = [
         publishedDate: 'June 1, 2024',
         author: {
           name: 'DogSwap Team',
-          profilePicture: '/assets/images/dogswap-team.jpg',
+          profilePicture: '/images/coins/dogswap.png',
         },
       },
     {

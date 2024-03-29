@@ -25,7 +25,7 @@ function SinglePost() {
           <p className="post-excerpt">{post.excerpt}</p>
           <div className="post-content" dangerouslySetInnerHTML={{ __html: post.content }} />
           <div className="post-actions">
-            <Link to="/posts" className="back-link">
+            <Link to="/blog" className="back-link">
               Back to Posts
             </Link>
           </div>
