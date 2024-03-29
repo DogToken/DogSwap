@@ -71,6 +71,43 @@ const Footer = () => {
               GitHub
             </Button>
           </div>
+          <div className="button-container">
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<FaDiscord />}
+              href="https://discord.gg/RSQZDGThfU"
+              target="_blank"
+              rel="noopener noreferrer"
+              size="small"
+            >
+              Discord
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<FaTwitter />}
+              href="https://twitter.com/DogSwapDeFi"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ backgroundColor: "#26a7de", color: "#fff" }}
+              size="small"
+            >
+              Twitter
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<FaGithub />}
+              href="https://github.com/DogSwap"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ backgroundColor: "#24292e", color: "#fff" }}
+              size="small"
+            >
+              GitHub
+            </Button>
+          </div>
         </div>
 
         <div className="footer-section">
