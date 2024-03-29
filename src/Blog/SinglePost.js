@@ -22,7 +22,6 @@ function SinglePost() {
             </div>
             <span className="publish-date">Published on {post.publishedDate}</span>
           </div>
-          <p className="post-excerpt">{post.excerpt}</p>
           <div className="post-content" dangerouslySetInnerHTML={{ __html: post.content }} />
           <div className="post-actions">
             <Link to="/blog" className="back-link">
