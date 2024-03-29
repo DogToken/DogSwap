@@ -18,6 +18,8 @@ import Faucet from "./Faucet/Faucet";
 import TVL from "./tvl/tvl";
 import Pools from "./Pools/pools";
 import Lottery from "./Lottery/Lottery";
+import PostList from './Blog/PostList';
+import SinglePost from './Blog/SinglePost';
 
 inject();
 
@@ -74,6 +76,8 @@ const App = () => {
                 <Route exact path="/privacy">
                   <Privacy />
                 </Route>
+                <Route exact path="/posts" component={PostList} />
+                <Route path="/posts/:id" component={SinglePost} />
               </div>
             </div>
           )}></Web3Provider>
