@@ -93,18 +93,7 @@ const Footer = () => {
               style={{ backgroundColor: "#fff", color: "#000000" }}
               size="small"
             >
-              NordVPN
-            </Button><Button
-              variant="contained"
-              color="primary"
-              startIcon={<img src="https://dogswap.online/images/coins/mintmelogo.png" alt="MintMe" width="100" height="20" />}
-              href="https://www.mintme.com/token/BONE/invite"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ backgroundColor: "#252525", color: "#fff" }}
-              size="small"
-            >
-              
+              Nord VPN
             </Button>
           </div>
         </div>
