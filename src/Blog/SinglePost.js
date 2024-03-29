@@ -15,13 +15,17 @@ function SinglePost() {
       <div className="single-post-container">
         <div className="post-card">
           <h1>{post.title}</h1>
-          <p className="post-meta">
-            Published on {post.publishedDate} by {post.author}
-          </p>
+          <div className="post-meta">
+            <div className="author-info">
+              <img src={post.author.profilePicture} alt={post.author.name} className="author-picture" />
+              <span className="author-name">{post.author.name}</span>
+            </div>
+            <span className="publish-date">Published on {post.publishedDate}</span>
+          </div>
           <p className="post-excerpt">{post.excerpt}</p>
           <div className="post-content">{post.content}</div>
           <div className="post-actions">
-            <Link to="/blog" className="back-link">
+            <Link to="/posts" className="back-link">
               Back to Posts
             </Link>
           </div>

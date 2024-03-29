@@ -12,9 +12,9 @@
   }
   
   .post-meta {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
   }
   
   .post-excerpt {
@@ -42,6 +42,27 @@
   
   .back-link:hover {
     background-color: #d0d0d0;
+  }
+
+  .author-info {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+  }
+
+  .author-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .author-name {
+    font-weight: bold;
+  }
+  
+  .publish-date {
+    color: #666;
   }
   
   @media (max-width: 768px) {
