@@ -72,7 +72,7 @@ const Footer = () => {
             </Button>
           </div>
           <div className="button-container">
-            <Button
+          <Button
               variant="contained"
               color="primary"
               startIcon={<img src="https://dogswap.online/images/coins/mintmelogo.png" alt="MintMe" width="100" height="20" />}
@@ -83,30 +83,28 @@ const Footer = () => {
               size="small"
             >
               
-            </Button>
-            <Button
+            </Button><Button
               variant="contained"
-              color="secondary"
-              startIcon={<FaTwitter />}
-              href="https://twitter.com/DogSwapDeFi"
+              color="primary"
+              startIcon={<img src="https://dogswap.online/images/coins/nordlogo" alt="Nord" width="20" height="20" />}
+              href="https://ref.nordvpn.com/DRUHsAoWykw"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ backgroundColor: "#26a7de", color: "#fff" }}
+              style={{ backgroundColor: "#fff", color: "#fff" }}
               size="small"
             >
-              Twitter
-            </Button>
-            <Button
+              
+            </Button><Button
               variant="contained"
-              color="secondary"
-              startIcon={<FaGithub />}
-              href="https://github.com/DogSwap"
+              color="primary"
+              startIcon={<img src="https://dogswap.online/images/coins/mintmelogo.png" alt="MintMe" width="100" height="20" />}
+              href="https://www.mintme.com/token/BONE/invite"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ backgroundColor: "#24292e", color: "#fff" }}
+              style={{ backgroundColor: "#252525", color: "#fff" }}
               size="small"
             >
-              GitHub
+              
             </Button>
           </div>
         </div>
@@ -121,10 +119,10 @@ const Footer = () => {
               <FaEnvelope /> support@dogswap.online
             </p>
             <p>
-              <FaPhoneAlt /> +1 (555) 123-4567
+              <FaPhoneAlt /> +1 (555) WOOF-WOOF
             </p>
             <p>
-              <FaMapMarkerAlt /> 123 Main Street, Anytown USA
+              <FaMapMarkerAlt /> 5th Tree, Barkingson USA
             </p>
           </div>
         </div>
