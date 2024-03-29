@@ -76,7 +76,7 @@ const App = () => {
                 <Route exact path="/privacy">
                   <Privacy />
                 </Route>
-                <Route exact path="/posts" component={PostList} />
+                <Route exact path="/blog" component={PostList} />
                 <Route path="/posts/:id" component={SinglePost} />
               </div>
             </div>
