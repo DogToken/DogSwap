@@ -57,6 +57,59 @@ const posts = [
           profilePicture: '/images/coins/doggo.png',
         },
       },
+      {
+        id: 3,
+        title: 'Master the Art of Arbitrage Trading with DogSwap',
+        content: `<p>In the ever-evolving world of decentralized finance (DeFi), savvy traders are always on the lookout for lucrative opportunities. One such opportunity lies in the realm of arbitrage trading, and DogSwap is here to help you navigate this exciting frontier.</p>
+      
+        <h2>What is Arbitrage Trading?</h2>
+        <p>Arbitrage trading is the practice of exploiting price discrepancies across different exchanges or platforms. By simultaneously buying and selling an asset at different prices, traders can capitalize on these temporary price inefficiencies and generate profits.</p>
+      
+        <p>However, successful arbitrage trading requires constant vigilance, lightning-fast execution, and a deep understanding of market dynamics across multiple platforms.</p>
+      
+        <h2>DogSwap: Your Gateway to Profitable Arbitrage</h2>
+        <p>At DogSwap, we understand the importance of providing our community with the tools and resources necessary to succeed in the DeFi space. That's why we've integrated cutting-edge features to streamline the arbitrage trading process.</p>
+      
+        <p>Our platform aggregates real-time pricing data from various decentralized exchanges (DEXs) and centralized exchanges (CEXs), empowering you to identify and capitalize on price disparities with ease. By leveraging our advanced algorithms and user-friendly interface, you can execute trades seamlessly, minimizing slippage and maximizing your potential profits.</p>
+      
+        <h2>Stay Ahead of the Game</h2>
+        <p>Arbitrage opportunities can be fleeting, and timing is everything. That's why DogSwap's advanced notification system keeps you informed about emerging price discrepancies, allowing you to act swiftly and seize profitable opportunities before they disappear.</p>
+      
+        <p>Join our community of savvy traders and unlock the full potential of arbitrage trading with DogSwap. Stay ahead of the curve, maximize your returns, and experience the thrill of capitalizing on market inefficiencies like never before.</p>`,
+        excerpt: 'Discover the art of arbitrage trading and how DogSwap empowers you to capitalize on price discrepancies across multiple exchanges, maximizing your potential profits.',
+        publishedDate: 'July 1, 2024',
+        author: {
+          name: 'DogSwap Team',
+          profilePicture: '/assets/images/dogswap-team.jpg',
+        },
+      },
+      {
+        id: 4,
+        title: 'Building a Robust Community: DogSwap Path to Scaling',
+        content: `<p>At DogSwap, we're more than just a decentralized finance (DeFi) platform; we're a thriving community of like-minded individuals united by a shared vision of financial empowerment and technological innovation.</p>
+      
+        <h2>The Power of Community</h2>
+        <p>From the very beginning, our community has been the driving force behind DogSwap's success. Your valuable feedback, contributions, and unwavering support have propelled us forward, shaping our roadmap and inspiring us to push the boundaries of what's possible in the DeFi space.</p>
+      
+        <p>As we continue to grow, we recognize the importance of scaling our operations and infrastructure to meet the ever-increasing demands of our community. That's why we're actively expanding our team and seeking talented individuals who share our passion for decentralized finance and community-driven development.</p>
+      
+        <h2>Call for Volunteers</h2>
+        <p>We invite passionate developers, designers, and DeFi enthusiasts to join our ranks as volunteers. By contributing your skills and expertise, you'll have the opportunity to shape the future of DogSwap and play a pivotal role in our journey towards becoming a leading force in the DeFi ecosystem.</p>
+      
+        <p>Whether you're a seasoned developer looking to contribute to our codebase or a talented designer eager to enhance our user experience, we welcome you with open arms. Together, we'll tackle complex challenges, push the boundaries of innovation, and create a more inclusive and accessible DeFi landscape.</p>
+      
+        <h2>Scaling Our Codebase</h2>
+        <p>As our community grows, so too must our codebase. We're committed to ensuring that our platform remains scalable, secure, and efficient, capable of handling the increasing demands of our users. Our team of dedicated developers is continuously working to optimize our codebase, implement cutting-edge technologies, and ensure seamless integration with the latest DeFi protocols.</p>
+      
+        <p>Join us on this exciting journey as we build a robust and resilient community, empowering individuals worldwide to take control of their financial future. Together, we can create a decentralized financial ecosystem that is truly inclusive, transparent, and accessible to all.</p>`,
+        excerpt: 'Discover how DogSwap is building a robust community, scaling our operations, and seeking passionate volunteers to contribute to our journey of financial empowerment and technological innovation.',
+        publishedDate: 'July 15, 2024',
+        author: {
+          name: 'DogSwap Team',
+          profilePicture: '/assets/images/dogswap-team.jpg',
+        },
+    },
+    
     // Add more posts here
   ];
   
