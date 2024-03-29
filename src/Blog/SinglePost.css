@@ -17,6 +17,27 @@
     margin-bottom: 20px;
   }
   
+  .author-info {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+  }
+  
+  .author-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .author-name {
+    font-weight: bold;
+  }
+  
+  .publish-date {
+    color: #666;
+  }
+  
   .post-excerpt {
     font-size: 18px;
     margin-bottom: 20px;
@@ -25,6 +46,32 @@
   .post-content {
     line-height: 1.6;
     margin-bottom: 20px;
+  }
+  
+  .post-content h2 {
+    margin-top: 30px;
+  }
+  
+  .post-content p {
+    margin-bottom: 15px;
+  }
+  
+  .post-content ul {
+    margin-bottom: 15px;
+    padding-left: 20px;
+  }
+  
+  .post-content li {
+    margin-bottom: 5px;
+  }
+  
+  .post-content a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .post-content a:hover {
+    text-decoration: underline;
   }
   
   .post-actions {
@@ -42,27 +89,6 @@
   
   .back-link:hover {
     background-color: #d0d0d0;
-  }
-
-  .author-info {
-    display: flex;
-    align-items: center;
-    margin-right: 20px;
-  }
-
-  .author-picture {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .author-name {
-    font-weight: bold;
-  }
-  
-  .publish-date {
-    color: #666;
   }
   
   @media (max-width: 768px) {
