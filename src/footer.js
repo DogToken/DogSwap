@@ -90,10 +90,10 @@ const Footer = () => {
               href="https://ref.nordvpn.com/DRUHsAoWykw"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ backgroundColor: "#fff", color: "#fff" }}
+              style={{ backgroundColor: "#fff", color: "#000000" }}
               size="small"
             >
-              
+              NordVPN
             </Button><Button
               variant="contained"
               color="primary"
