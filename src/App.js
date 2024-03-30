@@ -9,7 +9,7 @@ import Liquidity from "./Liquidity/Liquidity";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./footer";
 import "./footer.css";
-import { inject } from '@vercel/speed-insights';
+import { injectSpeedInsights } from '@vercel/speed-insights';
 import About from "./About";
 import Contact from "./Contact";
 import Privacy from "./Privacy";
@@ -25,7 +25,7 @@ import ReactGA from 'react-ga';
 const TRACKING_ID = "G-PNK1QQHD9M"; // OUR_TRACKING_ID
 ReactGA.initialize(TRACKING_ID);
 
-inject();
+injectSpeedInsights();
 
 const theme = createTheme({
   palette: {
