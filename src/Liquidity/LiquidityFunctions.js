@@ -64,8 +64,10 @@ export async function addLiquidity(
   const time = Math.floor(Date.now() / 1000) + 200000;
   const deadline = ethers.BigNumber.from(time);
 
-  await token1.approve(routerContract.address, amountIn1);
-  await token2.approve(routerContract.address, amountIn2);
+  let tx1 = await token1.approve(routerContract.address, amountIn);
+  let tx2 = await token2.approve(routerContract.address, amountIn);
+  await tx1.wait();
+  await tx2.wait();
 
   const wethAddress = await routerContract.WETH();
 
