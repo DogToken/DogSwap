@@ -9,7 +9,7 @@ import Liquidity from "./Liquidity/Liquidity";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./footer";
 import "./footer.css";
-import { inject } from '@vercel/analytics';
+import { inject } from '@vercel/speed-insights';
 import About from "./About";
 import Contact from "./Contact";
 import Privacy from "./Privacy";
