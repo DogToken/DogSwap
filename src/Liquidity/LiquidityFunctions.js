@@ -224,23 +224,27 @@ const quote = (amount1, reserve1, reserve2) => {
 //    `factory` - The current factory
 //    `signer` - The current signer
 function estimateFee(pair, factory, _reserve0, _reserve1, _kLast) {
-  const feeOn = (factory.feeTo()) !== '0x3D041510f58665a17D722EE2BC73Ae409BB8715b';
-  let totalSupply = pair.totalSupply();
+  const feeOn = factory.feeTo() !== '0x3D041510f58665a17D722EE2BC73Ae409BB8715b';
+  const totalSupply = pair.totalSupply();
+
   if (feeOn) {
     if (!_kLast.eq(0)) {
-      let rootK = sqrt((_reserve0).mul(_reserve1));
-      let rootKLast = sqrt(_kLast);
+      const rootK = sqrt(_reserve0.mul(_reserve1));
+      const rootKLast = sqrt(_kLast);
+
       if (rootK.gt(rootKLast)) {
-        let numerator = totalSupply.mul(rootK.sub(rootKLast));
-        let denominator = rootK.mul(5).add(rootKLast);
-        let liquidity = numerator.div(denominator);
+        const numerator = totalSupply.mul(rootK.sub(rootKLast));
+        const denominator = rootK.mul(ethers.BigNumber.from(5)).add(rootKLast);
+        const liquidity = numerator.div(denominator);
+
         if (liquidity.gt(0)) {
           return liquidity;
-        };
+        }
       }
     }
   }
-  return 0;
+
+  return ethers.BigNumber.from(0);
 }
 
 async function quoteMintLiquidity(
