@@ -69,7 +69,7 @@ const posts = [
         <p>Arbitrage trading is the practice of exploiting price discrepancies across different exchanges or platforms. By simultaneously buying and selling an asset at different prices, traders can capitalize on these temporary price inefficiencies and generate profits.</p>
       
         <p>However, successful arbitrage trading requires constant vigilance, lightning-fast execution, and a deep understanding of market dynamics across multiple platforms.</p>
-      
+        <img width="600" src="/images/blog/arb1.png" alt="arbitrage">
         <h2>DogSwap: Your Gateway to Profitable Arbitrage</h2>
         <p>At DogSwap, we understand the importance of providing our community with the tools and resources necessary to succeed in the DeFi space. That's why we've integrated cutting-edge features to streamline the arbitrage trading process.</p>
       
