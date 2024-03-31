@@ -6,7 +6,7 @@ import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunction
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTicketAlt, faWallet, faCoins, faTrophy, faCog } from '@fortawesome/free-solid-svg-icons';
 import lotteryABI from "../../build/Lottery.json";
-import boneTokenABI from "../../build/bone.json";
+import boneTokenABI from "../../build/BoneToken.json";
 
 
 const useStyles = makeStyles((theme) => ({

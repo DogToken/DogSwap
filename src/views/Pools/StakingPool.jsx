@@ -6,7 +6,7 @@ import { Contract, ethers } from 'ethers';
 import { getProvider, getSigner, getNetwork } from '../../utils/ethereumFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons';
-import boneTokenABI from '../../build/bone.json';
+import boneTokenABI from '../../build/BoneToken.json';
 import masterChefABI from '../../build/MasterChef.json';
 
 const useStyles = makeStyles((theme) => ({
