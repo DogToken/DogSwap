@@ -11,7 +11,7 @@ import Footer from "./footer";
 import "./footer.css";
 import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
-import About from "./About";
+import About from "./views/About/About";
 import Contact from "./Contact";
 import Privacy from "./Privacy";
 import Staking from "./Staking/Staking";
