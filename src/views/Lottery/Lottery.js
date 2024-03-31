@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Container, Typography, CircularProgress, TextField, Grid, Card, CardContent } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
-import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
+import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTicketAlt, faWallet, faCoins, faTrophy, faCog } from '@fortawesome/free-solid-svg-icons';
-import lotteryABI from "./abis/Lottery.json";
-import boneTokenABI from "./abis/BoneToken.json";
+import lotteryABI from "../../build/Lottery.json";
+import boneTokenABI from "../../build/bone.json";
 
 
 const useStyles = makeStyles((theme) => ({
