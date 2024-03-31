@@ -8,7 +8,7 @@ import { SnackbarProvider } from "notistack";
 import Liquidity from "./Liquidity/Liquidity";
 import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./components/Footer/footer";
-import "./footer.css";
+import "./components/Footer/footer.css";
 import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
 import About from "./About";
