@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography, CircularProgress, TextField, Grid, Card, CardContent } from '@material-ui/core';
 import { Contract, ethers } from 'ethers';
-import { getProvider, getSigner, getNetwork } from '../ethereumFunctions';
+import { getProvider, getSigner, getNetwork } from '../../utils/ethereumFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons';
-import boneTokenABI from './abis/BoneToken.json';
-import masterChefABI from './abis/MasterChef.json';
+import boneTokenABI from '../../build/BoneToken.json';
+import masterChefABI from '../../build/MasterChef.json';
 
 const useStyles = makeStyles((theme) => ({
     root: {

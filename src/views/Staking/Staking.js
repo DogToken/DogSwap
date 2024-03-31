@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Container, Typography, CircularProgress, TextField, Grid, Card, CardContent } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
-import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
+import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons'; // Import FontAwesome icons
-import boneTokenABI from "./abis/BoneToken.json"; // Import the ABI for the $BONE token contract
-import masterChefABI from "./abis/MasterChef.json"; // Import the ABI for the MasterChef contract
+import boneTokenABI from "../../build/BoneToken.json"; // Import the ABI for the $BONE token contract
+import masterChefABI from "../../build/MasterChef.json"; // Import the ABI for the MasterChef contract
 
 const useStyles = makeStyles((theme) => ({
   container: {

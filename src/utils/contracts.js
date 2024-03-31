@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import NFTContract from "../build/NFTContract.json";
 import MarketplaceContract from "../build/MarketplaceContract.json";
-import { nftContractAddress, marketplaceContractAddress } from "./data";
+import { nftContractAddress, marketplaceContractAddress } from "../constants/data";
 
 const getNFTContract = (signer) => {
   const nftContract = new ethers.Contract(
