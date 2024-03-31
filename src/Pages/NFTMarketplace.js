@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import Web3Modal from "@klaytn/web3modal";
+import Web3Modal from "@web3modal/core";
 import { getNFTContract, getMarketplaceContract } from "../constants/contracts";
 
 const NFTMarketplace = () => {
