@@ -153,7 +153,7 @@ const Faucet = ({ faucetAddress, title, description, claimInterval }) => {
 
 const FaucetPage = () => {
   const faucets = [
-    { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "The $BONE Faucet", description: "Claim 0.1 $BONE each 30 minutes. Stake, trade or hodl your tokens to support the DogSwap ecosystem", claimInterval: 1800 },
+    { id: 1, address: "0x99f1dad7e8bea4eb9e0829361d5322b63ff9c250", title: "The $BONE Faucet", description: "Claim 0.1 $BONE every 30 minutes. Stake, trade or hodl your tokens to support the DogSwap ecosystem", claimInterval: 1800 },
   ];
 
   const classes = useStyles();
