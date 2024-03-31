@@ -1,7 +1,7 @@
 // useWeb3Provider.js
 import { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
-import { getAccount, getRouter, getNetwork, getWeth, getFactory } from "../ethereumFunctions";
+import { getAccount, getRouter, getNetwork, getWeth, getFactory } from "../utils/ethereumFunctions";
 import COINS from "../constants/coins";
 import * as chains from "../constants/chains";
 

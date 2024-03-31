@@ -11,18 +11,18 @@ import Footer from "./components/Footer/footer";
 import "./components/Footer/footer.css";
 import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
-import About from "./Pages/Info/About";
-import Contact from "./Pages/Info/Contact";
-import Privacy from "./Pages/Info/Privacy";
-import Staking from "./Pages/Staking/Staking";
-import Faucet from "./Pages/Faucet/Faucet";
-import TVL from "./Pages/tvl/tvl";
-import Pools from "./Pages/Pools/pools";
-import Lottery from "./Pages/Lottery/Lottery";
-import PostList from './Pages/Blog/PostList';
-import SinglePost from './Pages/Blog/SinglePost';
+import About from "./pages/Info/About";
+import Contact from "./pages/Info/Contact";
+import Privacy from "./pages/Info/Privacy";
+import Staking from "./pages/Staking/Staking";
+import Faucet from "./pages/Faucet/Faucet";
+import TVL from "./pages/tvl/tvl";
+import Pools from "./pages/Pools/pools";
+import Lottery from "./pages/Lottery/Lottery";
+import PostList from './pages/Blog/PostList';
+import SinglePost from './pages/Blog/SinglePost';
 import ReactGA from 'react-ga';
-import Market from './Pages/Market/NFTMarketplace'
+import Market from './pages/Market/NFTMarketplace'
 
 const TRACKING_ID = "G-PNK1QQHD9M"; // OUR_TRACKING_ID
 ReactGA.initialize(TRACKING_ID);

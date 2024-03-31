@@ -1,5 +1,5 @@
 import { Contract, ethers, BigNumber } from "ethers";
-import { fetchReserves, fetchReservesRaw, getDecimals } from "../ethereumFunctions";
+import { fetchReserves, fetchReservesRaw, getDecimals } from "../utils/ethereumFunctions";
 
 window.BigNumber = BigNumber;
 

@@ -22,7 +22,7 @@ import {
   getWeth,
   swapTokens,
   getReserves,
-} from "../ethereumFunctions";
+} from "../utils/ethereumFunctions";
 import CoinField from "./CoinField";
 import CoinDialog from "./CoinDialog";
 import LoadingButton from "../Components/LoadingButton";
