@@ -22,6 +22,7 @@ import Lottery from "./Lottery/Lottery";
 import PostList from './Blog/PostList';
 import SinglePost from './Blog/SinglePost';
 import ReactGA from 'react-ga';
+import Market from './Pages/NFTMarketplace'
 
 const TRACKING_ID = "G-PNK1QQHD9M"; // OUR_TRACKING_ID
 ReactGA.initialize(TRACKING_ID);
@@ -72,6 +73,9 @@ const App = () => {
                 </Route>
                 <Route exact path="/lottery">
                   <Lottery network={network} />
+                </Route>
+                <Route exact path="/market">
+                  <Market network={network} />
                 </Route>
                 <Route exact path="/about">
                   <About />
