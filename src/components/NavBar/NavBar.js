@@ -6,7 +6,7 @@ import { ethers } from 'ethers';
 import { FaUserCircle, FaBars, FaTimes, FaCaretDown } from 'react-icons/fa';
 import Tooltip from '@mui/material/Tooltip';
 import boneTokenABI from "./abis/BoneToken.json";
-import pairABI from "../build/IUniswapV2Pair.json";
+import pairABI from "../../build/IUniswapV2Pair.json";
 import axios from 'axios';
 
 const POOLS = [
