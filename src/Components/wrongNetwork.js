@@ -16,6 +16,7 @@ const styles = (theme) => ({
   },
 });
 
+
 const useStyles = makeStyles(styles);
 
 export default function WrongNetwork(props) {
