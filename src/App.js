@@ -13,14 +13,14 @@ import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
 import About from "./views/About/About";
 import Contact from "./Contact";
-import Privacy from "./Privacy";
+import Privacy from "./views/Privacy/Privacy";
 import Staking from "./Staking/Staking";
 import Faucet from "./Faucet/Faucet";
 import TVL from "./tvl/tvl";
 import Pools from "./Pools/pools";
 import Lottery from "./Lottery/Lottery";
-import PostList from './Blog/PostList';
-import SinglePost from './Blog/SinglePost';
+import PostList from './views/Blog/PostList';
+import SinglePost from './views/Blog/SinglePost';
 import ReactGA from 'react-ga';
 import Market from './Pages/NFTMarketplace'
 
