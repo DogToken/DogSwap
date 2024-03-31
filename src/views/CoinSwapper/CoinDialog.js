@@ -9,12 +9,12 @@ import {
   Typography,
   withStyles,
 } from "@material-ui/core";
-import COINS from "../constants/coins";
+import COINS from "../../constants/coins";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogActions from "@material-ui/core/DialogActions";
 import CloseIcon from "@material-ui/icons/Close";
 import CoinButton from "./CoinButton";
-import { doesTokenExist } from "../utils/ethereumFunctions";
+import { doesTokenExist } from "../../utils/ethereumFunctions";
 import PropTypes from "prop-types";
 import * as COLORS from "@material-ui/core/colors";
 

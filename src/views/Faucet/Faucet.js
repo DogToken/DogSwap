@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Container, Typography, CircularProgress, Grid, Box, Card, CardContent } from "@material-ui/core";
 import { Contract } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
-import boneABI from "../../build/bone.json";
+import boneABI from "../../build/BoneToken.json";
 import faucetABI from "../../build/faucet.json";
 
 const useStyles = makeStyles((theme) => ({
