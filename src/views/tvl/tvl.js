@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Container, Typography, CircularProgress, Box } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
-import { getProvider, getSigner, getNetwork } from "../ethereumFunctions";
+import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
 import pairABI from "../../build/IUniswapV2Pair.json";
-import boneTokenABI from "../../build/bone.json";
+import boneTokenABI from "../../build/BoneToken.json";
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({

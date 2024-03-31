@@ -3,7 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, Grid } from '@material-ui/core';
 import StakingPool from './StakingPool';
-import { poolData } from './poolData';
+import { poolData } from '../../constants/poolData';
 
 const useStyles = makeStyles((theme) => ({
   root: {
