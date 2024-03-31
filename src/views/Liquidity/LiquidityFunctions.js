@@ -1,10 +1,10 @@
 import { Contract, ethers, BigNumber } from "ethers";
-import { fetchReserves, fetchReservesRaw, getDecimals } from "../utils/ethereumFunctions";
+import { fetchReserves, fetchReservesRaw, getDecimals } from "../../utils/ethereumFunctions";
 
 window.BigNumber = BigNumber;
 
-const ERC20 = require("../build/ERC20.json");
-const PAIR = require("../build/IUniswapV2Pair.json");
+const ERC20 = require("../../build/ERC20.json");
+const PAIR = require("../../build/IUniswapV2Pair.json");
 
 const ONE = ethers.BigNumber.from(1);
 const TWO = ethers.BigNumber.from(2);
