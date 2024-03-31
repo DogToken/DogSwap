@@ -6,17 +6,31 @@ import { getNFTContract, getMarketplaceContract } from "../constants/contracts";
 const NFTMarketplace = () => {
   const [nfts, setNFTs] = useState([]);
   const [loadingState, setLoadingState] = useState("not-loaded");
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [nftContract, setNFTContract] = useState(null);
+  const [marketplaceContract, setMarketplaceContract] = useState(null);
 
   useEffect(() => {
-    loadNFTs();
+    loadContracts();
   }, []);
 
-  async function loadNFTs() {
+  async function loadContracts() {
     const provider = await Web3Provider();
+    setProvider(provider);
     const signer = provider.getSigner();
+    setSigner(signer);
 
     const nftContract = getNFTContract(signer);
+    setNFTContract(nftContract);
     const marketplaceContract = getMarketplaceContract(signer);
+    setMarketplaceContract(marketplaceContract);
+
+    loadNFTs();
+  }
+
+  async function loadNFTs() {
+    if (!marketplaceContract) return;
 
     const data = await marketplaceContract.fetchMarketItems();
 
@@ -39,6 +53,56 @@ const NFTMarketplace = () => {
     );
     setNFTs(items);
     setLoadingState("loaded");
+  }
+
+  async function buyNft(nft) {
+    if (!marketplaceContract || !nftContract || !signer) return;
+
+    const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
+    const transaction = await marketplaceContract
+      .createMarketSale(nftContract.address, nft.tokenId, {
+        value: price,
+      })
+      .catch((error) => {
+        console.error("Error buying NFT:", error);
+      });
+
+    await transaction.wait();
+    loadNFTs();
+  }
+
+  async function createNFT() {
+    if (!nftContract || !signer) return;
+
+    const transaction = await nftContract.createToken("https://my-nft-url.com");
+    const tx = await transaction.wait();
+    const event = tx.events[0];
+    const tokenId = event.args[2];
+
+    await listNFT(tokenId);
+  }
+
+  async function listNFT(tokenId) {
+    if (!marketplaceContract || !nftContract || !signer) return;
+
+    const price = ethers.utils.parseUnits("0.01", "ether");
+    const transaction = await nftContract.approve(
+      marketplaceContract.address,
+      tokenId
+    );
+    await transaction.wait();
+
+    const listingTransaction = await marketplaceContract.createToken(
+      nftContract.address,
+      tokenId,
+      price,
+      {
+        value: ethers.utils.parseUnits("0.025", "ether"),
+      }
+    );
+    await listingTransaction.wait();
+
+    loadNFTs();
   }
 
   if (loadingState === "loaded" && !nfts.length)
@@ -75,6 +139,14 @@ const NFTMarketplace = () => {
               </div>
             </div>
           ))}
+        </div>
+        <div className="mt-8">
+          <button
+            className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+            onClick={createNFT}
+          >
+            Create NFT
+          </button>
         </div>
       </div>
     </div>

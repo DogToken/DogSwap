@@ -1,10 +1,11 @@
 import { ethers } from "ethers";
 import NFTContract from "../build/NFTContract.json";
 import MarketplaceContract from "../build/MarketplaceContract.json";
+import { nftContractAddress, marketplaceContractAddress } from "./data";
 
 const getNFTContract = (signer) => {
   const nftContract = new ethers.Contract(
-    NFTContract.address,
+    nftContractAddress,
     NFTContract.abi,
     signer
   );
@@ -13,7 +14,7 @@ const getNFTContract = (signer) => {
 
 const getMarketplaceContract = (signer) => {
   const marketplaceContract = new ethers.Contract(
-    MarketplaceContract.address,
+    marketplaceContractAddress,
     MarketplaceContract.abi,
     signer
   );
