@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 import {
   getBalanceAndSymbol,
   getReserves,
-} from "../utils/ethereumFunctions";
+} from "../../utils/ethereumFunctions";
 
 import { addLiquidity, quoteAddLiquidity } from "./LiquidityFunctions";
 
