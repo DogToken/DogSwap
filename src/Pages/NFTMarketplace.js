@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import Web3Modal from "@web3modal/core";
-import { getNFTContract, getMarketplaceContract } from "../constants/contracts";
+import Web3Provider from "../network";
+import { getNFTContract, getMarketplaceContract } from "./utils/contracts";
 
 const NFTMarketplace = () => {
   const [nfts, setNFTs] = useState([]);
@@ -12,9 +12,7 @@ const NFTMarketplace = () => {
   }, []);
 
   async function loadNFTs() {
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
+    const provider = await Web3Provider();
     const signer = provider.getSigner();
 
     const nftContract = getNFTContract(signer);
@@ -66,7 +64,7 @@ const NFTMarketplace = () => {
               </div>
               <div className="p-4 bg-black">
                 <p className="text-2xl mb-4 font-bold text-white">
-                  {nft.price} MINTME
+                  {nft.price} ETH
                 </p>
                 <button
                   className="w-full bg-pink-500 text-white font-bold py-2 px-12 rounded"
