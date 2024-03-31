@@ -25,8 +25,8 @@ import {
 } from "../ethereumFunctions";
 import CoinField from "./CoinField";
 import CoinDialog from "./CoinDialog";
-import LoadingButton from "../components/LoadingButton";
-import WrongNetwork from "../components/wrongNetwork";
+import LoadingButton from "../Components/LoadingButton";
+import WrongNetwork from "../Components/wrongNetwork";
 import COINS from "../constants/coins";
 import * as chains from "../constants/chains";
 
