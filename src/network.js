@@ -1,7 +1,7 @@
 // Web3Provider.js
 import React from "react";
-import useWeb3Provider from "./useWeb3Provider";
-import ConnectWalletPage from "./Components/connectWalletPage";
+import useWeb3Provider from "./hooks/useWeb3Provider";
+import ConnectWalletPage from "./components/connectWalletPage";
 
 const Web3Provider = (props) => {
   const { isConnected, network } = useWeb3Provider();

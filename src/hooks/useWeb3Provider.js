@@ -1,9 +1,9 @@
 // useWeb3Provider.js
 import { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
-import { getAccount, getRouter, getNetwork, getWeth, getFactory } from "./ethereumFunctions";
-import COINS from "./constants/coins";
-import * as chains from "./constants/chains";
+import { getAccount, getRouter, getNetwork, getWeth, getFactory } from "../ethereumFunctions";
+import COINS from "../constants/coins";
+import * as chains from "../constants/chains";
 
 const useWeb3Provider = () => {
   const [isConnected, setIsConnected] = useState(false);

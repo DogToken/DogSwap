@@ -12,8 +12,8 @@ import {
   RemoveLiquidityField2,
 } from "../CoinSwapper/CoinField";
 import CoinDialog from "../CoinSwapper/CoinDialog";
-import LoadingButton from "../Components/LoadingButton";
-import WrongNetwork from "../Components/wrongNetwork";
+import LoadingButton from "../components/LoadingButton";
+import WrongNetwork from "../components/wrongNetwork";
 
 const styles = (theme) => ({
   paperContainer: {
