@@ -19,10 +19,10 @@ import Faucet from "./Faucet/Faucet";
 import TVL from "./tvl/tvl";
 import Pools from "./Pools/pools";
 import Lottery from "./Lottery/Lottery";
-import PostList from './Blog/PostList';
-import SinglePost from './Blog/SinglePost';
+import PostList from './Pages/Blog/PostList';
+import SinglePost from './Pages/Blog/SinglePost';
 import ReactGA from 'react-ga';
-import Market from './Pages/NFTMarketplace'
+import Market from './Pages/Market/NFTMarketplace'
 
 const TRACKING_ID = "G-PNK1QQHD9M"; // OUR_TRACKING_ID
 ReactGA.initialize(TRACKING_ID);
