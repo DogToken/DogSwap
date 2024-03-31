@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Web3Provider from "../../utils/network";
-import { getNFTContract, getMarketplaceContract } from "../../constants/contracts";
+import { getNFTContract, getMarketplaceContract } from "../../utils/contracts";
 
 const NFTMarketplace = () => {
   const [nfts, setNFTs] = useState([]);
