@@ -1,13 +1,13 @@
 import React from "react";
 import { ethers } from "ethers";
 import Web3Provider from "./network";
-import NavBar from "./NavBar/NavBar";
+import NavBar from "./components/NavBar/NavBar";
 import CoinSwapper from "./CoinSwapper/CoinSwapper";
 import { Route } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
 import Liquidity from "./Liquidity/Liquidity";
 import { createTheme, ThemeProvider } from "@material-ui/core";
-import Footer from "./footer";
+import Footer from "./components/Footer/footer";
 import "./footer.css";
 import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
