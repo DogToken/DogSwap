@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins, faWallet, faHandHoldingUsd, faClock } from "@fortawesome/free-solid-svg-icons";
-import useWeb3Provider from "../../utils/network";
+import useWeb3Provider from "../../hooks/useWeb3Provider";
 import { getNFTContract, getMarketplaceContract } from "../../utils/contracts";
 
 const useStyles = makeStyles((theme) => ({
