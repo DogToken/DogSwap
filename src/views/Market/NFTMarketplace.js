@@ -38,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 const NFTMarketplace = () => {
   const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
@@ -164,38 +163,41 @@ const NFTMarketplace = () => {
         NFT Marketplace
       </Typography>
       <Grid container spacing={3}>
-        {nfts.map((nft, i) => (
-          <Grid item xs={12} sm={6} md={4} key={i}>
-            <Card className={classes.card}>
-              <CardMedia
-                className={classes.media}
-                image={nft.image}
-                title={nft.name}
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {nft.name}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {nft.description}
-                </Typography>
-                <Typography variant="body1" color="textPrimary">
-                  <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
-                </Typography>
-              </CardContent>
-              <CardActions>
-              <Button
-                size="small"
-                color="primary"
-                startIcon={<FontAwesomeIcon icon={faHandHoldingUsd} />}
-                onClick={() => buyNft(nft, marketplaceContract, nftContract, signer)}
-              >
-                Buy
-              </Button>
-            </CardActions>
-            </Card>
-          </Grid>
-        ))}
+        {nfts.map((nft, i) => {
+          const { nftContract, marketplaceContract, signer } = network;
+          return (
+            <Grid item xs={12} sm={6} md={4} key={i}>
+              <Card className={classes.card}>
+                <CardMedia
+                  className={classes.media}
+                  image={nft.image}
+                  title={nft.name}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {nft.name}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                    {nft.description}
+                  </Typography>
+                  <Typography variant="body1" color="textPrimary">
+                    <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    size="small"
+                    color="primary"
+                    startIcon={<FontAwesomeIcon icon={faHandHoldingUsd} />}
+                    onClick={() => buyNft(nft, marketplaceContract, nftContract, signer)}
+                  >
+                    Buy
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          );
+        })}
       </Grid>
       <Typography variant="h5" gutterBottom>
         Create a New NFT
@@ -210,16 +212,16 @@ const NFTMarketplace = () => {
           />
         </Grid>
         <Grid item xs={12} md={4}>
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          startIcon={<FontAwesomeIcon icon={faWallet} />}
-          onClick={() => createNFT(nftContract, signer)}
-        >
-          Create NFT
-        </Button>
-      </Grid>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            startIcon={<FontAwesomeIcon icon={faWallet} />}
+            onClick={() => createNFT(network.nftContract, network.signer)}
+          >
+            Create NFT
+          </Button>
+        </Grid>
       </Grid>
     </Container>
   );
