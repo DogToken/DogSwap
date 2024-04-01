@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins, faWallet, faHandHoldingUsd, faClock } from "@fortawesome/free-solid-svg-icons";
-import Web3Provider from "../../utils/network";
+import useWeb3Provider from "../../utils/network";
 import { getNFTContract, getMarketplaceContract } from "../../utils/contracts";
 
 const useStyles = makeStyles((theme) => ({
@@ -38,35 +38,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 const NFTMarketplace = () => {
   const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
   const [loadingState, setLoadingState] = useState("not-loaded");
-  const [provider, setProvider] = useState(null);
-  const [signer, setSigner] = useState(null);
-  const [nftContract, setNFTContract] = useState(null);
-  const [marketplaceContract, setMarketplaceContract] = useState(null);
   const [newNFTUrl, setNewNFTUrl] = useState("");
+  const { isConnected, network } = useWeb3Provider();
 
   useEffect(() => {
-    loadContracts();
-  }, []);
+    if (isConnected) {
+      loadContracts();
+    }
+  }, [isConnected]);
 
   async function loadContracts() {
-    const provider = await Web3Provider();
-    setProvider(provider);
-    const signer = provider.getSigner();
-    setSigner(signer);
+    const nftContract = getNFTContract(network.signer);
+    const marketplaceContract = getMarketplaceContract(network.signer);
 
-    const nftContract = getNFTContract(signer);
-    setNFTContract(nftContract);
-    const marketplaceContract = getMarketplaceContract(signer);
-    setMarketplaceContract(marketplaceContract);
-
-    loadNFTs();
+    loadNFTs(nftContract, marketplaceContract);
   }
 
-  async function loadNFTs() {
+  async function loadNFTs(nftContract, marketplaceContract) {
     if (!marketplaceContract) return;
 
     const data = await marketplaceContract.fetchMarketItems();
