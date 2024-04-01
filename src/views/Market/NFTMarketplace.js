@@ -1,15 +1,52 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  Button,
+  Container,
+  Typography,
+  CircularProgress,
+  TextField,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActions,
+} from "@material-ui/core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCoins, faWallet, faHandHoldingUsd, faClock } from "@fortawesome/free-solid-svg-icons";
 import Web3Provider from "../../utils/network";
 import { getNFTContract, getMarketplaceContract } from "../../utils/contracts";
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    padding: theme.spacing(2),
+  },
+  card: {
+    maxWidth: 345,
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%", // 16:9
+  },
+  loadingSpinner: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+  },
+}));
+
 const NFTMarketplace = () => {
+  const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
   const [loadingState, setLoadingState] = useState("not-loaded");
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [nftContract, setNFTContract] = useState(null);
   const [marketplaceContract, setMarketplaceContract] = useState(null);
+  const [newNFTUrl, setNewNFTUrl] = useState("");
 
   useEffect(() => {
     loadContracts();
@@ -72,14 +109,15 @@ const NFTMarketplace = () => {
   }
 
   async function createNFT() {
-    if (!nftContract || !signer) return;
+    if (!nftContract || !signer || !newNFTUrl) return;
 
-    const transaction = await nftContract.createToken("https://my-nft-url.com");
+    const transaction = await nftContract.createToken(newNFTUrl);
     const tx = await transaction.wait();
     const event = tx.events[0];
     const tokenId = event.args[2];
 
     await listNFT(tokenId);
+    setNewNFTUrl("");
   }
 
   async function listNFT(tokenId) {
@@ -105,51 +143,91 @@ const NFTMarketplace = () => {
     loadNFTs();
   }
 
-  if (loadingState === "loaded" && !nfts.length)
-    return <h1 className="px-20 py-10 text-3xl">No items in marketplace</h1>;
+  if (loadingState === "not-loaded") {
+    return (
+      <div className={classes.loadingSpinner}>
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (loadingState === "loaded" && !nfts.length) {
+    return (
+      <Container maxWidth="md">
+        <Typography variant="h4" align="center" gutterBottom>
+          No NFTs in the Marketplace
+        </Typography>
+        <Typography variant="body1" align="center" color="textSecondary">
+          Create your first NFT to start trading!
+        </Typography>
+      </Container>
+    );
+  }
 
   return (
-    <div className="flex justify-center">
-      <div className="px-4" style={{ maxWidth: "1600px" }}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-          {nfts.map((nft, i) => (
-            <div key={i} className="border shadow rounded-xl overflow-hidden">
-              <img src={nft.image} />
-              <div className="p-4">
-                <p
-                  style={{ height: "64px" }}
-                  className="text-2xl font-semibold"
-                >
+    <Container maxWidth="lg" className={classes.root}>
+      <Typography variant="h4" gutterBottom>
+        NFT Marketplace
+      </Typography>
+      <Grid container spacing={3}>
+        {nfts.map((nft, i) => (
+          <Grid item xs={12} sm={6} md={4} key={i}>
+            <Card className={classes.card}>
+              <CardMedia
+                className={classes.media}
+                image={nft.image}
+                title={nft.name}
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
                   {nft.name}
-                </p>
-                <div style={{ height: "70px", overflow: "hidden" }}>
-                  <p className="text-gray-400">{nft.description}</p>
-                </div>
-              </div>
-              <div className="p-4 bg-black">
-                <p className="text-2xl mb-4 font-bold text-white">
-                  {nft.price} ETH
-                </p>
-                <button
-                  className="w-full bg-pink-500 text-white font-bold py-2 px-12 rounded"
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  {nft.description}
+                </Typography>
+                <Typography variant="body1" color="textPrimary">
+                  <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  color="primary"
+                  startIcon={<FontAwesomeIcon icon={faHandHoldingUsd} />}
                   onClick={() => buyNft(nft)}
                 >
                   Buy
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8">
-          <button
-            className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+      <Typography variant="h5" gutterBottom>
+        Create a New NFT
+      </Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={8}>
+          <TextField
+            fullWidth
+            label="NFT URL"
+            value={newNFTUrl}
+            onChange={(e) => setNewNFTUrl(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            startIcon={<FontAwesomeIcon icon={faWallet} />}
             onClick={createNFT}
           >
             Create NFT
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

@@ -5,7 +5,7 @@ import './NavBar.css';
 import { ethers } from 'ethers';
 import { FaUserCircle, FaBars, FaTimes, FaCaretDown } from 'react-icons/fa';
 import Tooltip from '@mui/material/Tooltip';
-import boneTokenABI from "./abis/BoneToken.json";
+import boneTokenABI from "../../build/BoneToken.json";
 import pairABI from "../../build/IUniswapV2Pair.json";
 import axios from 'axios';
 
