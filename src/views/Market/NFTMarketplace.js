@@ -77,6 +77,9 @@ const NFTMarketplace = () => {
           image: meta.image,
           name: meta.name,
           description: meta.description,
+          marketplaceContract, // Add the marketplaceContract to the item
+          nftContract, // Add the nftContract to the item
+          signer, // Add the signer to the item
         };
         return item;
       })
@@ -85,12 +88,12 @@ const NFTMarketplace = () => {
     setLoadingState("loaded");
   }
 
-  async function buyNft(nft, marketplaceContract, nftContract, signer) {
-    if (!marketplaceContract || !nftContract || !signer) return;
+  async function buyNft(nft) {
+    if (!nft.marketplaceContract || !nft.nftContract || !nft.signer) return;
 
     const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-    const transaction = await marketplaceContract
-      .createMarketSale(nftContract.address, nft.tokenId, {
+    const transaction = await nft.marketplaceContract
+      .createMarketSale(nft.nftContract.address, nft.tokenId, {
         value: price,
       })
       .catch((error) => {
@@ -98,7 +101,7 @@ const NFTMarketplace = () => {
       });
 
     await transaction.wait();
-    loadNFTs(nftContract, marketplaceContract, signer);
+    loadNFTs(nft.nftContract, nft.marketplaceContract, nft.signer);
   }
 
   async function createNFT(nftContract, signer) {
@@ -185,15 +188,15 @@ const NFTMarketplace = () => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button
-                    size="small"
-                    color="primary"
-                    startIcon={<FontAwesomeIcon icon={faHandHoldingUsd} />}
-                    onClick={() => buyNft(nft, marketplaceContract, nftContract, signer)}
-                  >
-                    Buy
-                  </Button>
-                </CardActions>
+              <Button
+                size="small"
+                color="primary"
+                startIcon={<FontAwesomeIcon icon={faHandHoldingUsd} />}
+                onClick={() => buyNft(nft)}
+              >
+                Buy
+              </Button>
+            </CardActions>
               </Card>
             </Grid>
           );
