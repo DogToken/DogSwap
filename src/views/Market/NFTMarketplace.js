@@ -55,11 +55,12 @@ const NFTMarketplace = () => {
   async function loadContracts() {
     const nftContract = getNFTContract(network.signer);
     const marketplaceContract = getMarketplaceContract(network.signer);
+    const signer = network.signer;
 
-    loadNFTs(nftContract, marketplaceContract);
+    loadNFTs(nftContract, marketplaceContract, signer);
   }
 
-  async function loadNFTs(nftContract, marketplaceContract) {
+  async function loadNFTs(nftContract, marketplaceContract, signer) {
     if (!marketplaceContract) return;
 
     const data = await marketplaceContract.fetchMarketItems();
@@ -85,7 +86,7 @@ const NFTMarketplace = () => {
     setLoadingState("loaded");
   }
 
-  async function buyNft(nft) {
+  async function buyNft(nft, marketplaceContract, nftContract, signer) {
     if (!marketplaceContract || !nftContract || !signer) return;
 
     const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
@@ -98,10 +99,10 @@ const NFTMarketplace = () => {
       });
 
     await transaction.wait();
-    loadNFTs();
+    loadNFTs(nftContract, marketplaceContract, signer);
   }
 
-  async function createNFT() {
+  async function createNFT(nftContract, signer) {
     if (!nftContract || !signer || !newNFTUrl) return;
 
     const transaction = await nftContract.createToken(newNFTUrl);
@@ -109,11 +110,11 @@ const NFTMarketplace = () => {
     const event = tx.events[0];
     const tokenId = event.args[2];
 
-    await listNFT(tokenId);
+    await listNFT(tokenId, nftContract, marketplaceContract, signer);
     setNewNFTUrl("");
   }
 
-  async function listNFT(tokenId) {
+  async function listNFT(tokenId, nftContract, marketplaceContract, signer) {
     if (!marketplaceContract || !nftContract || !signer) return;
 
     const price = ethers.utils.parseUnits("0.01", "ether");
@@ -133,7 +134,7 @@ const NFTMarketplace = () => {
     );
     await listingTransaction.wait();
 
-    loadNFTs();
+    loadNFTs(nftContract, marketplaceContract, signer);
   }
 
   if (loadingState === "not-loaded") {
@@ -183,15 +184,15 @@ const NFTMarketplace = () => {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  startIcon={<FontAwesomeIcon icon={faHandHoldingUsd} />}
-                  onClick={() => buyNft(nft)}
-                >
-                  Buy
-                </Button>
-              </CardActions>
+              <Button
+                size="small"
+                color="primary"
+                startIcon={<FontAwesomeIcon icon={faHandHoldingUsd} />}
+                onClick={() => buyNft(nft, marketplaceContract, nftContract, signer)}
+              >
+                Buy
+              </Button>
+            </CardActions>
             </Card>
           </Grid>
         ))}
@@ -209,16 +210,16 @@ const NFTMarketplace = () => {
           />
         </Grid>
         <Grid item xs={12} md={4}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            startIcon={<FontAwesomeIcon icon={faWallet} />}
-            onClick={createNFT}
-          >
-            Create NFT
-          </Button>
-        </Grid>
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          startIcon={<FontAwesomeIcon icon={faWallet} />}
+          onClick={() => createNFT(nftContract, signer)}
+        >
+          Create NFT
+        </Button>
+      </Grid>
       </Grid>
     </Container>
   );
