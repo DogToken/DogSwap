@@ -153,6 +153,44 @@ const posts = [
           profilePicture: '/images/coins/doggo.png',
         },
       },
+      {
+        id: 7,
+        title: 'DogSwap $BONE Token Goes Live on MintMe',
+        content: `
+          <p>We are thrilled to announce that DogSwap's native token, $BONE, has officially gone live on MintMe.com, one of the leading platforms for launching and trading digital assets. This significant milestone marks a new chapter in our journey towards decentralized finance (DeFi) and financial empowerment for our community.</p>
+      
+          <h2>Seamless Trading, Withdrawals, and Deposits</h2>
+          <p>With the listing on MintMe, our community can now seamlessly trade, withdraw, and deposit $BONE tokens. MintMe's user-friendly interface and cutting-edge technology ensure a smooth and secure experience for our users, allowing them to navigate the world of DeFi with confidence and ease.</p>
+      
+          <h2>Expanding Our Reach and Fostering Adoption</h2>
+          <p>Our partnership with MintMe is a strategic move to expand our reach and foster greater adoption of the $BONE token. By listing on MintMe, we are opening up new avenues for increased liquidity, accessibility, and exposure to a wider audience of potential investors and DeFi enthusiasts.</p>
+      
+          <h2>A Heartfelt Thank You to the MintMe Team</h2>
+          <p>We would like to express our heartfelt gratitude to the MintMe team for their unwavering support and dedication throughout this process. Their professionalism, expertise, and commitment to innovation have been instrumental in making this listing a reality. We look forward to a long and fruitful partnership, working together to drive the adoption of decentralized finance and empower individuals worldwide.</p>
+      
+          <div style="text-align: center;">
+            <img width="600" src="/images/coins/mintmelogo.png" alt="mintme">
+          </div>
+      
+          <h2>The Future of DogSwap and $BONE</h2>
+          <p>This listing is just the beginning of an exciting journey for DogSwap and the $BONE token. We remain committed to our vision of building a decentralized future where transparency, security, and community empowerment reign supreme. With the support of our dedicated community and partners like MintMe, we are poised to continue pushing the boundaries of DeFi and revolutionizing the financial landscape.</p>
+      
+          <p>Stay tuned for more exciting updates, new product launches, and exclusive opportunities as we continue to grow and evolve. Join the DogSwap pack and embark on this journey towards financial freedom with us.</p>
+      
+          <p>Follow us on social media to stay up-to-date:</p>
+          <ul>
+            <li>Twitter: <a href="https://twitter.com/DogSwapDefi" target="_blank" rel="noopener noreferrer">@DogSwapDefi</a></li>
+            <li>Telegram: <a href="https://t.me/DogSwapOfficial" target="_blank" rel="noopener noreferrer">t.me/DogSwapOfficial</a></li>
+            <li>Discord: <a href="https://discord.gg/RSQZDGThfU" target="_blank" rel="noopener noreferrer">discord.gg/RSQZDGThfU</a></li>
+          </ul>
+        `,
+        excerpt: 'We are thrilled to announce that DogSwap\'s native token, $BONE, has officially gone live on MintMe.com, one of the leading platforms for launching and trading digital assets.',
+        publishedDate: 'April 2, 2024',
+        author: {
+          name: 'Doggo',
+          profilePicture: '/images/coins/doggo.png',
+        },
+      }
     
     // Add more posts here
   ];
