@@ -18,7 +18,7 @@
     "react-icons": "4.10.1",
     "react-markdown": "^6.0.2",
     "react-modal": "3.16.1",
-    "react-native": "^0.64.1",
+    "react-native": "^0.73.6",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "remark-gfm": "^4.0.0",
