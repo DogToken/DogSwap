@@ -115,7 +115,7 @@ const MINTMECoins = [
     name: "MLM",
     abbr: "MLM",
     address: "0xAf0589ce275Bff00a6C71E70Cc4187B7B6894306",
-    logoUrl: "https://dogswap.online/images/coins/mlm.png",
+    logoUrl: "https://dogswap.online/images/coins/mlm.jpeg",
   },
 ]
 
