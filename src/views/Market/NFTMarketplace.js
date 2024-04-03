@@ -49,63 +49,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const fallbackABI = [
-  {
-    inputs: [],
-    name: "fetchMarketItems",
-    outputs: [],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "nftContract", type: "address" },
-      { internalType: "uint256", name: "tokenId", type: "uint256" },
-    ],
-    name: "createMarketSale",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "string", name: "tokenURI", type: "string" },
-    ],
-    name: "createToken",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "to", type: "address" },
-      { internalType: "uint256", name: "tokenId", type: "uint256" },
-    ],
-    name: "approve",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address", name: "nftContract", type: "address" },
-      { internalType: "uint256", name: "tokenId", type: "uint256" },
-      { internalType: "uint256", name: "price", type: "uint256" },
-    ],
-    name: "createToken",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
-    name: "tokenURI",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
-    stateMutability: "view",
-    type: "function",
-  },
-];
-
 const NFTMarketplace = () => {
   const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
@@ -127,13 +70,13 @@ const NFTMarketplace = () => {
 
       const nftContract = new Contract(
         '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
-        fallbackABI,
+        NFTContractABI.abi,
         signer
       );
 
       const marketplaceContract = new Contract(
         '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
-        fallbackABI,
+        MarketplaceContractABI,
         signer
       );
 
@@ -146,7 +89,7 @@ const NFTMarketplace = () => {
   async function loadNFTs(nftContract, marketplaceContract) {
     if (!marketplaceContract) return;
 
-    const data = await marketplaceContract.fetchMarketItems();
+    const data = await marketplaceContract.fetchMarketplaceItems();
 
     const items = await Promise.all(
       data.map(async (i) => {
@@ -177,7 +120,7 @@ const NFTMarketplace = () => {
 
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether');
     const transaction = await nft.marketplaceContract
-      .createMarketSale(nft.nftContract.address, nft.tokenId, {
+      .createMarketplaceSale(nft.nftContract.address, nft.tokenId, {
         value: price,
       })
       .catch((error) => {
@@ -193,41 +136,40 @@ const NFTMarketplace = () => {
 
     const nftContract = new Contract(
       '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
-      fallbackABI,
+      NFTContractABI.abi,
       signer
     );
 
-    const transaction = await nftContract.createToken(newNFTUrl);
-    const tx = await transaction.wait();
-    const event = tx.events[0];
-    const tokenId = event.args[2];
+    const tokenId = await nftContract.createToken(newNFTUrl);
 
     const marketplaceContract = new Contract(
       '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
-      fallbackABI,
+      MarketplaceContractABI,
       signer
     );
 
-    await listNFT(tokenId, nftContract, marketplaceContract);
+    const price = ethers.utils.parseUnits('0.01', 'ether');
+    const listingFee = await marketplaceContract.getListingPrice();
+
+    await listNFT(tokenId, nftContract, marketplaceContract, price, listingFee);
     setNewNFTUrl('');
   }
 
-  async function listNFT(tokenId, nftContract, marketplaceContract) {
+  async function listNFT(tokenId, nftContract, marketplaceContract, price, listingFee) {
     if (!marketplaceContract || !nftContract || !signer) return;
 
-    const price = ethers.utils.parseUnits('0.01', 'ether');
     const transaction = await nftContract.approve(
       marketplaceContract.address,
       tokenId
     );
     await transaction.wait();
 
-    const listingTransaction = await marketplaceContract.createToken(
+    const listingTransaction = await marketplaceContract.createMarketplaceItem(
       nftContract.address,
       tokenId,
       price,
       {
-        value: ethers.utils.parseUnits('0.025', 'ether'),
+        value: listingFee,
       }
     );
     await listingTransaction.wait();
