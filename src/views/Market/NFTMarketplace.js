@@ -241,19 +241,32 @@ const NFTMarketplace = () => {
 
   async function buyNft(nft) {
     if (!nft.marketplaceContract || !nft.nftContract || !nft.signer) return;
-
+  
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether');
-    const transaction = await nft.marketplaceContract
-      .createMarketplaceSale(nft.nftContract.address, nft.tokenId, {
-        value: price,
-      })
-      .catch((error) => {
-        console.error('Error buying NFT:', error);
-      });
-
-    await transaction.wait();
-    loadNFTs(nft.nftContract, nft.marketplaceContract);
-    loadMyNFTs(nft.nftContract, nft.marketplaceContract, nft.signer);
+  
+    try {
+      let tokenId;
+      if (ethers.BigNumber.isBigNumber(nft.tokenId)) {
+        tokenId = nft.tokenId.toNumber();
+      } else {
+        console.error('Invalid tokenId:', nft.tokenId);
+        return;
+      }
+  
+      const transaction = await nft.marketplaceContract.createMarketplaceSale(
+        nft.nftContract.address,
+        tokenId,
+        {
+          value: price,
+        }
+      );
+  
+      await transaction.wait();
+      loadNFTs(nft.nftContract, nft.marketplaceContract);
+      loadMyNFTs(nft.nftContract, nft.marketplaceContract, nft.signer);
+    } catch (error) {
+      console.error('Error buying NFT:', error);
+    }
   }
 
   const handleCreateNFTDialogOpen = () => {
