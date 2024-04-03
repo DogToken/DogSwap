@@ -50,6 +50,63 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const fallbackABI = [
+  {
+    inputs: [],
+    name: "fetchMarketItems",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "nftContract", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+    ],
+    name: "createMarketSale",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "string", name: "tokenURI", type: "string" },
+    ],
+    name: "createToken",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+    ],
+    name: "approve",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "nftContract", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "uint256", name: "price", type: "uint256" },
+    ],
+    name: "createToken",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+    name: "tokenURI",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
 const NFTMarketplace = () => {
   const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
@@ -66,13 +123,13 @@ const NFTMarketplace = () => {
   async function loadContracts() {
     const nftContract = new ethers.Contract(
       "0x8e6ed851Efe845fd91A009BB88e823d067346d87", // Replace with the actual NFT contract address
-      NFTContractABI.abi,
+      fallbackABI,
       network.signer
     );
 
     const marketplaceContract = new ethers.Contract(
       "0xFa851eeECDbD8405C98929770bBfe522a730AF37", // Replace with the actual Marketplace contract address
-      MarketplaceContractABI.abi,
+      fallbackABI,
       network.signer
     );
 
