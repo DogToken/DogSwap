@@ -134,7 +134,12 @@ const NFTMarketplace = () => {
     const event = tx.events[0];
     const tokenId = event.args[2];
 
-    const marketplaceContract = getMarketplaceContract(signer);
+    const marketplaceContract = new ethers.Contract(
+      "0xFa851eeECDbD8405C98929770bBfe522a730AF37", // Replace with the actual Marketplace contract address
+      MarketplaceContractABI.abi,
+      signer
+    );
+
     await listNFT(tokenId, nftContract, marketplaceContract, signer);
     setNewNFTUrl("");
   }
