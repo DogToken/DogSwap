@@ -70,13 +70,13 @@ const NFTMarketplace = () => {
 
       const nftContract = new Contract(
         '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
-        NFTContractABI.abi,
+        NFTContractABI, // Pass the ABI array directly
         signer
       );
 
       const marketplaceContract = new Contract(
         '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
-        MarketplaceContractABI,
+        MarketplaceContractABI, // Pass the ABI array directly
         signer
       );
 
