@@ -15,6 +15,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Tabs,
+  Tab,
+  Box,
 } from '@material-ui/core';
 import { Contract, ethers } from 'ethers';
 import { getProvider, getSigner, getNetwork } from '../../utils/ethereumFunctions';
@@ -35,39 +38,111 @@ import MarketplaceContractABI from '../../build/MarketplaceContract.json';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1,
+    padding: theme.spacing(3),
+    backgroundColor: theme.palette.background.default,
+    minHeight: '100vh',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing(4),
+  },
+  title: {
+    fontWeight: 'bold',
+    color: theme.palette.text.primary,
+  },
+  createButton: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
+  tabsRoot: {
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    marginBottom: theme.spacing(4),
+  },
+  tabPanel: {
     padding: theme.spacing(2),
   },
-  card: {
-    maxWidth: 345,
-    cursor: 'pointer',
+  nftCard: {
+    position: 'relative',
+    borderRadius: theme.spacing(1),
+    boxShadow: theme.shadows[2],
+    transition: 'box-shadow 0.3s ease-in-out',
+    '&:hover': {
+      boxShadow: theme.shadows[4],
+    },
   },
-  media: {
+  nftMedia: {
     height: 0,
-    paddingTop: '56.25%', // 16:9
+    paddingTop: '56.25%', // 16:9 aspect ratio
   },
-  loadingSpinner: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
+  nftContent: {
+    padding: theme.spacing(2),
   },
-  createNFTButton: {
-    marginBottom: theme.spacing(2),
-  },
-  nftCardContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-  },
-  nftCardDetails: {
+  nftName: {
+    fontWeight: 'bold',
     marginBottom: theme.spacing(1),
   },
+  nftDescription: {
+    marginBottom: theme.spacing(2),
+  },
+  nftDetails: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: theme.spacing(2),
+  },
+  nftPrice: {
+    fontWeight: 'bold',
+    color: theme.palette.primary.main,
+  },
+  buyButton: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
+  createNFTDialog: {
+    '& .MuiDialogContent-root': {
+      padding: theme.spacing(3),
+    },
+  },
+  createNFTInput: {
+    marginBottom: theme.spacing(2),
+  },
 }));
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box p={3}>{children}</Box>}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
 
 const NFTMarketplace = () => {
   const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
+  const [myNFTs, setMyNFTs] = useState([]);
   const [loadingState, setLoadingState] = useState('not-loaded');
   const [openCreateNFTDialog, setOpenCreateNFTDialog] = useState(false);
   const [newNFTName, setNewNFTName] = useState('');
@@ -76,6 +151,7 @@ const NFTMarketplace = () => {
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [network, setNetwork] = useState(null);
+  const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
     const initializeContracts = async () => {
@@ -100,6 +176,7 @@ const NFTMarketplace = () => {
       );
 
       loadNFTs(nftContract, marketplaceContract);
+      loadMyNFTs(nftContract, marketplaceContract, signer);
     };
 
     initializeContracts();
@@ -134,6 +211,34 @@ const NFTMarketplace = () => {
     setLoadingState('loaded');
   }
 
+  async function loadMyNFTs(nftContract, marketplaceContract, signer) {
+    if (!marketplaceContract || !signer) return;
+
+    const data = await marketplaceContract.fetchMyNFTs();
+
+    const items = await Promise.all(
+      data.map(async (i) => {
+        const tokenUri = await nftContract.tokenURI(i.tokenId);
+        const meta = await fetch(tokenUri).then((res) => res.json());
+        let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
+        let item = {
+          price,
+          tokenId: i.tokenId.toNumber(),
+          seller: i.seller,
+          owner: i.owner,
+          image: meta.image,
+          name: meta.name,
+          description: meta.description,
+          marketplaceContract,
+          nftContract,
+          signer,
+        };
+        return item;
+      })
+    );
+    setMyNFTs(items);
+  }
+
   async function buyNft(nft) {
     if (!nft.marketplaceContract || !nft.nftContract || !nft.signer) return;
 
@@ -148,6 +253,7 @@ const NFTMarketplace = () => {
 
     await transaction.wait();
     loadNFTs(nft.nftContract, nft.marketplaceContract);
+    loadMyNFTs(nft.nftContract, nft.marketplaceContract, nft.signer);
   }
 
   const handleCreateNFTDialogOpen = () => {
@@ -220,35 +326,18 @@ const NFTMarketplace = () => {
     await listingTransaction.wait();
 
     loadNFTs(nftContract, marketplaceContract);
+    loadMyNFTs(nftContract, marketplaceContract, signer);
   }
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   if (loadingState === 'not-loaded') {
     return (
       <div className={classes.loadingSpinner}>
         <CircularProgress />
       </div>
-    );
-  }
-
-  if (loadingState === 'loaded' && !nfts.length) {
-    return (
-      <Container maxWidth="md">
-        <Typography variant="h4" align="center" gutterBottom>
-          No NFTs in the Marketplace
-        </Typography>
-        <Typography variant="body1" align="center" color="textSecondary">
-          Create your first NFT to start trading!
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<FontAwesomeIcon icon={faPlus} />}
-          className={classes.createNFTButton}
-          onClick={handleCreateNFTDialogOpen}
-        >
-          Create NFT
-        </Button>
-      </Container>
     );
   }
 
@@ -266,62 +355,134 @@ const NFTMarketplace = () => {
       >
         Create NFT
       </Button>
-      <Grid container spacing={3}>
-        {nfts.map((nft, i) => (
-          <Grid item xs={12} sm={6} md={4} key={i}>
-            <Card className={classes.card}>
-              <CardMedia
-                className={classes.media}
-                image={nft.image}
-                title={nft.name}
-              />
-              <CardContent className={classes.nftCardContent}>
-                <Typography variant="h6" gutterBottom>
-                  {nft.name}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  className={classes.nftCardDetails}
-                >
-                  {nft.description}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  color="textPrimary"
-                  className={classes.nftCardDetails}
-                >
-                  <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
-                </Typography>
-                <Typography
-                  variant="body1"
-                  color="textSecondary"
-                  className={classes.nftCardDetails}
-                >
-                  Seller: {nft.seller}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  color="textSecondary"
-                  className={classes.nftCardDetails}
-                >
-                  Owner: {nft.owner}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  startIcon={<FontAwesomeIcon icon={faHandHoldingUsd} />}
-                  onClick={() => buyNft(nft)}
-                >
-                  Buy
-                </Button>
-              </CardActions>
-            </Card>
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        aria-label="nft-tabs"
+        indicatorColor="primary"
+        textColor="primary"
+      >
+        <Tab label="Marketplace" {...a11yProps(0)} />
+        <Tab label="My NFTs" {...a11yProps(1)} />
+      </Tabs>
+      <TabPanel value={tabValue} index={0}>
+        {nfts.length > 0 ? (
+          <Grid container spacing={3}>
+            {nfts.map((nft, i) => (
+              <Grid item xs={12} sm={6} md={4} key={i}>
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.media}
+                    image={nft.image}
+                    title={nft.name}
+                  />
+                  <CardContent className={classes.nftCardContent}>
+                    <Typography variant="h6" gutterBottom>
+                      {nft.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      className={classes.nftCardDetails}
+                    >
+                      {nft.description}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      className={classes.nftCardDetails}
+                    >
+                      <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      className={classes.nftCardDetails}
+                    >
+                      Seller: {nft.seller}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      className={classes.nftCardDetails}
+                    >
+                      Owner: {nft.owner}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      color="primary"
+                      startIcon={<FontAwesomeIcon icon={faHandHoldingUsd} />}
+                      onClick={() => buyNft(nft)}
+                    >
+                      Buy
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
+        ) : (
+          <Typography variant="body1" color="textSecondary">
+            No NFTs available in the marketplace.
+          </Typography>
+        )}
+      </TabPanel>
+      <TabPanel value={tabValue} index={1}>
+        {myNFTs.length > 0 ? (
+          <Grid container spacing={3}>
+            {myNFTs.map((nft, i) => (
+              <Grid item xs={12} sm={6} md={4} key={i}>
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.media}
+                    image={nft.image}
+                    title={nft.name}
+                  />
+                  <CardContent className={classes.nftCardContent}>
+                    <Typography variant="h6" gutterBottom>
+                      {nft.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      className={classes.nftCardDetails}
+                    >
+                      {nft.description}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      className={classes.nftCardDetails}
+                    >
+                      <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      className={classes.nftCardDetails}
+                    >
+                      Seller: {nft.seller}
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      color="textSecondary"
+                      className={classes.nftCardDetails}
+                    >
+                      Owner: {nft.owner}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Typography variant="body1" color="textSecondary">
+            You don't have any NFTs.
+          </Typography>
+        )}
+      </TabPanel>
 
       {/* Create NFT Dialog */}
       <Dialog
