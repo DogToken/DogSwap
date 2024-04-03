@@ -111,6 +111,12 @@ const MINTMECoins = [
     address: "0x02d0E745f6A5BCC5216E63E12249e08514CcFfE4",
     logoUrl: "https://dogswap.online/images/coins/10klitoshi.png",
   },
+  {
+    name: "MLM",
+    abbr: "MLM",
+    address: "0xAf0589ce275Bff00a6C71E70Cc4187B7B6894306",
+    logoUrl: "https://dogswap.online/images/coins/mlm.png",
+  },
 ]
 
 const COINS = new Map();
