@@ -12,11 +12,22 @@ import {
   CardContent,
   CardMedia,
   CardActions,
+  Link,
 } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoins, faWallet, faHandHoldingUsd, faClock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCoins,
+  faWallet,
+  faHandHoldingUsd,
+  faClock,
+} from "@fortawesome/free-solid-svg-icons";
 import useWeb3Provider from "../../hooks/useWeb3Provider";
-import { getNFTContract, getMarketplaceContract } from "../../utils/contracts";
+
+// Import the NFT contract ABI
+import NFTContractABI from "../../build/NFTContract.json";
+
+// Import the Marketplace contract ABI
+import MarketplaceContractABI from "../../build/MarketplaceContract.json";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     maxWidth: 345,
+    cursor: "pointer",
   },
   media: {
     height: 0,
@@ -52,8 +64,18 @@ const NFTMarketplace = () => {
   }, [isConnected]);
 
   async function loadContracts() {
-    const nftContract = getNFTContract(network.signer);
-    const marketplaceContract = getMarketplaceContract(network.signer);
+    const nftContract = new ethers.Contract(
+      "0x8e6ed851Efe845fd91A009BB88e823d067346d87", // Replace with the actual NFT contract address
+      NFTContractABI.abi,
+      network.signer
+    );
+
+    const marketplaceContract = new ethers.Contract(
+      "0xFa851eeECDbD8405C98929770bBfe522a730AF37", // Replace with the actual Marketplace contract address
+      MarketplaceContractABI.abi,
+      network.signer
+    );
+
     const signer = network.signer;
 
     loadNFTs(nftContract, marketplaceContract, signer);
@@ -170,11 +192,13 @@ const NFTMarketplace = () => {
         {nfts.map((nft, i) => (
           <Grid item xs={12} sm={6} md={4} key={i}>
             <Card className={classes.card}>
-              <CardMedia
-                className={classes.media}
-                image={nft.image}
-                title={nft.name}
-              />
+              <Link href={`/nft/${nft.tokenId}`}>
+                <CardMedia
+                  className={classes.media}
+                  image={nft.image}
+                  title={nft.name}
+                />
+              </Link>
               <CardContent>
                 <Typography gutterBottom variant="h5" component="h2">
                   {nft.name}
@@ -199,30 +223,6 @@ const NFTMarketplace = () => {
             </Card>
           </Grid>
         ))}
-      </Grid>
-      <Typography variant="h5" gutterBottom>
-        Create a New NFT
-      </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={8}>
-          <TextField
-            fullWidth
-            label="NFT URL"
-            value={newNFTUrl}
-            onChange={(e) => setNewNFTUrl(e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            startIcon={<FontAwesomeIcon icon={faWallet} />}
-            onClick={() => createNFT(network.nftContract, network.signer)}
-          >
-            Create NFT
-          </Button>
-        </Grid>
       </Grid>
     </Container>
   );
