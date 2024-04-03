@@ -11,6 +11,10 @@ import {
   CardMedia,
   CardActions,
   Container,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@material-ui/core';
 import { Contract, ethers } from 'ethers';
 import { getProvider, getSigner, getNetwork } from '../../utils/ethereumFunctions';
@@ -20,6 +24,7 @@ import {
   faWallet,
   faHandHoldingUsd,
   faClock,
+  faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 
 // Import the NFT contract ABI
@@ -47,13 +52,27 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     height: '100vh',
   },
+  createNFTButton: {
+    marginBottom: theme.spacing(2),
+  },
+  nftCardContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  nftCardDetails: {
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 const NFTMarketplace = () => {
   const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
   const [loadingState, setLoadingState] = useState('not-loaded');
-  const [newNFTUrl, setNewNFTUrl] = useState('');
+  const [openCreateNFTDialog, setOpenCreateNFTDialog] = useState(false);
+  const [newNFTName, setNewNFTName] = useState('');
+  const [newNFTDescription, setNewNFTDescription] = useState('');
+  const [newNFTImageUrl, setNewNFTImageUrl] = useState('');
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [network, setNetwork] = useState(null);
@@ -70,13 +89,13 @@ const NFTMarketplace = () => {
 
       const nftContract = new Contract(
         '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
-        NFTContractABI, // Pass the ABI array directly
+        NFTContractABI,
         signer
       );
 
       const marketplaceContract = new Contract(
         '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
-        MarketplaceContractABI, // Pass the ABI array directly
+        MarketplaceContractABI,
         signer
       );
 
@@ -104,9 +123,9 @@ const NFTMarketplace = () => {
           image: meta.image,
           name: meta.name,
           description: meta.description,
-          marketplaceContract, // Add the marketplaceContract to the item
-          nftContract, // Add the nftContract to the item
-          signer, // Add the signer to the item
+          marketplaceContract,
+          nftContract,
+          signer,
         };
         return item;
       })
@@ -131,16 +150,35 @@ const NFTMarketplace = () => {
     loadNFTs(nft.nftContract, nft.marketplaceContract);
   }
 
-  async function createNFT() {
-    if (!signer || !newNFTUrl) return;
+  const handleCreateNFTDialogOpen = () => {
+    setOpenCreateNFTDialog(true);
+  };
+
+  const handleCreateNFTDialogClose = () => {
+    setOpenCreateNFTDialog(false);
+    setNewNFTName('');
+    setNewNFTDescription('');
+    setNewNFTImageUrl('');
+  };
+
+  const handleCreateNFTSubmit = async () => {
+    if (!signer || !newNFTName || !newNFTDescription || !newNFTImageUrl) return;
 
     const nftContract = new Contract(
       '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
-      NFTContractABI.abi,
+      NFTContractABI,
       signer
     );
 
-    const tokenId = await nftContract.createToken(newNFTUrl);
+    const tokenURI = `data:application/json;base64,${btoa(
+      JSON.stringify({
+        name: newNFTName,
+        description: newNFTDescription,
+        image: newNFTImageUrl,
+      })
+    )}`;
+
+    const tokenId = await nftContract.createToken(tokenURI);
 
     const marketplaceContract = new Contract(
       '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
@@ -151,9 +189,16 @@ const NFTMarketplace = () => {
     const price = ethers.utils.parseUnits('0.01', 'ether');
     const listingFee = await marketplaceContract.getListingPrice();
 
-    await listNFT(tokenId, nftContract, marketplaceContract, price, listingFee);
-    setNewNFTUrl('');
-  }
+    await listNFT(
+      tokenId.toNumber(),
+      nftContract,
+      marketplaceContract,
+      price,
+      listingFee
+    );
+
+    handleCreateNFTDialogClose();
+  };
 
   async function listNFT(tokenId, nftContract, marketplaceContract, price, listingFee) {
     if (!marketplaceContract || !nftContract || !signer) return;
@@ -194,6 +239,15 @@ const NFTMarketplace = () => {
         <Typography variant="body1" align="center" color="textSecondary">
           Create your first NFT to start trading!
         </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<FontAwesomeIcon icon={faPlus} />}
+          className={classes.createNFTButton}
+          onClick={handleCreateNFTDialogOpen}
+        >
+          Create NFT
+        </Button>
       </Container>
     );
   }
@@ -203,6 +257,15 @@ const NFTMarketplace = () => {
       <Typography variant="h4" gutterBottom>
         NFT Marketplace
       </Typography>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<FontAwesomeIcon icon={faPlus} />}
+        className={classes.createNFTButton}
+        onClick={handleCreateNFTDialogOpen}
+      >
+        Create NFT
+      </Button>
       <Grid container spacing={3}>
         {nfts.map((nft, i) => (
           <Grid item xs={12} sm={6} md={4} key={i}>
@@ -212,15 +275,37 @@ const NFTMarketplace = () => {
                 image={nft.image}
                 title={nft.name}
               />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
+              <CardContent className={classes.nftCardContent}>
+                <Typography variant="h6" gutterBottom>
                   {nft.name}
                 </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  className={classes.nftCardDetails}
+                >
                   {nft.description}
                 </Typography>
-                <Typography variant="body1" color="textPrimary">
+                <Typography
+                  variant="body1"
+                  color="textPrimary"
+                  className={classes.nftCardDetails}
+                >
                   <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
+                </Typography>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  className={classes.nftCardDetails}
+                >
+                  Seller: {nft.seller}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  className={classes.nftCardDetails}
+                >
+                  Owner: {nft.owner}
                 </Typography>
               </CardContent>
               <CardActions>
@@ -237,6 +322,49 @@ const NFTMarketplace = () => {
           </Grid>
         ))}
       </Grid>
+
+      {/* Create NFT Dialog */}
+      <Dialog
+        open={openCreateNFTDialog}
+        onClose={handleCreateNFTDialogClose}
+        aria-labelledby="create-nft-dialog-title"
+      >
+        <DialogTitle id="create-nft-dialog-title">Create New NFT</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="NFT Name"
+            fullWidth
+            value={newNFTName}
+            onChange={(e) => setNewNFTName(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="NFT Description"
+            fullWidth
+            multiline
+            rows={4}
+            value={newNFTDescription}
+            onChange={(e) => setNewNFTDescription(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Image URL"
+            fullWidth
+            value={newNFTImageUrl}
+            onChange={(e) => setNewNFTImageUrl(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCreateNFTDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleCreateNFTSubmit} color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
