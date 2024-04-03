@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { ethers } from "ethers";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   Button,
-  Container,
   Typography,
   CircularProgress,
   TextField,
@@ -12,22 +10,23 @@ import {
   CardContent,
   CardMedia,
   CardActions,
-  Link,
-} from "@material-ui/core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  Container,
+} from '@material-ui/core';
+import { Contract, ethers } from 'ethers';
+import { getProvider, getSigner, getNetwork } from '../../utils/ethereumFunctions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCoins,
   faWallet,
   faHandHoldingUsd,
   faClock,
-} from "@fortawesome/free-solid-svg-icons";
-import useWeb3Provider from "../../hooks/useWeb3Provider";
+} from '@fortawesome/free-solid-svg-icons';
 
 // Import the NFT contract ABI
-import NFTContractABI from "../../build/NFTContract.json";
+import NFTContractABI from '../../build/NFTContract.json';
 
 // Import the Marketplace contract ABI
-import MarketplaceContractABI from "../../build/MarketplaceContract.json";
+import MarketplaceContractABI from '../../build/MarketplaceContract.json';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,17 +35,17 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     maxWidth: 345,
-    cursor: "pointer",
+    cursor: 'pointer',
   },
   media: {
     height: 0,
-    paddingTop: "56.25%", // 16:9
+    paddingTop: '56.25%', // 16:9
   },
   loadingSpinner: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
   },
 }));
 
@@ -110,35 +109,41 @@ const fallbackABI = [
 const NFTMarketplace = () => {
   const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
-  const [loadingState, setLoadingState] = useState("not-loaded");
-  const [newNFTUrl, setNewNFTUrl] = useState("");
-  const { isConnected, network } = useWeb3Provider();
+  const [loadingState, setLoadingState] = useState('not-loaded');
+  const [newNFTUrl, setNewNFTUrl] = useState('');
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [network, setNetwork] = useState(null);
 
   useEffect(() => {
-    if (isConnected) {
-      loadContracts();
-    }
-  }, [isConnected]);
+    const initializeContracts = async () => {
+      const provider = await getProvider();
+      const signer = await getSigner(provider);
+      const network = await getNetwork(provider);
 
-  async function loadContracts() {
-    const nftContract = new ethers.Contract(
-      "0x8e6ed851Efe845fd91A009BB88e823d067346d87", // Replace with the actual NFT contract address
-      fallbackABI,
-      network.signer
-    );
+      setProvider(provider);
+      setSigner(signer);
+      setNetwork(network);
 
-    const marketplaceContract = new ethers.Contract(
-      "0xFa851eeECDbD8405C98929770bBfe522a730AF37", // Replace with the actual Marketplace contract address
-      fallbackABI,
-      network.signer
-    );
+      const nftContract = new Contract(
+        '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
+        fallbackABI,
+        signer
+      );
 
-    const signer = network.signer;
+      const marketplaceContract = new Contract(
+        '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
+        fallbackABI,
+        signer
+      );
 
-    loadNFTs(nftContract, marketplaceContract, signer);
-  }
+      loadNFTs(nftContract, marketplaceContract);
+    };
 
-  async function loadNFTs(nftContract, marketplaceContract, signer) {
+    initializeContracts();
+  }, []);
+
+  async function loadNFTs(nftContract, marketplaceContract) {
     if (!marketplaceContract) return;
 
     const data = await marketplaceContract.fetchMarketItems();
@@ -147,7 +152,7 @@ const NFTMarketplace = () => {
       data.map(async (i) => {
         const tokenUri = await nftContract.tokenURI(i.tokenId);
         const meta = await fetch(tokenUri).then((res) => res.json());
-        let price = ethers.utils.formatUnits(i.price.toString(), "ether");
+        let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
         let item = {
           price,
           tokenId: i.tokenId.toNumber(),
@@ -164,47 +169,53 @@ const NFTMarketplace = () => {
       })
     );
     setNFTs(items);
-    setLoadingState("loaded");
+    setLoadingState('loaded');
   }
 
   async function buyNft(nft) {
     if (!nft.marketplaceContract || !nft.nftContract || !nft.signer) return;
 
-    const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
+    const price = ethers.utils.parseUnits(nft.price.toString(), 'ether');
     const transaction = await nft.marketplaceContract
       .createMarketSale(nft.nftContract.address, nft.tokenId, {
         value: price,
       })
       .catch((error) => {
-        console.error("Error buying NFT:", error);
+        console.error('Error buying NFT:', error);
       });
 
     await transaction.wait();
-    loadNFTs(nft.nftContract, nft.marketplaceContract, nft.signer);
+    loadNFTs(nft.nftContract, nft.marketplaceContract);
   }
 
-  async function createNFT(nftContract, signer) {
-    if (!nftContract || !signer || !newNFTUrl) return;
+  async function createNFT() {
+    if (!signer || !newNFTUrl) return;
+
+    const nftContract = new Contract(
+      '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
+      fallbackABI,
+      signer
+    );
 
     const transaction = await nftContract.createToken(newNFTUrl);
     const tx = await transaction.wait();
     const event = tx.events[0];
     const tokenId = event.args[2];
 
-    const marketplaceContract = new ethers.Contract(
-      "0xFa851eeECDbD8405C98929770bBfe522a730AF37", // Replace with the actual Marketplace contract address
-      MarketplaceContractABI.abi,
+    const marketplaceContract = new Contract(
+      '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
+      fallbackABI,
       signer
     );
 
-    await listNFT(tokenId, nftContract, marketplaceContract, signer);
-    setNewNFTUrl("");
+    await listNFT(tokenId, nftContract, marketplaceContract);
+    setNewNFTUrl('');
   }
 
-  async function listNFT(tokenId, nftContract, marketplaceContract, signer) {
+  async function listNFT(tokenId, nftContract, marketplaceContract) {
     if (!marketplaceContract || !nftContract || !signer) return;
 
-    const price = ethers.utils.parseUnits("0.01", "ether");
+    const price = ethers.utils.parseUnits('0.01', 'ether');
     const transaction = await nftContract.approve(
       marketplaceContract.address,
       tokenId
@@ -216,15 +227,15 @@ const NFTMarketplace = () => {
       tokenId,
       price,
       {
-        value: ethers.utils.parseUnits("0.025", "ether"),
+        value: ethers.utils.parseUnits('0.025', 'ether'),
       }
     );
     await listingTransaction.wait();
 
-    loadNFTs(nftContract, marketplaceContract, signer);
+    loadNFTs(nftContract, marketplaceContract);
   }
 
-  if (loadingState === "not-loaded") {
+  if (loadingState === 'not-loaded') {
     return (
       <div className={classes.loadingSpinner}>
         <CircularProgress />
@@ -232,7 +243,7 @@ const NFTMarketplace = () => {
     );
   }
 
-  if (loadingState === "loaded" && !nfts.length) {
+  if (loadingState === 'loaded' && !nfts.length) {
     return (
       <Container maxWidth="md">
         <Typography variant="h4" align="center" gutterBottom>
@@ -254,13 +265,11 @@ const NFTMarketplace = () => {
         {nfts.map((nft, i) => (
           <Grid item xs={12} sm={6} md={4} key={i}>
             <Card className={classes.card}>
-              <Link href={`/nft/${nft.tokenId}`}>
-                <CardMedia
-                  className={classes.media}
-                  image={nft.image}
-                  title={nft.name}
-                />
-              </Link>
+              <CardMedia
+                className={classes.media}
+                image={nft.image}
+                title={nft.name}
+              />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="h2">
                   {nft.name}
