@@ -29,11 +29,6 @@ import {
   faClock,
   faPlus,
 } from '@fortawesome/free-solid-svg-icons';
-import { create } from "ipfs-http-client";
-import { toast } from 'react-toastify';
-
-// Create the IPFS client
-const client = create("https://ipfs.infura.io:5001/api/v0");
 
 // Import the NFT contract ABI
 import NFTContractABI from '../../build/NFTContract.json';
@@ -156,94 +151,7 @@ const NFTMarketplace = () => {
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [network, setNetwork] = useState(null);
-  const [tabValue, setTabValue] = useState(0);const [file, setFile] = useState(null);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [attributes, setAttributes] = useState([]);
-  const [loader, setLoader] = useState(false);
-
-  const addAttribute = (e) => {
-    e.preventDefault();
-    if (attributes) {
-      setAttributes([
-        ...attributes,
-        {
-          trait_type: e.target.key.value,
-          value: e.target.value.value,
-        },
-      ]);
-    } else {
-      setAttributes([
-        { trait_type: e.target.key.value, value: e.target.value.value },
-      ]);
-    }
-    e.target.reset();
-  };
-
-  const removeAttribute = (index) => {
-    const filteredAttr = attributes.filter((_, i) => i !== index);
-    setAttributes(filteredAttr);
-  };
-
-  const uploadImageToIPFS = async () => {
-    if (!file) {
-      toast.error("Please select an image file!");
-      return;
-    }
-  
-    try {
-      const added = await client.add(file);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      await uploadMetadataToIPFS(url);
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      toast.error("Error uploading image");
-    }
-  };
-  
-  const uploadMetadataToIPFS = async (fileUrl) => {
-    if (!newNFTName || !newNFTDescription || !fileUrl) return;
-  
-    const data = JSON.stringify({
-      name: newNFTName,
-      description: newNFTDescription,
-      image: fileUrl,
-      attributes,
-    });
-  
-    try {
-      const added = await client.add(data);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      await mintNFT(url);
-    } catch (error) {
-      console.error("Error uploading metadata:", error);
-      toast.error("Error uploading metadata");
-    }
-  };
-  
-  const mintNFT = async (metadata) => {
-    if (!signer) return;
-  
-    const nftContract = new Contract(
-      '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
-      NFTContractABI,
-      signer
-    );
-  
-    const tokenId = await nftContract.createToken(metadata);
-  
-    const marketplaceContract = new Contract(
-      '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
-      MarketplaceContractABI,
-      signer
-    );
-  
-    const price = ethers.utils.parseUnits(price.toString(), 'ether');
-    const listingFee = await marketplaceContract.getListingPrice();
-  
-    await listNFT(tokenId.toNumber(), nftContract, marketplaceContract, price, listingFee);
-  };
+  const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
     const initializeContracts = async () => {
@@ -332,36 +240,36 @@ const NFTMarketplace = () => {
   }
 
   async function buyNft(nft) {
-    if (!nft.marketplaceContract || !nft.nftContract || !nft.signer) return;
-  
-    const price = ethers.utils.parseUnits(nft.price.toString(), 'ether');
-  
-    try {
-      let tokenId;
-      if (ethers.BigNumber.isBigNumber(nft.tokenId)) {
-        tokenId = nft.tokenId.toNumber();
-      } else if (typeof nft.tokenId === 'number') {
-        tokenId = nft.tokenId;
-      } else {
-        console.error('Invalid tokenId:', nft.tokenId);
-        return;
-      }
-  
-      const transaction = await nft.marketplaceContract.createMarketplaceSale(
-        nft.nftContract.address,
-        tokenId,
-        {
-          value: price,
-        }
-      );
-  
-      await transaction.wait();
-      loadNFTs(nft.nftContract, nft.marketplaceContract);
-      loadMyNFTs(nft.nftContract, nft.marketplaceContract, nft.signer);
-    } catch (error) {
-      console.error('Error buying NFT:', error);
+  if (!nft.marketplaceContract || !nft.nftContract || !nft.signer) return;
+
+  const price = ethers.utils.parseUnits(nft.price.toString(), 'ether');
+
+  try {
+    let tokenId;
+    if (ethers.BigNumber.isBigNumber(nft.tokenId)) {
+      tokenId = nft.tokenId.toNumber();
+    } else if (typeof nft.tokenId === 'number') {
+      tokenId = nft.tokenId;
+    } else {
+      console.error('Invalid tokenId:', nft.tokenId);
+      return;
     }
+
+    const transaction = await nft.marketplaceContract.createMarketplaceSale(
+      nft.nftContract.address,
+      tokenId,
+      {
+        value: price,
+      }
+    );
+
+    await transaction.wait();
+    loadNFTs(nft.nftContract, nft.marketplaceContract);
+    loadMyNFTs(nft.nftContract, nft.marketplaceContract, nft.signer);
+  } catch (error) {
+    console.error('Error buying NFT:', error);
   }
+}Ò
 
   const handleCreateNFTDialogOpen = () => {
     setOpenCreateNFTDialog(true);
@@ -375,27 +283,44 @@ const NFTMarketplace = () => {
   };
 
   const handleCreateNFTSubmit = async () => {
-    if (!signer || !newNFTName || !newNFTDescription || !file) return;
-  
-    setLoader(true);
-  
-    try {
-      const added = await client.add(file);
-      const fileUrl = `https://ipfs.infura.io/ipfs/${added.path}`;
-      const metadata = await uploadMetadataToIPFS(fileUrl);
-      await mintNFT(metadata);
-      setNewNFTName("");
-      setNewNFTDescription("");
-      setNewNFTImageUrl("");
-      setFile(null);
-      setAttributes([]);
-      setLoader(false);
-      handleCreateNFTDialogClose();
-    } catch (error) {
-      setLoader(false);
-      console.error("Error minting NFT:", error);
-      toast.error("Error minting NFT");
-    }
+    if (!signer || !newNFTName || !newNFTDescription || !newNFTImageUrl) return;
+
+    const nftContract = new Contract(
+      '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
+      NFTContractABI,
+      signer
+    );
+
+    const tokenURI = `data:application/json;base64,${btoa(
+      JSON.stringify({
+        name: newNFTName,
+        description: newNFTDescription,
+        image: newNFTImageUrl,
+      })
+    )}`;
+
+    const tokenId = await nftContract.createToken(tokenURI);
+
+    const marketplaceContract = new Contract(
+      '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
+      MarketplaceContractABI,
+      signer
+    );
+
+    const price = ethers.utils.parseUnits('0.01', 'ether');
+    const listingFee = await marketplaceContract.getListingPrice();
+
+    await listNFT(
+      tokenId.toNumber(),
+      nftContract,
+      marketplaceContract,
+      price,
+      listingFee
+    );
+
+    loadMyNFTs(nftContract, marketplaceContract, signer);
+
+    handleCreateNFTDialogClose();
   };
 
   async function listNFT(tokenId, nftContract, marketplaceContract, price, listingFee) {
@@ -417,8 +342,8 @@ const NFTMarketplace = () => {
     );
     await listingTransaction.wait();
   
-    loadNFTs(nftContract, marketplaceContract);
-    await loadMyNFTs(nftContract, marketplaceContract, signer); // Await loadMyNFTs
+    loadNFTs(nftContract, marketplaceContract); 
+    loadMyNFTs(nftContract, marketplaceContract, signer);
   }
 
   const handleTabChange = (event, newValue) => {
@@ -608,50 +533,14 @@ const NFTMarketplace = () => {
             value={newNFTImageUrl}
             onChange={(e) => setNewNFTImageUrl(e.target.value)}
           />
-          <form onSubmit={addAttribute}>
-  <div className="mb-3">
-    <label htmlFor="attributes" className="form-label">
-      Attributes
-    </label>
-    <div className="d-flex flex-wrap">
-      {attributes.map((attr, index) => (
-        <div key={index}>
-          <span>{attr.trait_type}: {attr.value}</span>
-          <Button onClick={() => removeAttribute(index)}>Remove</Button>
-        </div>
-      ))}
-    </div>
-    <div className="d-flex attribute">
-      <TextField
-        margin="dense"
-        label="Attribute Key"
-        name="key"
-        required
-      />
-      <TextField
-        margin="dense"
-        label="Attribute Value"
-        name="value"
-        required
-      />
-      <Button type="submit" color="primary">
-        Add Attribute
-      </Button>
-    </div>
-  </div>
-</form>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCreateNFTDialogClose} color="primary">
             Cancel
           </Button>
-          <Button
-  onClick={handleCreateNFTSubmit}
-  color="primary"
-  disabled={loader}
->
-  {loader ? 'Minting...' : 'Create'}
-</Button>
+          <Button onClick={handleCreateNFTSubmit} color="primary">
+            Create
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>
