@@ -269,7 +269,7 @@ const NFTMarketplace = () => {
   } catch (error) {
     console.error('Error buying NFT:', error);
   }
-}Ò
+}
 
   const handleCreateNFTDialogOpen = () => {
     setOpenCreateNFTDialog(true);
