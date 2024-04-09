@@ -154,7 +154,7 @@ const posts = [
         },
       },
       {
-        id: 7,
+        id: 8,
         title: 'DogSwap $BONE Token Goes Live on MintMe',
         content: `
           <p>We are thrilled to announce that DogSwap's native token, $BONE, has officially gone live on MintMe.com, one of the leading platforms for launching and trading digital assets. This significant milestone marks a new chapter in our journey towards decentralized finance (DeFi) and financial empowerment for our community.</p>
@@ -190,7 +190,39 @@ const posts = [
           name: 'Doggo',
           profilePicture: '/images/coins/doggo.png',
         },
+      },
+      {
+        id: 7,
+        title: 'Introducing Our BONEFT NFT Collection on OpenSea!',
+        content: `
+          <p>🚀 <strong>Introducing Our BONEFT NFT Collection on OpenSea!</strong> 🎨</p>
+      
+          <p>Exciting news, everyone! We're delighted to unveil our latest creation – the BONEFT NFT Collection! 🖼️✨ Dive into a world of digital art and creativity on <a href="https://opensea.io/collection/boneft" target="_blank" rel="noopener noreferrer">OpenSea</a> as we introduce our exclusive collection of unique and captivating NFTs.</p>
+      
+          <p>🔥 <strong>Unique Features and Rarity</strong><br>
+          Explore our collection, featuring NFTs with unique properties, special backgrounds, different bone types, colors, and varying levels of rarity. Each piece is a masterpiece waiting to be discovered and owned by collectors like you!</p>
+      
+          <p>💎 <strong>Limited Edition Collectibles</strong><br>
+          Discover limited edition pieces that showcase the finest craftsmanship and creativity. Own a piece of digital art that stands out from the crowd and adds value to your collection.</p>
+      
+          <p>🌟 <strong>Unlock a World of Possibilities</strong><br>
+          With the BONEFT NFT Collection, you're not just buying art – you're investing in the future of digital assets. Join us on OpenSea and be part of a thriving community passionate about blockchain art and innovation.</p>
+      
+          <p>📅 <strong>Published</strong>: April 2, 2024<br>
+          👤 <strong>Author</strong>: Doggo</p>
+      
+          <p>🔗 <a href="https://opensea.io/collection/boneft">Explore the BONEFT Collection on OpenSea</a></p>
+      
+          <p>Don't miss out on your chance to own a piece of digital history. Start collecting BONEFT NFTs today! 🐾💼 #BONEFT #NFTCollection #DigitalArt #CryptoArt 🚀</p>
+        `,
+        excerpt: 'Exciting news, everyone! Were delighted to unveil our latest creation – the BONEFT NFT Collection! 🖼️✨ Dive into a world of digital art and creativity on OpenSea as we introduce our exclusive collection of unique and captivating NFTs.',
+        publishedDate: 'April 2, 2024',
+        author: {
+          name: 'Doggo',
+          profilePicture: '/images/coins/doggo.png',
+        },
       }
+      
     
     // Add more posts here
   ];
