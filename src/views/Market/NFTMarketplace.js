@@ -284,13 +284,13 @@ const NFTMarketplace = () => {
 
   const handleCreateNFTSubmit = async () => {
     if (!signer || !newNFTName || !newNFTDescription || !newNFTImageUrl) return;
-
+  
     const nftContract = new Contract(
       '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
       NFTContractABI,
       signer
     );
-
+  
     const tokenURI = `data:application/json;base64,${btoa(
       JSON.stringify({
         name: newNFTName,
@@ -298,28 +298,24 @@ const NFTMarketplace = () => {
         image: newNFTImageUrl,
       })
     )}`;
-
-    const tokenId = await nftContract.createToken(tokenURI);
-
+  
+    const transaction = await nftContract.createToken(tokenURI);
+    await transaction.wait();
+  
     const marketplaceContract = new Contract(
       '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
       MarketplaceContractABI,
       signer
     );
-
+  
     const price = ethers.utils.parseUnits('0.01', 'ether');
     const listingFee = await marketplaceContract.getListingPrice();
-
-    await listNFT(
-      tokenId.toNumber(),
-      nftContract,
-      marketplaceContract,
-      price,
-      listingFee
-    );
-
+  
+    const tokenId = await nftContract.tokenCounter() - 1; // Get the latest tokenId
+    await listNFT(tokenId, nftContract, marketplaceContract, price, listingFee);
+  
     loadMyNFTs(nftContract, marketplaceContract, signer);
-
+  
     handleCreateNFTDialogClose();
   };
 
