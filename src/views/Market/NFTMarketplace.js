@@ -375,6 +375,14 @@ const NFTMarketplace = () => {
       >
         Create NFT
       </Button>
+      <Button
+        size="small"
+        color="primary"
+        startIcon={<FontAwesomeIcon icon={faPlus} />}
+        onClick={() => listNFT(nftContract, nft.tokenId, price)}
+      >
+        List NFT
+      </Button>
       <Tabs
         value={tabValue}
         onChange={handleTabChange}
