@@ -155,6 +155,10 @@ const NFTMarketplace = () => {
   const [nftContract, setNFTContract] = useState(null);
   const [marketplaceContract, setMarketplaceContract] = useState(null);
 
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   useEffect(() => {
     const initializeContracts = async () => {
       const provider = await getProvider();
