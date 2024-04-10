@@ -300,7 +300,9 @@ const NFTMarketplace = () => {
     )}`;
   
     const transaction = await nftContract.createToken(tokenURI);
-    await transaction.wait();
+    const receipt = await transaction.wait();
+  
+    const tokenId = receipt.events[0].args.tokenId; // Get the tokenId from the event emitted by the createToken function
   
     const marketplaceContract = new Contract(
       '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
@@ -311,7 +313,6 @@ const NFTMarketplace = () => {
     const price = ethers.utils.parseUnits('0.01', 'ether');
     const listingFee = await marketplaceContract.getListingPrice();
   
-    const tokenId = await nftContract.tokenCounter() - 1; // Get the latest tokenId
     await listNFT(tokenId, nftContract, marketplaceContract, price, listingFee);
   
     loadMyNFTs(nftContract, marketplaceContract, signer);
