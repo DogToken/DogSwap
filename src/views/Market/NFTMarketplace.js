@@ -158,7 +158,7 @@ const NFTMarketplace = () => {
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
     if (newValue === 1) {
-      loadMyNFTs(marketplaceContract, nftContract, signer);
+      loadMyNFTs(nftContract, signer);
     }
   };
 
@@ -222,39 +222,34 @@ const NFTMarketplace = () => {
     setLoadingState('loaded');
   }
 
-  async function loadMyNFTs(marketplaceContract, nftContract, signer) {
-    if (!marketplaceContract || !nftContract || !signer) return;
+  async function loadMyNFTs(nftContract, signer) {
+    if (!nftContract || !signer) return;
   
     const userAddress = await signer.getAddress();
-    const myNFTs = [];
+    const userNFTs = [];
   
-    // Fetch all the items created
-    const createdItems = await marketplaceContract.fetchItemsCreated();
+    // Fetch the number of NFTs owned by the user
+    const numTokens = await nftContract.balanceOf(userAddress);
   
-    // Find the items owned by the current user
-    for (let i = 0; i < createdItems.length; i++) {
-      const item = createdItems[i];
-      if (item.owner.toLowerCase() === userAddress.toLowerCase()) {
-        const tokenUri = await nftContract.tokenURI(item.tokenId);
-        const meta = await fetch(tokenUri).then((res) => res.json());
+    // Fetch the token IDs of the NFTs owned by the user
+    for (let i = 0; i < numTokens; i++) {
+      const tokenId = await nftContract.tokenOfOwnerByIndex(userAddress, i);
+      const tokenUri = await nftContract.tokenURI(tokenId);
+      const meta = await fetch(tokenUri).then((res) => res.json());
   
-        let nftItem = {
-          price: ethers.utils.formatUnits(item.price.toString(), 'ether'),
-          tokenId: item.tokenId.toNumber(),
-          seller: item.seller,
-          owner: item.owner,
-          image: meta.image,
-          name: meta.name,
-          description: meta.description,
-          marketplaceContract,
-          nftContract,
-          signer,
-        };
-        myNFTs.push(nftItem);
-      }
+      let nftItem = {
+        tokenId: tokenId.toNumber(),
+        owner: userAddress,
+        image: meta.image,
+        name: meta.name,
+        description: meta.description,
+        nftContract,
+        signer,
+      };
+      userNFTs.push(nftItem);
     }
   
-    setMyNFTs(myNFTs);
+    setMyNFTs(userNFTs);
   }
   
   async function buyNft(nft) {
