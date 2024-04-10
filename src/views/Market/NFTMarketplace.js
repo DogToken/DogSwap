@@ -225,10 +225,12 @@ const NFTMarketplace = () => {
     const userAddress = await signer.getAddress();
     const userNFTs = [];
   
-    // Fetch the token IDs of the NFTs owned by the user
+    // Fetch the number of NFTs owned by the user
     const numTokens = await nftContract.balanceOf(userAddress);
+  
+    // Fetch the token IDs of the NFTs owned by the user
     for (let i = 0; i < numTokens; i++) {
-      const tokenId = await nftContract.tokenByIndex(i);
+      const tokenId = await nftContract.tokenOfOwnerByIndex(userAddress, i);
       const tokenUri = await nftContract.tokenURI(tokenId);
       const meta = await fetch(tokenUri).then((res) => res.json());
       let price = '0'; // Set the price to 0 for NFTs not listed on the marketplace
