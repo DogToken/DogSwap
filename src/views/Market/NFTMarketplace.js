@@ -157,6 +157,9 @@ const NFTMarketplace = () => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+    if (newValue === 1) {
+      loadMyNFTs(marketplaceContract, nftContract, signer);
+    }
   };
 
   useEffect(() => {
@@ -224,9 +227,6 @@ const NFTMarketplace = () => {
   
     const userAddress = await signer.getAddress();
     const myNFTs = [];
-  
-    // Fetch all the marketplace items
-    const marketplaceItems = await marketplaceContract.fetchMarketplaceItems();
   
     // Fetch all the items created
     const createdItems = await marketplaceContract.fetchItemsCreated();
