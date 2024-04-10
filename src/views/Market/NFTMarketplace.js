@@ -219,42 +219,22 @@ const NFTMarketplace = () => {
     setLoadingState('loaded');
   }
 
-  async function loadMyNFTs(nftContract, signer) {
-    if (!nftContract || !signer) return;
+  async function loadMyNFTs(marketplaceContract, signer) {
+    if (!marketplaceContract || !signer) return;
   
-    const userAddress = await signer.getAddress();
+    const myNFTs = await marketplaceContract.fetchMyNFTs();
     const userNFTs = [];
   
-    // Fetch the number of NFTs owned by the user
-    const numTokens = await nftContract.balanceOf(userAddress);
-  
-    // Fetch the token IDs of the NFTs owned by the user
-    for (let i = 0; i < numTokens; i++) {
-      const tokenId = await nftContract.tokenOfOwnerByIndex(userAddress, i);
-      const tokenUri = await nftContract.tokenURI(tokenId);
+    for (let i = 0; i < myNFTs.length; i++) {
+      const nft = myNFTs[i];
+      const tokenUri = await nftContract.tokenURI(nft.tokenId);
       const meta = await fetch(tokenUri).then((res) => res.json());
-      let price = '0'; // Set the price to 0 for NFTs not listed on the marketplace
-  
-      // Check if the NFT is listed on the marketplace
-      const marketplaceContract = new Contract(
-        '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
-        MarketplaceContractABI,
-        signer
-      );
-      const marketplaceItem = await marketplaceContract.fetchMarketplaceItems();
-      const listedItem = marketplaceItem.find(
-        (item) =>
-          item.nftContract === nftContract.address && item.tokenId.eq(tokenId)
-      );
-      if (listedItem) {
-        price = ethers.utils.formatUnits(listedItem.price.toString(), 'ether');
-      }
   
       let item = {
-        price,
-        tokenId: tokenId.toNumber(),
-        seller: listedItem ? listedItem.seller : userAddress,
-        owner: userAddress,
+        price: ethers.utils.formatUnits(nft.price.toString(), 'ether'),
+        tokenId: nft.tokenId.toNumber(),
+        seller: nft.seller,
+        owner: nft.owner,
         image: meta.image,
         name: meta.name,
         description: meta.description,
@@ -263,8 +243,7 @@ const NFTMarketplace = () => {
         signer,
       };
       userNFTs.push(item);
-    }
-  
+    }  
     setMyNFTs(userNFTs);
   }
   
