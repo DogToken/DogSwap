@@ -320,16 +320,22 @@ const NFTMarketplace = () => {
     handleCreateNFTDialogClose();
   };
 
-  async function listNFT(tokenId, nftContract, marketplaceContract, price, listingFee) {
-    if (!marketplaceContract || !nftContract || !signer) return;
+  async function listNFT(nftContract, tokenId, price) {
+    if (!signer || !nftContract || !marketplaceContract) return;
   
-    const transaction = await nftContract.approve(
-      marketplaceContract.address,
-      tokenId
+    const marketplaceContract = new Contract(
+      '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
+      MarketplaceContractABI,
+      signer
     );
-    await transaction.wait();
   
-    const listingTransaction = await marketplaceContract.createMarketplaceItem(
+    const listingFee = await marketplaceContract.getListingPrice();
+  
+    // Approve the NFT contract to transfer the token
+    await nftContract.approve(marketplaceContract.address, tokenId);
+  
+    // List the NFT on the marketplace
+    const listingTransaction = await marketplaceContract.listNFT(
       nftContract.address,
       tokenId,
       price,
@@ -339,7 +345,7 @@ const NFTMarketplace = () => {
     );
     await listingTransaction.wait();
   
-    loadNFTs(nftContract, marketplaceContract); 
+    loadNFTs(nftContract, marketplaceContract);
     loadMyNFTs(nftContract, marketplaceContract, signer);
   }
 
