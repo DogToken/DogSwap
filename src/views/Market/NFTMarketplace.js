@@ -152,6 +152,8 @@ const NFTMarketplace = () => {
   const [signer, setSigner] = useState(null);
   const [network, setNetwork] = useState(null);
   const [tabValue, setTabValue] = useState(0);
+  const [nftContract, setNFTContract] = useState(null);
+  const [marketplaceContract, setMarketplaceContract] = useState(null);
 
   useEffect(() => {
     const initializeContracts = async () => {
@@ -168,15 +170,17 @@ const NFTMarketplace = () => {
         NFTContractABI,
         signer
       );
+      setNFTContract(nftContract);
 
       const marketplaceContract = new Contract(
         '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
         MarketplaceContractABI,
         signer
       );
+      setMarketplaceContract(marketplaceContract);
 
       loadNFTs(nftContract, marketplaceContract);
-      loadMyNFTs(nftContract, marketplaceContract, signer);
+      loadMyNFTs(nftContract, signer);
     };
 
     initializeContracts();
@@ -257,7 +261,7 @@ const NFTMarketplace = () => {
   
     setMyNFTs(userNFTs);
   }
-  
+
   async function buyNft(nft) {
   if (!nft.marketplaceContract || !nft.nftContract || !nft.signer) return;
 
