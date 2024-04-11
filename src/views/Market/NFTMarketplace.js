@@ -189,10 +189,10 @@ const NFTMarketplace = () => {
       loadNFTs(nftContract, marketplaceContract);
       loadMyNFTs(nftContract, signer);
     };
-
+  
     initializeContracts();
   }, []);
-
+  
   async function loadNFTs(nftContract, marketplaceContract) {
     if (!marketplaceContract) return;
 
@@ -223,34 +223,34 @@ const NFTMarketplace = () => {
   }
 
   async function loadMyNFTs(nftContract, signer) {
-    if (!nftContract || !signer) return;
-  
-    const userAddress = await signer.getAddress();
-    const myNFTs = [];
-  
-    // Get the total number of tokens owned by the user
-    const balance = await nftContract.balanceOf(userAddress);
-  
-    // Loop through the user's tokens and fetch their metadata
-    for (let i = 0; i < balance.toNumber(); i++) {
-      const tokenId = await nftContract.tokenOfOwnerByIndex(userAddress, i);
-      const tokenUri = await nftContract.tokenURI(tokenId);
-      const meta = await fetch(tokenUri).then((res) => res.json());
-  
-      let nftItem = {
-        tokenId: tokenId.toNumber(),
-        owner: userAddress,
-        image: meta.image,
-        name: meta.name,
-        description: meta.description,
-        nftContract,
-        signer,
-      };
-      myNFTs.push(nftItem);
-    }
-  
-    setMyNFTs(myNFTs);
+  if (!nftContract || !signer) return;
+
+  const userAddress = await signer.getAddress();
+  const myNFTs = [];
+
+  // Get the total number of tokens owned by the user
+  const balance = await nftContract.balanceOf(userAddress);
+
+  // Loop through the user's tokens and fetch their metadata
+  for (let i = 0; i < balance.toNumber(); i++) {
+    const tokenId = await nftContract.tokenOfOwnerByIndex(userAddress, i);
+    const tokenUri = await nftContract.tokenURI(tokenId);
+    const meta = await fetch(tokenUri).then((res) => res.json());
+
+    let nftItem = {
+      tokenId: tokenId.toNumber(),
+      owner: userAddress,
+      image: meta.image,
+      name: meta.name,
+      description: meta.description,
+      nftContract,
+      signer,
+    };
+    myNFTs.push(nftItem);
   }
+
+  setMyNFTs(myNFTs);
+}
   
   async function buyNft(nft) {
   if (!nft.marketplaceContract || !nft.nftContract || !nft.signer) return;
