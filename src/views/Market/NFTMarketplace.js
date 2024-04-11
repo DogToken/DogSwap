@@ -335,34 +335,23 @@ const NFTMarketplace = () => {
 
   async function listNFT(nft) {
     if (!signer || !nftContract || !marketplaceContract) return;
-
+  
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether');
-
+  
     try {
-      let tokenId;
-      if (ethers.BigNumber.isBigNumber(nft.tokenId)) {
-        tokenId = nft.tokenId.toNumber();
-      } else if (typeof nft.tokenId === 'number') {
-        tokenId = nft.tokenId;
-      } else {
-        console.error('Invalid tokenId:', nft.tokenId);
-        return;
-      }
-
-      await nftContract.approve(marketplaceContract.address, tokenId);
-
+      await nftContract.approve(marketplaceContract.address, nft.tokenId);
       const listingTransaction = await marketplaceContract.listNFT(
         nftContract.address,
-        tokenId,
+        nft.tokenId,
         price,
         {
           value: await marketplaceContract.getListingPrice(),
         }
       );
       await listingTransaction.wait();
-
+  
       loadNFTs(nftContract, marketplaceContract);
-      loadMyNFTs(nftContract, marketplaceContract, signer);
+      loadMyNFTs(nftContract, signer);
     } catch (error) {
       console.error('Error listing NFT:', error);
     }
@@ -473,59 +462,69 @@ const NFTMarketplace = () => {
         )}
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        {myNFTs.length > 0 ? (
-          <Grid container spacing={3}>
-            {myNFTs.map((nft, i) => (
-              <Grid item xs={12} sm={6} md={4} key={i}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.media}
-                    image={nft.image}
-                    title={nft.name}
-                  />
-                  <CardContent className={classes.nftCardContent}>
-                    <Typography variant="h6" gutterBottom>
-                      {nft.name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      className={classes.nftCardDetails}
-                    >
-                      {nft.description}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      color="textPrimary"
-                      className={classes.nftCardDetails}
-                    >
-                      <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      color="textSecondary"
-                      className={classes.nftCardDetails}
-                    >
-                      Seller: {nft.seller}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      color="textSecondary"
-                      className={classes.nftCardDetails}
-                    >
-                      Owner: {nft.owner}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        ) : (
-          <Typography variant="body1" color="textSecondary">
-            You don't have any NFTs.
-          </Typography>
-        )}
-      </TabPanel>
+  {myNFTs.length > 0 ? (
+    <Grid container spacing={3}>
+      {myNFTs.map((nft, i) => (
+        <Grid item xs={12} sm={6} md={4} key={i}>
+          <Card className={classes.card}>
+            <CardMedia
+              className={classes.media}
+              image={nft.image}
+              title={nft.name}
+            />
+            <CardContent className={classes.nftCardContent}>
+              <Typography variant="h6" gutterBottom>
+                {nft.name}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className={classes.nftCardDetails}
+              >
+                {nft.description}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="textPrimary"
+                className={classes.nftCardDetails}
+              >
+                <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
+              </Typography>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                className={classes.nftCardDetails}
+              >
+                Seller: {nft.seller}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                className={classes.nftCardDetails}
+              >
+                Owner: {nft.owner}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                size="small"
+                color="primary"
+                startIcon={<FontAwesomeIcon icon={faPlus} />}
+                onClick={() => listNFT(nft)}
+              >
+                List
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
+  ) : (
+    <Typography variant="body1" color="textSecondary">
+      You don't have any NFTs.
+    </Typography>
+  )}
+</TabPanel>
 
       {/* Create NFT Dialog */}
       <Dialog
