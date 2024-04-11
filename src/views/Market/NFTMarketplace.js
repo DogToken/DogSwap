@@ -402,8 +402,8 @@ const NFTMarketplace = () => {
     handleCreateNFTDialogClose();
   };
 
-  async function listNFT(nftContract, marketplaceContract, tokenId, price) {
-    if (!signer) return;
+  async function listNFT(tokenId, price) {
+    if (!signer || !nftContract || !marketplaceContract) return;
   
     try {
       // Check if the NFT is already approved for the marketplace contract
