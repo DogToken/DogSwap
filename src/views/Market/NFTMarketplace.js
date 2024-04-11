@@ -352,7 +352,20 @@ const NFTMarketplace = () => {
     }
   
     try {
-      await nftContract.approve(marketplaceContract.address, nft.tokenId);
+      // Check if the NFT is already approved for the marketplace contract
+      const isApproved = await nftContract.isApprovedForAll(
+        await signer.getAddress(),
+        marketplaceContract.address
+      );
+  
+      if (!isApproved) {
+        // Approve the marketplace contract to transfer the NFT
+        const approveTransaction = await nftContract.setApprovalForAll(
+          marketplaceContract.address,
+          true
+        );
+        await approveTransaction.wait();
+      }
   
       // Try to estimate the gas limit
       let gasLimit;
