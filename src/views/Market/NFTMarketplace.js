@@ -222,7 +222,7 @@ const NFTMarketplace = () => {
     setLoadingState('loaded');
   }
 
-  async function loadMyNFTs(marketplaceContract, nftContract, signer) {
+  async function loadMyNFTs(nftContract, marketplaceContract, signer) {
     if (!marketplaceContract || !nftContract || !signer) return;
   
     const userAddress = await signer.getAddress();
@@ -237,6 +237,31 @@ const NFTMarketplace = () => {
       if (item.owner.toLowerCase() === userAddress.toLowerCase()) {
         const tokenUri = await nftContract.tokenURI(item.tokenId);
         const meta = await fetch(tokenUri).then((res) => res.json());
+  
+        let nftItem = {
+          price: ethers.utils.formatUnits(item.price.toString(), 'ether'),
+          tokenId: item.tokenId.toNumber(),
+          seller: item.seller,
+          owner: item.owner,
+          image: meta.image,
+          name: meta.name,
+          description: meta.description,
+          marketplaceContract,
+          nftContract,
+          signer,
+        };
+        myNFTs.push(nftItem);
+      }
+    }
+  
+    // Fetch all the items owned by the user
+    const ownedItems = await marketplaceContract.fetchMyNFTs();
+  
+    for (let i = 0; i < ownedItems.length; i++) {
+      const item = ownedItems[i];
+      if (item.owner.toLowerCase() === userAddress.toLowerCase()) {
+        const tokenUri = await nftContract.tokenURI(i.tokenId);
+        const meta = tokenUri ? await fetch(tokenUri).then((res) => res.json()) : { image: '', name: '', description: '' };
   
         let nftItem = {
           price: ethers.utils.formatUnits(item.price.toString(), 'ether'),
