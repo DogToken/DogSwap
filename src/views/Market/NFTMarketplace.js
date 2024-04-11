@@ -461,7 +461,7 @@ const NFTMarketplace = () => {
                 color="textPrimary"
                 className={classes.nftCardDetails}
               >
-                <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
+                <FontAwesomeIcon icon={faCoins} /> {nft.price} MINTME
               </Typography>
               <Typography
                 variant="body1"
@@ -525,7 +525,7 @@ const NFTMarketplace = () => {
                 color="textPrimary"
                 className={classes.nftCardDetails}
               >
-                <FontAwesomeIcon icon={faCoins} /> {nft.price} ETH
+                <FontAwesomeIcon icon={faCoins} /> {nft.price} MINTME
               </Typography>
               <Typography
                 variant="body1"
@@ -544,7 +544,7 @@ const NFTMarketplace = () => {
             </CardContent>
             <CardActions>
             <TextField
-                label="Listing Price (ETH)"
+                label="Listing Price (MINTME)"
                 variant="outlined"
                 size="small"
                 type="number"
