@@ -83,7 +83,8 @@ const Footer = () => {
               size="small"
             >
               
-            </Button><Button
+            </Button>
+            <Button
               variant="contained"
               color="primary"
               startIcon={<img src="https://dogswap.online/images/coins/nordlogo.svg" alt="Nord" width="20" height="20" />}
@@ -92,8 +93,20 @@ const Footer = () => {
               rel="noopener noreferrer"
               style={{ backgroundColor: "#fff", color: "#000000" }}
               size="small"
-            >
+            >https://warpcast.com/~/invite-page/365010?id=faf4569c
               Nord VPN
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<img src="https://dogswap.online/images/ui/warpcast.png" alt="warpcast" width="20" height="20" />}
+              href="https://warpcast.com/~/invite-page/365010?id=faf4569c"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ backgroundColor: "#8565CB", color: "#000000" }}
+              size="small"
+            >
+              Warpcast
             </Button>
           </div>
         </div>
