@@ -235,7 +235,14 @@ const NFTMarketplace = () => {
     for (let i = 0; i < balance.toNumber(); i++) {
       const tokenId = await nftContract.getUserNFTs();
       const tokenUri = await nftContract.tokenURI(tokenId[i]);
-      const meta = await fetch(tokenUri).then((res) => res.json());
+  
+      let meta;
+      try {
+        meta = await fetch(tokenUri).then((res) => res.json());
+      } catch (error) {
+        console.error(`Error fetching metadata for token ${tokenId[i]}:`, error);
+        meta = { image: '', name: '', description: '' };
+      }
   
       let nftItem = {
         tokenId: tokenId[i].toNumber(),
@@ -336,7 +343,13 @@ const NFTMarketplace = () => {
   async function listNFT(nft) {
     if (!signer || !nftContract || !marketplaceContract) return;
   
-    const price = ethers.utils.parseUnits(nft.price.toString(), 'ether');
+    let price;
+    if (nft.price && typeof nft.price === 'string') {
+      price = ethers.utils.parseUnits(nft.price, 'ether');
+    } else {
+      console.error('Invalid NFT price:', nft.price);
+      return;
+    }
   
     try {
       await nftContract.approve(marketplaceContract.address, nft.tokenId);
