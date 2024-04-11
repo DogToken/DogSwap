@@ -192,6 +192,8 @@ const NFTMarketplace = () => {
   
     initializeContracts();
   }, []);
+
+  const [listingPrice, setListingPrice] = useState('');
   
   async function loadNFTs(nftContract, marketplaceContract) {
     if (!marketplaceContract) return;
@@ -402,8 +404,8 @@ const NFTMarketplace = () => {
     handleCreateNFTDialogClose();
   };
 
-  async function listNFT(tokenId, price) {
-    if (!signer || !nftContract || !marketplaceContract) return;
+  async function listNFT(tokenId) {
+    if (!signer || !nftContract || !marketplaceContract || !listingPrice) return;
   
     try {
       // Check if the NFT is already approved for the marketplace contract
@@ -421,17 +423,17 @@ const NFTMarketplace = () => {
         await approveTransaction.wait();
       }
   
-      // Convert the price to a BigNumber
-      const priceInWei = ethers.utils.parseUnits(price.toString(), 'ether');
+      // Convert the listing price to a BigNumber
+      const priceInWei = ethers.utils.parseUnits(listingPrice, 'ether');
   
       // List the NFT on the marketplace
-      const listingPrice = await marketplaceContract.getListingPrice();
+      const listingFee = await marketplaceContract.getListingPrice();
       const listingTransaction = await marketplaceContract.listNFT(
         nftContract.address,
         tokenId,
         priceInWei,
         {
-          value: listingPrice,
+          value: listingFee,
         }
       );
       await listingTransaction.wait();
@@ -585,14 +587,14 @@ const NFTMarketplace = () => {
             </CardContent>
             <CardActions>
             <TextField
-                label="Listing Price (MINTME)"
-                variant="outlined"
-                size="small"
-                type="number"
-                defaultValue={nft.price}
-                onChange={(e) => (nft.price = e.target.value)}
-                className={classes.listingPriceInput}
-              />
+              label="Listing Price (MINTME)"
+              variant="outlined"
+              size="small"
+              type="number"
+              value={listingPrice}
+              onChange={(e) => setListingPrice(e.target.value)}
+              className={classes.listingPriceInput}
+            />
               <Button
                 size="small"
                 color="primary"
