@@ -402,16 +402,8 @@ const NFTMarketplace = () => {
     handleCreateNFTDialogClose();
   };
 
-  async function listNFT(nft) {
-    if (!signer || !nftContract || !marketplaceContract) return;
-  
-    let price;
-    if (nft.price && typeof nft.price === 'string') {
-      price = ethers.utils.parseUnits(nft.price, 'ether');
-    } else {
-      console.error('Invalid NFT price:', nft.price);
-      return;
-    }
+  async function listNFT(nftContract, marketplaceContract, tokenId, price) {
+    if (!signer) return;
   
     try {
       // Check if the NFT is already approved for the marketplace contract
@@ -430,12 +422,13 @@ const NFTMarketplace = () => {
       }
   
       // List the NFT on the marketplace
+      const listingPrice = await marketplaceContract.getListingPrice();
       const listingTransaction = await marketplaceContract.listNFT(
         nftContract.address,
-        nft.tokenId,
+        tokenId,
         price,
         {
-          value: await marketplaceContract.getListingPrice(),
+          value: listingPrice,
         }
       );
       await listingTransaction.wait();
