@@ -550,8 +550,8 @@ const NFTMarketplace = () => {
         <Grid item xs={12} sm={6} md={4} key={i}>
           <Card className={classes.card}>
             <CardMedia
-              className={classes.media}
-              image={nft.image}
+              className={classes.nftMedia}
+              image={nft.image || '/images/coins/doggo.png'}
               title={nft.name}
             />
             <CardContent className={classes.nftCardContent}>
