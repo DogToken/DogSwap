@@ -195,9 +195,9 @@ const NFTMarketplace = () => {
   
   async function loadNFTs(nftContract, marketplaceContract) {
     if (!marketplaceContract) return;
-
+  
     const data = await marketplaceContract.fetchMarketplaceItems();
-
+  
     const items = await Promise.all(
       data.map(async (i) => {
         const tokenUri = await nftContract.tokenURI(i.tokenId);
@@ -208,7 +208,7 @@ const NFTMarketplace = () => {
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
-          image: meta.image,
+          image: meta.image.startsWith('ipfs://') ? `https://ipfs.io/ipfs/${meta.image.slice(7)}` : meta.image,
           name: meta.name,
           description: meta.description,
           marketplaceContract,
@@ -220,6 +220,62 @@ const NFTMarketplace = () => {
     );
     setNFTs(items);
     setLoadingState('loaded');
+  }
+  
+  async function makeOffer(nft, offerPrice) {
+    if (!signer || !nft.marketplaceContract || !nft.nftContract) return;
+  
+    const price = ethers.utils.parseUnits(offerPrice, 'ether');
+  
+    try {
+      // Check if the NFT is already approved for the marketplace contract
+      const isApproved = await nft.nftContract.isApprovedForAll(
+        await signer.getAddress(),
+        nft.marketplaceContract.address
+      );
+  
+      if (!isApproved) {
+        // Approve the marketplace contract to transfer the NFT
+        const approveTransaction = await nft.nftContract.setApprovalForAll(
+          nft.marketplaceContract.address,
+          true
+        );
+        await approveTransaction.wait();
+      }
+  
+      // Create the offer on the marketplace
+      const createOfferTransaction = await nft.marketplaceContract.createMarketplaceItem(
+        nft.nftContract.address,
+        nft.tokenId,
+        price,
+        {
+          value: price,
+        }
+      );
+      await createOfferTransaction.wait();
+  
+      loadNFTs(nft.nftContract, nft.marketplaceContract);
+    } catch (error) {
+      console.error('Error making offer:', error);
+    }
+  }
+  
+  async function acceptOffer(nft, offerIndex) {
+    if (!signer || !nft.marketplaceContract || !nft.nftContract) return;
+  
+    try {
+      // Accept the offer on the marketplace
+      const acceptOfferTransaction = await nft.marketplaceContract.createMarketplaceSale(
+        nft.nftContract.address,
+        offerIndex
+      );
+      await acceptOfferTransaction.wait();
+  
+      loadNFTs(nft.nftContract, nft.marketplaceContract);
+      loadMyNFTs(nft.nftContract, signer);
+    } catch (error) {
+      console.error('Error accepting offer:', error);
+    }
   }
 
   async function loadMyNFTs(nftContract, signer) {
@@ -367,29 +423,13 @@ const NFTMarketplace = () => {
         await approveTransaction.wait();
       }
   
-      // Try to estimate the gas limit
-      let gasLimit;
-      try {
-        gasLimit = await marketplaceContract.estimateGas.listNFT(
-          nftContract.address,
-          nft.tokenId,
-          price,
-          {
-            value: await marketplaceContract.getListingPrice(),
-          }
-        );
-      } catch (error) {
-        console.error('Error estimating gas limit:', error);
-        gasLimit = 1000000; // Set a manual gas limit
-      }
-  
+      // List the NFT on the marketplace
       const listingTransaction = await marketplaceContract.listNFT(
         nftContract.address,
         nft.tokenId,
         price,
         {
           value: await marketplaceContract.getListingPrice(),
-          gasLimit,
         }
       );
       await listingTransaction.wait();
