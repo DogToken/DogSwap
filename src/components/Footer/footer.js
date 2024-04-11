@@ -96,6 +96,8 @@ const Footer = () => {
             >https://warpcast.com/~/invite-page/365010?id=faf4569c
               Nord VPN
             </Button>
+            </div>
+          <div className="button-container">
             <Button
               variant="contained"
               color="primary"
