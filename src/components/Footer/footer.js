@@ -93,7 +93,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               style={{ backgroundColor: "#fff", color: "#000000" }}
               size="small"
-            >https://warpcast.com/~/invite-page/365010?id=faf4569c
+            >
               Nord VPN
             </Button>
             </div>
