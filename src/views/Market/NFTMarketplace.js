@@ -421,12 +421,15 @@ const NFTMarketplace = () => {
         await approveTransaction.wait();
       }
   
+      // Convert the price to a BigNumber
+      const priceInWei = ethers.utils.parseUnits(price.toString(), 'ether');
+  
       // List the NFT on the marketplace
       const listingPrice = await marketplaceContract.getListingPrice();
       const listingTransaction = await marketplaceContract.listNFT(
         nftContract.address,
         tokenId,
-        price,
+        priceInWei,
         {
           value: listingPrice,
         }
