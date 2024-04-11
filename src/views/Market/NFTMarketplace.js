@@ -353,12 +353,30 @@ const NFTMarketplace = () => {
   
     try {
       await nftContract.approve(marketplaceContract.address, nft.tokenId);
+  
+      // Try to estimate the gas limit
+      let gasLimit;
+      try {
+        gasLimit = await marketplaceContract.estimateGas.listNFT(
+          nftContract.address,
+          nft.tokenId,
+          price,
+          {
+            value: await marketplaceContract.getListingPrice(),
+          }
+        );
+      } catch (error) {
+        console.error('Error estimating gas limit:', error);
+        gasLimit = 1000000; // Set a manual gas limit
+      }
+  
       const listingTransaction = await marketplaceContract.listNFT(
         nftContract.address,
         nft.tokenId,
         price,
         {
           value: await marketplaceContract.getListingPrice(),
+          gasLimit,
         }
       );
       await listingTransaction.wait();
