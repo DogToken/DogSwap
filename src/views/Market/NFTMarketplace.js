@@ -389,7 +389,8 @@ const NFTMarketplace = () => {
         price,
         {
           value: await marketplaceContract.getListingPrice(),
-          gasLimit,
+          gasLimit: 1500000,
+          gasPrice: ethers.utils.parseUnits('50', 'gwei') // Increase the gas price
         }
       );
       await listingTransaction.wait();
