@@ -187,7 +187,7 @@ const NFTMarketplace = () => {
       setMarketplaceContract(marketplaceContract);
   
       loadNFTs(nftContract, marketplaceContract);
-      loadMyNFTs(marketplaceContract, signer);
+      loadMyNFTs(nftContract, signer);
     };
   
     initializeContracts();
@@ -222,35 +222,31 @@ const NFTMarketplace = () => {
     setLoadingState('loaded');
   }
 
-  async function loadMyNFTs(marketplaceContract, signer) {
-    if (!marketplaceContract || !signer) return;
+  async function loadMyNFTs(nftContract, signer) {
+    if (!nftContract || !signer) return;
   
     const userAddress = await signer.getAddress();
     const myNFTs = [];
   
-    // Fetch all the items owned by the current user
-    const ownedItems = await marketplaceContract.fetchMyNFTs();
+    // Get the total number of tokens owned by the user
+    const balance = await nftContract.balanceOf(userAddress);
   
-    for (let i = 0; i < ownedItems.length; i++) {
-      const item = ownedItems[i];
-      if (item.owner.toLowerCase() === userAddress.toLowerCase()) {
-        const tokenUri = await nftContract.tokenURI(item.tokenId);
-        const meta = await fetch(tokenUri).then((res) => res.json());
+    // Loop through the user's tokens and fetch their metadata
+    for (let i = 0; i < balance.toNumber(); i++) {
+      const tokenId = await nftContract.getUserNFTs();
+      const tokenUri = await nftContract.tokenURI(tokenId[i]);
+      const meta = await fetch(tokenUri).then((res) => res.json());
   
-        let nftItem = {
-          price: ethers.utils.formatUnits(item.price.toString(), 'ether'),
-          tokenId: item.tokenId.toNumber(),
-          seller: item.seller,
-          owner: item.owner,
-          image: meta.image,
-          name: meta.name,
-          description: meta.description,
-          marketplaceContract,
-          nftContract,
-          signer,
-        };
-        myNFTs.push(nftItem);
-      }
+      let nftItem = {
+        tokenId: tokenId[i].toNumber(),
+        owner: userAddress,
+        image: meta.image,
+        name: meta.name,
+        description: meta.description,
+        nftContract,
+        signer,
+      };
+      myNFTs.push(nftItem);
     }
   
     setMyNFTs(myNFTs);
