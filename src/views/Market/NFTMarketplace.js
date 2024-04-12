@@ -139,7 +139,7 @@ function a11yProps(index) {
   };
 }
 
-const NFTMarketplace = () => {
+function NFTMarketplace() {
   const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
   const [myNFTs, setMyNFTs] = useState([]);
@@ -155,6 +155,39 @@ const NFTMarketplace = () => {
   const [nftContract, setNFTContract] = useState(null);
   const [marketplaceContract, setMarketplaceContract] = useState(null);
 
+  useEffect(() => {
+    const initializeContracts = async () => {
+      const provider = await getProvider();
+      const signer = await getSigner(provider);
+      const network = await getNetwork(provider);
+
+      setProvider(provider);
+      setSigner(signer);
+      setNetwork(network);
+
+      const nftContract = new Contract(
+        '0xf2AC4F7974c4369b45b7cd28258d2f372Bf61BA1', // Replace with the actual NFT contract address
+        NFTContractABI,
+        signer
+      );
+      setNFTContract(nftContract);
+
+      const marketplaceContract = new Contract(
+        '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
+        MarketplaceContractABI,
+        signer
+      );
+      setMarketplaceContract(marketplaceContract);
+
+      loadNFTs(nftContract, marketplaceContract);
+      loadMyNFTs(nftContract, signer);
+    };
+
+    initializeContracts();
+  }, []);
+
+  const [listingPrice, setListingPrice] = useState('');
+
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
     if (newValue === 1) {
@@ -162,39 +195,6 @@ const NFTMarketplace = () => {
     }
   };
 
-  useEffect(() => {
-    const initializeContracts = async () => {
-      const provider = await getProvider();
-      const signer = await getSigner(provider);
-      const network = await getNetwork(provider);
-  
-      setProvider(provider);
-      setSigner(signer);
-      setNetwork(network);
-  
-      const nftContract = new Contract(
-        '0xf2AC4F7974c4369b45b7cd28258d2f372Bf61BA1', // Replace with the actual NFT contract address
-        NFTContractABI,
-        signer
-      );
-      setNFTContract(nftContract);
-  
-      const marketplaceContract = new Contract(
-        '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
-        MarketplaceContractABI,
-        signer
-      );
-      setMarketplaceContract(marketplaceContract);
-  
-      loadNFTs(nftContract, marketplaceContract);
-      loadMyNFTs(nftContract, signer);
-    };
-  
-    initializeContracts();
-  }, []);
-
-  const [listingPrice, setListingPrice] = useState('');
-  
   async function loadNFTs(nftContract, marketplaceContract) {
     if (!marketplaceContract) return;
   
@@ -404,16 +404,16 @@ const NFTMarketplace = () => {
     handleCreateNFTDialogClose();
   };
 
-  async function listNFT(tokenId) {
-    if (!signer || !nftContract || !marketplaceContract || !listingPrice) return;
-  
+  async function listNFT(tokenId, nftContract, marketplaceContract, price) {
+    if (!signer || !nftContract || !marketplaceContract || !price) return;
+
     try {
       // Check if the NFT is already approved for the marketplace contract
       const isApproved = await nftContract.isApprovedForAll(
         await signer.getAddress(),
         marketplaceContract.address
       );
-  
+
       if (!isApproved) {
         // Approve the marketplace contract to transfer the NFT
         const approveTransaction = await nftContract.setApprovalForAll(
@@ -422,15 +422,15 @@ const NFTMarketplace = () => {
         );
         await approveTransaction.wait();
       }
-  
+
       // Convert the listing price to a BigNumber
-      const priceInWei = ethers.utils.parseUnits(listingPrice.toString(), 'ether');
-  
+      const priceInWei = ethers.utils.parseUnits(price.toString(), 'ether');
+
       // Get the listing fee and convert it to a BigNumber
       const listingFeeInWei = await marketplaceContract.getListingPrice();
-  
+
       // List the NFT on the marketplace
-      const listingTransaction = await marketplaceContract.listNFT(
+      const listingTransaction = await marketplaceContract.createMarketplaceItem(
         nftContract.address,
         tokenId,
         priceInWei,
@@ -439,7 +439,7 @@ const NFTMarketplace = () => {
         }
       );
       await listingTransaction.wait();
-  
+
       loadNFTs(nftContract, marketplaceContract);
       loadMyNFTs(nftContract, signer);
     } catch (error) {
