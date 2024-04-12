@@ -202,23 +202,23 @@ function NFTMarketplace() {
   
     const items = await Promise.all(
       data.map(async (i) => {
-        let meta;
+        let meta = null;
         try {
           const tokenUri = await nftContract.tokenURI(i.tokenId);
           meta = await fetch(tokenUri).then((res) => res.json());
         } catch (error) {
           console.error(`Error fetching metadata for token ${i.tokenId}:`, error);
-          meta = { image: '', name: '', description: '' };
         }
+  
         let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
         let item = {
           price,
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
-          image: meta.image || '/images/coins/doggo.png',
-          name: meta.name || `NFT #${i.tokenId.toNumber()}`,
-          description: meta.description || '',
+          image: meta?.image,
+          name: meta?.name,
+          description: meta?.description,
           marketplaceContract,
           nftContract,
           signer,
@@ -226,7 +226,10 @@ function NFTMarketplace() {
         return item;
       })
     );
-    setNFTs(items);
+  
+    // Filter out the items where meta couldn't be fetched
+    const validItems = items.filter((item) => item.image && item.name && item.description);
+    setNFTs(validItems);
     setLoadingState('loaded');
   }
   
@@ -298,22 +301,20 @@ function NFTMarketplace() {
     // Loop through the user's tokens and fetch their metadata
     for (let i = 0; i < balance.toNumber(); i++) {
       const tokenId = await nftContract.getUserNFTs();
-      const tokenUri = await nftContract.tokenURI(tokenId[i]);
-  
-      let meta;
+      let meta = null;
       try {
+        const tokenUri = await nftContract.tokenURI(tokenId[i]);
         meta = await fetch(tokenUri).then((res) => res.json());
       } catch (error) {
         console.error(`Error fetching metadata for token ${tokenId[i]}:`, error);
-        meta = { image: '', name: '', description: '' };
       }
   
       let nftItem = {
         tokenId: tokenId[i].toNumber(),
         owner: userAddress,
-        image: meta.image,
-        name: meta.name,
-        description: meta.description,
+        image: meta?.image,
+        name: meta?.name,
+        description: meta?.description,
         nftContract,
         signer,
       };
