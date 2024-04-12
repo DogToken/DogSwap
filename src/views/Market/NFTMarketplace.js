@@ -173,7 +173,7 @@ const NFTMarketplace = () => {
       setNetwork(network);
   
       const nftContract = new Contract(
-        '0xf2AC4F7974c4369b45b7cd28258d2f372Bf61BA1', // Replace with the actual NFT contract address
+        '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
         NFTContractABI,
         signer
       );
