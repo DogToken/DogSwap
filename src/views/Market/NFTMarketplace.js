@@ -404,8 +404,8 @@ const NFTMarketplace = () => {
     handleCreateNFTDialogClose();
   };
 
-  async function listNFT(tokenId) {
-    if (!signer || !nftContract || !marketplaceContract || !listingPrice) return;
+  async function listNFT(tokenId, price) {
+    if (!signer || !nftContract || !marketplaceContract) return;
   
     try {
       // Check if the NFT is already approved for the marketplace contract
@@ -423,19 +423,17 @@ const NFTMarketplace = () => {
         await approveTransaction.wait();
       }
   
-      // Convert the listing price to a BigNumber
-      const priceInWei = ethers.utils.parseUnits(listingPrice.toString(), 'ether');
-  
-      // Get the listing fee and convert it to a BigNumber
-      const listingFeeInWei = await marketplaceContract.getListingPrice();
+      // Convert the price to a BigNumber
+      const priceInWei = ethers.utils.parseUnits(price.toString(), 'ether');
   
       // List the NFT on the marketplace
+      const listingPrice = await marketplaceContract.getListingPrice();
       const listingTransaction = await marketplaceContract.listNFT(
         nftContract.address,
         tokenId,
         priceInWei,
         {
-          value: listingFeeInWei,
+          value: listingPrice,
         }
       );
       await listingTransaction.wait();
