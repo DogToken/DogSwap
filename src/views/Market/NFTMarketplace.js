@@ -388,18 +388,10 @@ function NFTMarketplace() {
   
     const tokenId = receipt.events[0].args.tokenId; // Get the tokenId from the event emitted by the createToken function
   
-    const marketplaceContract = new Contract(
-      '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
-      MarketplaceContractABI,
-      signer
-    );
+    // List the new NFT on the marketplace
+    await listNFT(tokenId, nftContract, marketplaceContract, '0.01');
   
-    const price = ethers.utils.parseUnits('0.01', 'ether');
-    const listingFee = await marketplaceContract.getListingPrice();
-  
-    await listNFT(tokenId, nftContract, marketplaceContract, price, listingFee);
-  
-    loadMyNFTs(nftContract, marketplaceContract, signer);
+    loadMyNFTs(nftContract, signer);
   
     handleCreateNFTDialogClose();
   };
