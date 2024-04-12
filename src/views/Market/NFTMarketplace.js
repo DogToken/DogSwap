@@ -139,7 +139,7 @@ function a11yProps(index) {
   };
 }
 
-function NFTMarketplace() {
+const NFTMarketplace = () => {
   const classes = useStyles();
   const [nfts, setNFTs] = useState([]);
   const [myNFTs, setMyNFTs] = useState([]);
@@ -155,39 +155,6 @@ function NFTMarketplace() {
   const [nftContract, setNFTContract] = useState(null);
   const [marketplaceContract, setMarketplaceContract] = useState(null);
 
-  useEffect(() => {
-    const initializeContracts = async () => {
-      const provider = await getProvider();
-      const signer = await getSigner(provider);
-      const network = await getNetwork(provider);
-
-      setProvider(provider);
-      setSigner(signer);
-      setNetwork(network);
-
-      const nftContract = new Contract(
-        '0xf2AC4F7974c4369b45b7cd28258d2f372Bf61BA1', // Replace with the actual NFT contract address
-        NFTContractABI,
-        signer
-      );
-      setNFTContract(nftContract);
-
-      const marketplaceContract = new Contract(
-        '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
-        MarketplaceContractABI,
-        signer
-      );
-      setMarketplaceContract(marketplaceContract);
-
-      loadNFTs(nftContract, marketplaceContract);
-      loadMyNFTs(nftContract, signer);
-    };
-
-    initializeContracts();
-  }, []);
-
-  const [listingPrice, setListingPrice] = useState('');
-
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
     if (newValue === 1) {
@@ -195,6 +162,39 @@ function NFTMarketplace() {
     }
   };
 
+  useEffect(() => {
+    const initializeContracts = async () => {
+      const provider = await getProvider();
+      const signer = await getSigner(provider);
+      const network = await getNetwork(provider);
+  
+      setProvider(provider);
+      setSigner(signer);
+      setNetwork(network);
+  
+      const nftContract = new Contract(
+        '0xf2AC4F7974c4369b45b7cd28258d2f372Bf61BA1', // Replace with the actual NFT contract address
+        NFTContractABI,
+        signer
+      );
+      setNFTContract(nftContract);
+  
+      const marketplaceContract = new Contract(
+        '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
+        MarketplaceContractABI,
+        signer
+      );
+      setMarketplaceContract(marketplaceContract);
+  
+      loadNFTs(nftContract, marketplaceContract);
+      loadMyNFTs(nftContract, signer);
+    };
+  
+    initializeContracts();
+  }, []);
+
+  const [listingPrice, setListingPrice] = useState('');
+  
   async function loadNFTs(nftContract, marketplaceContract) {
     if (!marketplaceContract) return;
   
@@ -202,23 +202,23 @@ function NFTMarketplace() {
   
     const items = await Promise.all(
       data.map(async (i) => {
-        let meta = null;
+        const tokenUri = await nftContract.tokenURI(i.tokenId);
+        let meta;
         try {
-          const tokenUri = await nftContract.tokenURI(i.tokenId);
           meta = await fetch(tokenUri).then((res) => res.json());
         } catch (error) {
           console.error(`Error fetching metadata for token ${i.tokenId}:`, error);
+          meta = { image: '', name: '', description: '' };
         }
-  
         let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
         let item = {
           price,
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
-          image: meta?.image || '/images/coins/doggo.png',
-          name: meta?.name || `NFT #${i.tokenId.toNumber()}`,
-          description: meta?.description || '',
+          image: meta.image,
+          name: meta.name,
+          description: meta.description,
           marketplaceContract,
           nftContract,
           signer,
@@ -226,10 +226,7 @@ function NFTMarketplace() {
         return item;
       })
     );
-  
-    // Filter out the items where meta couldn't be fetched
-    const validItems = items.filter((item) => item.image && item.name && item.description);
-    setNFTs(validItems);
+    setNFTs(items);
     setLoadingState('loaded');
   }
   
@@ -301,20 +298,22 @@ function NFTMarketplace() {
     // Loop through the user's tokens and fetch their metadata
     for (let i = 0; i < balance.toNumber(); i++) {
       const tokenId = await nftContract.getUserNFTs();
-      let meta = null;
+      const tokenUri = await nftContract.tokenURI(tokenId[i]);
+  
+      let meta;
       try {
-        const tokenUri = await nftContract.tokenURI(tokenId[i]);
         meta = await fetch(tokenUri).then((res) => res.json());
       } catch (error) {
         console.error(`Error fetching metadata for token ${tokenId[i]}:`, error);
+        meta = { image: '', name: '', description: '' };
       }
   
       let nftItem = {
         tokenId: tokenId[i].toNumber(),
         owner: userAddress,
-        image: meta?.image || '/images/coins/doggo.png',
-        name: meta?.name || `NFT #${tokenId[i].toNumber()}`,
-        description: meta?.description || '',
+        image: meta.image,
+        name: meta.name,
+        description: meta.description,
         nftContract,
         signer,
       };
@@ -371,7 +370,7 @@ function NFTMarketplace() {
     if (!signer || !newNFTName || !newNFTDescription || !newNFTImageUrl) return;
   
     const nftContract = new Contract(
-      '0xf2AC4F7974c4369b45b7cd28258d2f372Bf61BA1', // Replace with the actual NFT contract address
+      '0x8e6ed851Efe845fd91A009BB88e823d067346d87', // Replace with the actual NFT contract address
       NFTContractABI,
       signer
     );
@@ -389,24 +388,32 @@ function NFTMarketplace() {
   
     const tokenId = receipt.events[0].args.tokenId; // Get the tokenId from the event emitted by the createToken function
   
-    // List the new NFT on the marketplace
-    await listNFT(tokenId, nftContract, marketplaceContract, '0.01');
+    const marketplaceContract = new Contract(
+      '0xFa851eeECDbD8405C98929770bBfe522a730AF37', // Replace with the actual Marketplace contract address
+      MarketplaceContractABI,
+      signer
+    );
   
-    loadMyNFTs(nftContract, signer);
+    const price = ethers.utils.parseUnits('0.01', 'ether');
+    const listingFee = await marketplaceContract.getListingPrice();
+  
+    await listNFT(tokenId, nftContract, marketplaceContract, price, listingFee);
+  
+    loadMyNFTs(nftContract, marketplaceContract, signer);
   
     handleCreateNFTDialogClose();
   };
 
-  async function listNFT(tokenId, nftContract, marketplaceContract, price) {
-    if (!signer || !nftContract || !marketplaceContract || !price) return;
-
+  async function listNFT(tokenId) {
+    if (!signer || !nftContract || !marketplaceContract || !listingPrice) return;
+  
     try {
       // Check if the NFT is already approved for the marketplace contract
       const isApproved = await nftContract.isApprovedForAll(
         await signer.getAddress(),
         marketplaceContract.address
       );
-
+  
       if (!isApproved) {
         // Approve the marketplace contract to transfer the NFT
         const approveTransaction = await nftContract.setApprovalForAll(
@@ -415,15 +422,15 @@ function NFTMarketplace() {
         );
         await approveTransaction.wait();
       }
-
+  
       // Convert the listing price to a BigNumber
-      const priceInWei = ethers.utils.parseUnits(price.toString(), 'ether');
-
+      const priceInWei = ethers.utils.parseUnits(listingPrice.toString(), 'ether');
+  
       // Get the listing fee and convert it to a BigNumber
       const listingFeeInWei = await marketplaceContract.getListingPrice();
-
+  
       // List the NFT on the marketplace
-      const listingTransaction = await marketplaceContract.createMarketplaceItem(
+      const listingTransaction = await marketplaceContract.listNFT(
         nftContract.address,
         tokenId,
         priceInWei,
@@ -432,7 +439,7 @@ function NFTMarketplace() {
         }
       );
       await listingTransaction.wait();
-
+  
       loadNFTs(nftContract, marketplaceContract);
       loadMyNFTs(nftContract, signer);
     } catch (error) {
