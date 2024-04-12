@@ -202,9 +202,9 @@ function NFTMarketplace() {
   
     const items = await Promise.all(
       data.map(async (i) => {
-        const tokenUri = await nftContract.tokenURI(i.tokenId);
         let meta;
         try {
+          const tokenUri = await nftContract.tokenURI(i.tokenId);
           meta = await fetch(tokenUri).then((res) => res.json());
         } catch (error) {
           console.error(`Error fetching metadata for token ${i.tokenId}:`, error);
@@ -216,9 +216,9 @@ function NFTMarketplace() {
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
-          image: meta.image,
-          name: meta.name,
-          description: meta.description,
+          image: meta.image || '/images/coins/doggo.png',
+          name: meta.name || `NFT #${i.tokenId.toNumber()}`,
+          description: meta.description || '',
           marketplaceContract,
           nftContract,
           signer,
