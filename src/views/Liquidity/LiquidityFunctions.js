@@ -150,13 +150,12 @@ export async function removeLiquidity(
   const token1Decimals = await getDecimals(token1);
   const token2Decimals = await getDecimals(token2);
 
-
-  const Getliquidity = (liquidity_tokens)=>{
-    if (liquidity_tokens < 0.001){
-      return ethers.BigNumber.from(liquidity_tokens*10**18);
+  const Getliquidity = (liquidity_tokens) => {
+    if (liquidity_tokens < 0.001) {
+      return ethers.utils.parseUnits(liquidity_tokens.toString(), 18);
     }
-    return ethers.utils.parseUnits(String(liquidity_tokens), 18);
-  }
+    return ethers.utils.parseUnits(liquidity_tokens.toString(), 18);
+  };
 
   const liquidity = Getliquidity(liquidity_tokens);
   console.log('liquidity: ', liquidity);
