@@ -39,9 +39,10 @@ const VotingPage = () => {
         setCurrentVotes(currentVotes);
       } catch (error) {
         console.error("Error fetching current votes:", error);
+        // Display a user-friendly error message here
       }
     };
-
+  
     fetchCurrentVotes();
   }, []);
 
