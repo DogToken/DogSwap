@@ -17,7 +17,7 @@ import {
   ListItemSecondaryAction,
 } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
-import boneTokenABI from "../../build/Bone.json";
+import boneTokenABI from "../../build/BoneToken.json";
 import { getProvider, getSigner, getNetwork, fetchReserves, fetchReservesRaw, getDecimals } from "../../utils/ethereumFunctions";
 
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
