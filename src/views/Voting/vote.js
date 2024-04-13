@@ -18,47 +18,47 @@ import {
   Tooltip,
 } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
-import Bone from "../../build/BoneToken.json";
+import boneTokenABI from "../../build/BoneToken.json";
 import { getProvider, getSigner, getNetwork, fetchReserves, fetchReservesRaw, getDecimals } from "../../utils/ethereumFunctions";
 
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(4),
-  },
-  card: {
-    padding: theme.spacing(2),
-  },
-  buttonContainer: {
-    marginTop: theme.spacing(2),
-  },
-  voteContainer: {
-    marginTop: theme.spacing(2),
-  },
-  voteItem: {
-    padding: theme.spacing(1, 2),
-  },
-  voteItemSecondaryAction: {
-    padding: theme.spacing(1, 2),
-  },
-  divider: {
-    margin: theme.spacing(2, 0),
-  },
+    root: {
+        marginTop: theme.spacing(4),
+      },
+      card: {
+        padding: theme.spacing(2),
+      },
+      buttonContainer: {
+        marginTop: theme.spacing(2),
+      },
+      voteContainer: {
+        marginTop: theme.spacing(2),
+      },
+      voteItem: {
+        padding: theme.spacing(1, 2),
+      },
+      voteItemSecondaryAction: {
+        padding: theme.spacing(1, 2),
+      },
+      divider: {
+        margin: theme.spacing(2, 0),
+      },
 }));
 
 const VotingPage = () => {
-    const classes = useStyles();
-    const [currentVotes, setCurrentVotes] = useState(0);
-    const [newDelegateAddress, setNewDelegateAddress] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [voteQuestions, setVoteQuestions] = useState([]);
+  const classes = useStyles();
+  const [currentVotes, setCurrentVotes] = useState(0);
+  const [newDelegateAddress, setNewDelegateAddress] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [voteQuestions, setVoteQuestions] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const provider = await getProvider();
-        const boneContract = new Contract(BONE_TOKEN_ADDRESS, Bone.abi, provider);
+        const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, provider);
         const currentVotesRaw = await boneContract.getCurrentVotes(provider.getSigner().getAddress());
         const currentVotes = ethers.utils.formatEther(currentVotesRaw);
         setCurrentVotes(currentVotes);
@@ -89,7 +89,7 @@ const VotingPage = () => {
       setLoading(true);
       const provider = await getProvider();
       const signer = provider.getSigner();
-      const boneContract = new Contract(BONE_TOKEN_ADDRESS, Bone.abi, signer);
+      const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, signer);
       const tx = await boneContract.delegate(newDelegateAddress);
       await tx.wait();
       const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
@@ -107,7 +107,7 @@ const VotingPage = () => {
       setLoading(true);
       const provider = await getProvider();
       const signer = provider.getSigner();
-      const boneContract = new Contract(BONE_TOKEN_ADDRESS, Bone.abi, signer);
+      const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, signer);
       const tx = await boneContract.castVote(voteIndex);
       await tx.wait();
       const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
@@ -122,7 +122,7 @@ const VotingPage = () => {
 
   return (
     <Container className={classes.root}>
-      <Card className={classes.card}>
+            <Card className={classes.card}>
         <CardContent>
           <Typography variant="h5" component="h2">
             Voting Page
