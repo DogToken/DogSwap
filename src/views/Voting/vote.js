@@ -15,9 +15,10 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  Tooltip,
 } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
-import boneTokenABI from "../../build/BoneToken.json";
+import Bone from "../../build/BoneToken.json";
 import { getProvider, getSigner, getNetwork, fetchReserves, fetchReservesRaw, getDecimals } from "../../utils/ethereumFunctions";
 
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
@@ -52,37 +53,52 @@ const VotingPage = () => {
   const [newDelegateAddress, setNewDelegateAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [voteQuestions, setVoteQuestions] = useState([]);
-  const [newVoteQuestion, setNewVoteQuestion] = useState("");
 
   useEffect(() => {
-    const fetchCurrentVotes = async () => {
+    const fetchData = async () => {
       try {
         const provider = await getProvider();
-        const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, provider);
+        const boneContract = new Contract(BONE_TOKEN_ADDRESS, Bone.abi, provider);
         const currentVotesRaw = await boneContract.getCurrentVotes(provider.getSigner().getAddress());
         const currentVotes = ethers.utils.formatEther(currentVotesRaw);
         setCurrentVotes(currentVotes);
+
+        // Fetch the list of vote questions from the contract
+        const questionsCount = await boneContract.getVoteQuestionsCount();
+        const questions = [];
+        for (let i = 0; i < questionsCount; i++) {
+          const question = await boneContract.getVoteQuestion(i);
+          questions.push(question);
+        }
+        setVoteQuestions(questions);
       } catch (error) {
-        console.error("Error fetching current votes:", error);
+        console.error("Error fetching data:", error);
         // Display a user-friendly error message here
       }
     };
 
-    fetchCurrentVotes();
+    fetchData();
   }, []);
 
   const handleDelegateChange = (event) => {
     setNewDelegateAddress(event.target.value);
   };
 
-  const handleVoteQuestionChange = (event) => {
-    setNewVoteQuestion(event.target.value);
-  };
-
-  const handleAddVoteQuestion = () => {
-    if (newVoteQuestion.trim() !== "") {
-      setVoteQuestions([...voteQuestions, newVoteQuestion.trim()]);
-      setNewVoteQuestion("");
+  const handleDelegate = async () => {
+    try {
+      setLoading(true);
+      const provider = await getProvider();
+      const signer = provider.getSigner();
+      const boneContract = new Contract(BONE_TOKEN_ADDRESS, Bone.abi, signer);
+      const tx = await boneContract.delegate(newDelegateAddress);
+      await tx.wait();
+      const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
+      const updatedVotes = ethers.utils.formatEther(updatedVotesRaw);
+      setCurrentVotes(updatedVotes);
+    } catch (error) {
+      console.error("Error delegating votes:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,8 +107,8 @@ const VotingPage = () => {
       setLoading(true);
       const provider = await getProvider();
       const signer = provider.getSigner();
-      const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
-      const tx = await boneContract.delegate(newDelegateAddress);
+      const boneContract = new Contract(BONE_TOKEN_ADDRESS, Bone.abi, signer);
+      const tx = await boneContract.castVote(voteIndex);
       await tx.wait();
       const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
       const updatedVotes = ethers.utils.formatEther(updatedVotesRaw);
@@ -111,20 +127,24 @@ const VotingPage = () => {
           <Typography variant="h5" component="h2">
             Voting Page
           </Typography>
-          <Typography variant="body1" color="textSecondary" gutterBottom>
-            Your current votes: {currentVotes}
-          </Typography>
-          <TextField
-            label="New Delegate Address"
-            variant="outlined"
-            value={newDelegateAddress}
-            onChange={handleDelegateChange}
-          />
+          <Tooltip title="Your current voting power">
+            <Typography variant="body1" color="textSecondary" gutterBottom>
+              Your current votes: {currentVotes}
+            </Typography>
+          </Tooltip>
+          <Tooltip title="The address you want to delegate your votes to">
+            <TextField
+              label="New Delegate Address"
+              variant="outlined"
+              value={newDelegateAddress}
+              onChange={handleDelegateChange}
+            />
+          </Tooltip>
           <div className={classes.buttonContainer}>
             <Button
               variant="contained"
               color="primary"
-              onClick={() => handleVote(null)}
+              onClick={handleDelegate}
               disabled={loading}
             >
               {loading ? <CircularProgress size={24} /> : "Delegate Votes"}
@@ -138,26 +158,13 @@ const VotingPage = () => {
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                label="New Vote Question"
-                variant="outlined"
-                value={newVoteQuestion}
-                onChange={handleVoteQuestionChange}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleAddVoteQuestion}
-              >
-                Add Question
-              </Button>
-            </Grid>
-            <Grid item xs={12}>
               <List>
                 {voteQuestions.map((question, index) => (
                   <Card key={index} className={classes.voteItem}>
                     <CardContent>
-                      <Typography variant="body1">{question}</Typography>
+                      <Tooltip title="The current vote question">
+                        <Typography variant="body1">{question}</Typography>
+                      </Tooltip>
                     </CardContent>
                     <CardActions className={classes.voteItemSecondaryAction}>
                       <Button
