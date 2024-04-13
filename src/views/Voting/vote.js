@@ -48,41 +48,41 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const VotingPage = () => {
-  const classes = useStyles();
-  const [currentVotes, setCurrentVotes] = useState(0);
-  const [newDelegateAddress, setNewDelegateAddress] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [voteQuestions, setVoteQuestions] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const provider = await getProvider();
-        const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, provider);
-        const currentVotesRaw = await boneContract.getCurrentVotes(provider.getSigner().getAddress());
-        const currentVotes = ethers.utils.formatEther(currentVotesRaw);
-        setCurrentVotes(currentVotes);
-
-        // Fetch the list of vote questions from the contract
-        const questionsCount = await boneContract.getVoteQuestionsCount();
-        const questions = [];
-        for (let i = 0; i < questionsCount; i++) {
-          const question = await boneContract.getVoteQuestion(i);
-          questions.push(question);
+    const classes = useStyles();
+    const [currentVotes, setCurrentVotes] = useState(0);
+    const [newDelegateAddress, setNewDelegateAddress] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [voteQuestions, setVoteQuestions] = useState([]);
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const provider = await getProvider();
+          const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, provider);
+          const currentVotesRaw = await boneContract.getCurrentVotes(provider.getSigner().getAddress());
+          const currentVotes = ethers.utils.formatEther(currentVotesRaw);
+          setCurrentVotes(currentVotes);
+  
+          // Fetch the list of vote questions from the contract
+          const questionsCount = await boneContract.getVoteQuestionsCount();
+          const questions = [];
+          for (let i = 0; i < questionsCount; i++) {
+            const question = await boneContract.getVoteQuestion(i);
+            questions.push(question);
+          }
+          setVoteQuestions(questions);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          // Display a user-friendly error message here
         }
-        setVoteQuestions(questions);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // Display a user-friendly error message here
-      }
+      };
+  
+      fetchData();
+    }, []);
+  
+    const handleDelegateChange = (event) => {
+      setNewDelegateAddress(event.target.value);
     };
-
-    fetchData();
-  }, []);
-
-  const handleDelegateChange = (event) => {
-    setNewDelegateAddress(event.target.value);
-  };
 
   const handleDelegate = async () => {
     try {
