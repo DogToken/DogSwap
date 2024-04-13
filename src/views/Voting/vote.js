@@ -59,68 +59,69 @@ const VotingPage = () => {
           try {
             const provider = await getProvider();
             const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, provider);
-      
+    
             // Fetch the current votes
             const currentVotesRaw = await boneContract.getCurrentVotes(provider.getSigner().getAddress());
             const currentVotes = ethers.utils.formatEther(currentVotesRaw);
             setCurrentVotes(currentVotes);
-      
+    
             // Fetch the list of vote questions
             const questionsCount = await boneContract.getVoteQuestionsCount();
-            const questions = [];
-            for (let i = 0; i < questionsCount; i++) {
-              const question = await boneContract.getVoteQuestion(i);
-              questions.push(question);
-            }
+            const questions = await Promise.all(
+              Array.from({ length: questionsCount }, async (_, index) => {
+                const question = await boneContract.getVoteQuestion(index);
+                return question;
+              })
+            );
             setVoteQuestions(questions);
           } catch (error) {
             console.error("Error fetching data:", error);
             // Display a user-friendly error message here
           }
         };
-      
+    
         fetchData();
       }, []);
-  
+
       const handleDelegateChange = (event) => {
-        setNewDelegateAddress(event.target.value);
-      };
+    setNewDelegateAddress(event.target.value);
+  };
 
-      const handleDelegate = async () => {
-        try {
-          setLoading(true);
-          const provider = await getProvider();
-          const signer = provider.getSigner();
-          const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, signer);
-          const tx = await boneContract.delegate(newDelegateAddress);
-          await tx.wait();
-          const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
-          const updatedVotes = ethers.utils.formatEther(updatedVotesRaw);
-          setCurrentVotes(updatedVotes);
-        } catch (error) {
-          console.error("Error delegating votes:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
+  const handleDelegate = async () => {
+    try {
+      setLoading(true);
+      const provider = await getProvider();
+      const signer = provider.getSigner();
+      const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, signer);
+      const tx = await boneContract.delegate(newDelegateAddress);
+      await tx.wait();
+      const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
+      const updatedVotes = ethers.utils.formatEther(updatedVotesRaw);
+      setCurrentVotes(updatedVotes);
+    } catch (error) {
+      console.error("Error delegating votes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const handleVote = async (voteIndex) => {
-        try {
-          setLoading(true);
-          const provider = await getProvider();
-          const signer = provider.getSigner();
-          const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, signer);
-          const tx = await boneContract.castVote(voteIndex);
-          await tx.wait();
-          const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
-          const updatedVotes = ethers.utils.formatEther(updatedVotesRaw);
-          setCurrentVotes(updatedVotes);
-        } catch (error) {
-          console.error("Error voting:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
+  const handleVote = async (voteIndex) => {
+    try {
+      setLoading(true);
+      const provider = await getProvider();
+      const signer = provider.getSigner();
+      const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI.abi, signer);
+      const tx = await boneContract.castVote(voteIndex);
+      await tx.wait();
+      const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
+      const updatedVotes = ethers.utils.formatEther(updatedVotesRaw);
+      setCurrentVotes(updatedVotes);
+    } catch (error) {
+      console.error("Error voting:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
       return (
         <Container className={classes.root}>
