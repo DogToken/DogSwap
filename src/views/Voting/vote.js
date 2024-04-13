@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Container, Typography, CircularProgress, TextField, Grid, Card, CardContent } from "@material-ui/core";
+import {
+  Button,
+  Container,
+  Typography,
+  CircularProgress,
+  TextField,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+} from "@material-ui/core";
 import { Contract, ethers } from "ethers";
-import boneTokenABI from "../../build/BoneToken.json";
+import boneTokenABI from "../../build/Bone.json";
 import { getProvider, getSigner, getNetwork, fetchReserves, fetchReservesRaw, getDecimals } from "../../utils/ethereumFunctions";
 
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
@@ -19,6 +34,15 @@ const useStyles = makeStyles((theme) => ({
   },
   voteContainer: {
     marginTop: theme.spacing(2),
+  },
+  voteItem: {
+    padding: theme.spacing(1, 2),
+  },
+  voteItemSecondaryAction: {
+    padding: theme.spacing(1, 2),
+  },
+  divider: {
+    margin: theme.spacing(2, 0),
   },
 }));
 
@@ -62,7 +86,7 @@ const VotingPage = () => {
     }
   };
 
-  const handleVote = async () => {
+  const handleVote = async (voteIndex) => {
     try {
       setLoading(true);
       const provider = await getProvider();
@@ -100,35 +124,56 @@ const VotingPage = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={handleVote}
+              onClick={() => handleVote(null)}
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : "Vote"}
+              {loading ? <CircularProgress size={24} /> : "Delegate Votes"}
             </Button>
           </div>
-          <div className={classes.voteContainer}>
-            <TextField
-              label="New Vote Question"
-              variant="outlined"
-              value={newVoteQuestion}
-              onChange={handleVoteQuestionChange}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddVoteQuestion}
-            >
-              Add Question
-            </Button>
-            {voteQuestions.map((question, index) => (
-              <Card key={index} className={classes.card}>
-                <CardContent>
-                  <Typography variant="body1">{question}</Typography>
-                  {/* Add voting functionality here */}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Divider className={classes.divider} />
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography variant="h6" component="h3">
+                Vote on Questions
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="New Vote Question"
+                variant="outlined"
+                value={newVoteQuestion}
+                onChange={handleVoteQuestionChange}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddVoteQuestion}
+              >
+                Add Question
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <List>
+                {voteQuestions.map((question, index) => (
+                  <Card key={index} className={classes.voteItem}>
+                    <CardContent>
+                      <Typography variant="body1">{question}</Typography>
+                    </CardContent>
+                    <CardActions className={classes.voteItemSecondaryAction}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleVote(index)}
+                        disabled={loading}
+                      >
+                        Vote
+                      </Button>
+                    </CardActions>
+                  </Card>
+                ))}
+              </List>
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
     </Container>
