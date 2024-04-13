@@ -55,11 +55,11 @@ export async function addLiquidity(
   const token1Decimals = await getDecimals(token1);
   const token2Decimals = await getDecimals(token2);
 
-  const amountIn1 = ethers.utils.parseUnits(amount1, token1Decimals);
-  const amountIn2 = ethers.utils.parseUnits(amount2, token2Decimals);
+  const amountIn1 = ethers.utils.parseUnits(amount1.toString(), token1Decimals);
+  const amountIn2 = ethers.utils.parseUnits(amount2.toString(), token2Decimals);
 
-  const amount1Min = ethers.utils.parseUnits(amount1min, token1Decimals);
-  const amount2Min = ethers.utils.parseUnits(amount2min, token2Decimals);
+  const amount1Min = ethers.utils.parseUnits(amount1min.toString(), token1Decimals);
+  const amount2Min = ethers.utils.parseUnits(amount2min.toString(), token2Decimals);
 
   const time = Math.floor(Date.now() / 1000) + 200000;
   const deadline = ethers.BigNumber.from(time);
@@ -150,6 +150,7 @@ export async function removeLiquidity(
   const token1Decimals = await getDecimals(token1);
   const token2Decimals = await getDecimals(token2);
 
+
   const Getliquidity = (liquidity_tokens)=>{
     if (liquidity_tokens < 0.001){
       return ethers.BigNumber.from(liquidity_tokens*10**18);
@@ -160,8 +161,8 @@ export async function removeLiquidity(
   const liquidity = Getliquidity(liquidity_tokens);
   console.log('liquidity: ', liquidity);
 
-  const amount1Min = ethers.utils.parseUnits(String(amount1min), token1Decimals);
-  const amount2Min = ethers.utils.parseUnits(String(amount2min), token2Decimals);
+  const amount1Min = ethers.utils.parseUnits(amount1min.toString(), token1Decimals);
+  const amount2Min = ethers.utils.parseUnits(amount2min.toString(), token2Decimals);
 
   const time = Math.floor(Date.now() / 1000) + 200000;
   const deadline = ethers.BigNumber.from(time);
