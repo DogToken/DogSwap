@@ -35,14 +35,15 @@ const VotingPage = () => {
       try {
         const provider = await getProvider();
         const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, provider);
-        const currentVotes = await boneContract.getCurrentVotes(provider.getSigner().getAddress());
+        const currentVotesRaw = await boneContract.getCurrentVotes(provider.getSigner().getAddress());
+        const currentVotes = ethers.utils.formatEther(currentVotesRaw);
         setCurrentVotes(currentVotes);
       } catch (error) {
         console.error("Error fetching current votes:", error);
         // Display a user-friendly error message here
       }
     };
-  
+
     fetchCurrentVotes();
   }, []);
 
@@ -69,7 +70,8 @@ const VotingPage = () => {
       const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
       const tx = await boneContract.delegate(newDelegateAddress);
       await tx.wait();
-      const updatedVotes = await boneContract.getCurrentVotes(signer.getAddress());
+      const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
+      const updatedVotes = ethers.utils.formatEther(updatedVotesRaw);
       setCurrentVotes(updatedVotes);
     } catch (error) {
       console.error("Error voting:", error);
