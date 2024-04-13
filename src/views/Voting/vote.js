@@ -48,11 +48,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const VotingPage = () => {
-  const classes = useStyles();
-  const [currentVotes, setCurrentVotes] = useState(0);
-  const [newDelegateAddress, setNewDelegateAddress] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [voteQuestions, setVoteQuestions] = useState([]);
+    const classes = useStyles();
+    const [currentVotes, setCurrentVotes] = useState(0);
+    const [newDelegateAddress, setNewDelegateAddress] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [voteQuestions, setVoteQuestions] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -158,27 +158,31 @@ const VotingPage = () => {
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              <List>
-                {voteQuestions.map((question, index) => (
-                  <Card key={index} className={classes.voteItem}>
-                    <CardContent>
-                      <Tooltip title="The current vote question">
-                        <Typography variant="body1">{question}</Typography>
-                      </Tooltip>
-                    </CardContent>
-                    <CardActions className={classes.voteItemSecondaryAction}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleVote(index)}
-                        disabled={loading}
-                      >
-                        Vote
-                      </Button>
-                    </CardActions>
-                  </Card>
-                ))}
-              </List>
+              {voteQuestions.length > 0 ? (
+                <List>
+                  {voteQuestions.map((question, index) => (
+                    <Card key={index} className={classes.voteItem}>
+                      <CardContent>
+                        <Tooltip title="The current vote question">
+                          <Typography variant="body1">{question}</Typography>
+                        </Tooltip>
+                      </CardContent>
+                      <CardActions className={classes.voteItemSecondaryAction}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleVote(index)}
+                          disabled={loading}
+                        >
+                          Vote
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  ))}
+                </List>
+              ) : (
+                <Typography variant="body1">No vote questions available.</Typography>
+              )}
             </Grid>
           </Grid>
         </CardContent>
