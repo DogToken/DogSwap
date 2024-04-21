@@ -11,7 +11,7 @@ function getLibrary(provider) {
   if (provider && provider.isMetaMask) {
     return new ethers.providers.Web3Provider(provider);
   } else {
-    return new ethers.providers.JsonRpcProvider("https://node1.mintme.com");
+    return new ethers.providers.JsonRpcProvider("https://node.1000x.ch");
   }
 }
 
