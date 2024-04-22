@@ -22,6 +22,12 @@ const MINTMECoins = [
     logoUrl: "https://dogswap.online/images/coins/bone.png",
   },
   {
+    name: "Bridged Bone",
+    abbr: "bBONE",
+    address: "0x46700A70314623D4F17561c237252Ff0F6bEe656",
+    logoUrl: "https://dogswap.online/images/coins/bone.png",
+  },
+  {
     name: "Peppermint",
     abbr: "PMINT",
     address: "0xe67f14Fa595947bd63546866a1FCCf27E2D58203",
