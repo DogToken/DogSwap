@@ -66,15 +66,6 @@ const styles = (theme) => ({
 
 const useStyles = makeStyles(styles);
 
-const [showNotification, setShowNotification] = React.useState(true);
-
-const handleCloseNotification = (event, reason) => {
-  if (reason === 'clickaway') {
-    return;
-  }
-  setShowNotification(false);
-};
-
 function CoinSwapper(props) {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -264,6 +255,18 @@ function CoinSwapper(props) {
     }
   }, [field1Value, coin1.address, coin2.address]);
 
+
+    // Declare the showNotification state here
+  const [showNotification, setShowNotification] = React.useState(true);
+
+    // Define the handleCloseNotification function here
+  const handleCloseNotification = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setShowNotification(false);
+  };
+
   // This hook creates a timeout that will run every ~10 seconds, it's role is to check if the user's balance has
   // updated has changed. This allows them to see when a transaction completes by looking at the balance output.
   useEffect(() => {
@@ -319,6 +322,7 @@ function CoinSwapper(props) {
 
     return () => clearTimeout(coinTimeout);
   });
+
 
   return (
     <div>
