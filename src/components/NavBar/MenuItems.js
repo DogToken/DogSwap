@@ -33,5 +33,6 @@ export const MenuItems = [
     title: "Bridge",
     url: "https://bridge.dogswap.online",
     cName: "nav-links",
+    target: "_blank",
   },
 ];
