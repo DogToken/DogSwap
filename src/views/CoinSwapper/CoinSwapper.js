@@ -29,7 +29,7 @@ import LoadingButton from "../../components/LoadingButton";
 import WrongNetwork from "../../components/wrongNetwork";
 import COINS from "../../constants/coins";
 import * as chains from "../../constants/chains";
-import { Snackbar, IconButton } from "@material-ui/core";
+import { Snackbar } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
 const styles = (theme) => ({
