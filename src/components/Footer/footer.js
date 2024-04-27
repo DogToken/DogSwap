@@ -28,6 +28,9 @@ const Footer = () => {
               <a href="https://www.bybit.com/invite?ref=73ARRG" target="_blank" rel="noopener noreferrer">
                 BYBIT <FiExternalLink />
               </a>
+              <a href="https://bridge.dogswap.online" target="_blank" rel="noopener noreferrer">
+                Bridge <FiExternalLink />
+              </a>
             </div>
           </div>
         </div>

@@ -29,10 +29,4 @@ export const MenuItems = [
     url: "/faucet",
     cName: "nav-links",
   },
-  {
-    title: "Bridge",
-    url: "https://bridge.dogswap.online",
-    cName: "nav-links",
-    target: "_blank",
-  },
 ];

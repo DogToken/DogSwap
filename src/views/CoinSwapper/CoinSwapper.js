@@ -29,6 +29,8 @@ import LoadingButton from "../../components/LoadingButton";
 import WrongNetwork from "../../components/wrongNetwork";
 import COINS from "../../constants/coins";
 import * as chains from "../../constants/chains";
+import { Snackbar, IconButton } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 
 const styles = (theme) => ({
   paperContainer: {
@@ -63,6 +65,15 @@ const styles = (theme) => ({
 });
 
 const useStyles = makeStyles(styles);
+
+const [showNotification, setShowNotification] = React.useState(true);
+
+const handleCloseNotification = (event, reason) => {
+  if (reason === 'clickaway') {
+    return;
+  }
+  setShowNotification(false);
+};
 
 function CoinSwapper(props) {
   const classes = useStyles();
@@ -408,7 +419,26 @@ function CoinSwapper(props) {
           </Grid>
         </Paper>
       </Container>
-
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={showNotification}
+        autoHideDuration={null}
+        onClose={handleCloseNotification}
+        message="Our bridge is now online! Visit https://bridge.dogswap.online!"
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleCloseNotification}
+          >
+      <CloseIcon fontSize="small" />
+    </IconButton>
+  }
+/>
       <Grid
         container
         className={classes.footer}
