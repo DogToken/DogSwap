@@ -1,32 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Container, Typography, CircularProgress, Box } from "@material-ui/core";
+import {
+  Container,
+  Typography,
+  CircularProgress,
+  Box,
+  Card,
+  CardContent,
+  Grid,
+} from "@material-ui/core";
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
 import pairABI from "../../build/IUniswapV2Pair.json";
 import boneTokenABI from "../../build/BoneToken.json";
-import axios from 'axios';
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   container: {
     textAlign: "center",
     padding: theme.spacing(2),
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-    borderRadius: theme.spacing(2),
     background: "#FFFFFF",
-    maxWidth: 600,
+    maxWidth: 800,
     margin: "auto",
   },
   space: {
     height: theme.spacing(4),
   },
-  tvlValue: {
-    fontWeight: "bold",
-    fontSize: "1.5rem",
-    marginTop: theme.spacing(2),
+  card: {
+    backgroundColor: theme.palette.primary.main,
+    color: "#fff",
+    padding: theme.spacing(2),
+    borderRadius: theme.spacing(1),
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
   },
-  priceInfo: {
-    marginTop: theme.spacing(2),
+  cardContent: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
 }));
 
@@ -53,12 +63,15 @@ const TVLPage = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [tvlData, setTVLData] = useState(null);
+  const [tvlDataPrev, setTVLDataPrev] = useState(null); // Previous TVL data
   const [mintmePrice, setMintmePrice] = useState(null);
   const [bonePrice, setBonePrice] = useState(null);
   const [bonePriceInUSD, setBonePriceInUSD] = useState(null);
 
   useEffect(() => {
     fetchData();
+    const interval = setInterval(fetchData, 60000); // Fetch data every minute
+    return () => clearInterval(interval);
   }, []);
 
   const fetchData = async () => {
@@ -124,7 +137,13 @@ const TVLPage = () => {
         tvl += poolTVL;
       }
 
-      setTVLData(tvl.toFixed(8)); // Limiting to 8 digits after the comma
+      const tvlChangePercentage =
+        tvlData && tvlDataPrev
+          ? ((tvlData - tvlDataPrev) / tvlDataPrev) * 100
+          : 0;
+
+      setTVLDataPrev(tvlData); // Update previous TVL data
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -148,15 +167,47 @@ const TVLPage = () => {
       ) : (
         <>
           <Box className={classes.space}></Box>
-          <Typography variant="subtitle1" className={classes.priceInfo}>
-            TVL = ${tvlData} USD
-          </Typography>
-          <Typography variant="subtitle1" className={classes.priceInfo}>
-            1 MintMe = ${mintmePrice} USD
-          </Typography>
-          <Typography variant="subtitle1" className={classes.priceInfo}>
-            1 🦴 BONE = {bonePrice} MintMe (${bonePriceInUSD} USD)
-          </Typography>
+          <Grid container spacing={2} justify="center">
+            <Grid item>
+              <Card className={classes.card}>
+                <CardContent className={classes.cardContent}>
+                  <Typography variant="h5">TVL</Typography>
+                  <Typography variant="h6">${tvlData} USD</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item>
+              <Card className={classes.card}>
+                <CardContent className={classes.cardContent}>
+                  <Typography variant="h5">TVL Change (1h)</Typography>
+                  <Typography variant="h6">
+                    {tvlChangePercentage.toFixed(2)}%
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+          <Box className={classes.space}></Box>
+          <Grid container spacing={2} justify="center">
+            <Grid item>
+              <Card className={classes.card}>
+                <CardContent className={classes.cardContent}>
+                  <Typography variant="h5">MintMe Price</Typography>
+                  <Typography variant="h6">${mintmePrice} USD</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item>
+              <Card className={classes.card}>
+                <CardContent className={classes.cardContent}>
+                  <Typography variant="h5">BONE Price</Typography>
+                  <Typography variant="h6">
+                    {bonePrice} MintMe (${bonePriceInUSD} USD)
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         </>
       )}
       <Box className={classes.space}></Box>
