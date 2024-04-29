@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Container, Typography, CircularProgress, Box } from "@material-ui/core";
+import { Container, Typography, CircularProgress, Box, Card, CardContent } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
 import pairABI from "../../build/IUniswapV2Pair.json";
@@ -9,16 +9,18 @@ import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    textAlign: "center",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100vh",
     padding: theme.spacing(2),
+  },
+  card: {
+    maxWidth: 600,
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
     borderRadius: theme.spacing(2),
+    padding: theme.spacing(4),
     background: "#FFFFFF",
-    maxWidth: 600,
-    margin: "auto",
-  },
-  space: {
-    height: theme.spacing(4),
   },
   tvlValue: {
     fontWeight: "bold",
@@ -140,26 +142,31 @@ const TVLPage = () => {
     return tokenPrice;
   };
 
+
   return (
     <Container className={classes.container}>
-      <Typography variant="h4">Total Value Locked (TVL)</Typography>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <>
-          <Box className={classes.space}></Box>
-          <Typography variant="subtitle1" className={classes.priceInfo}>
-            TVL = ${tvlData} USD
+      <Card className={classes.card}>
+        <CardContent>
+          <Typography variant="h4" gutterBottom>
+            Total Value Locked (TVL)
           </Typography>
-          <Typography variant="subtitle1" className={classes.priceInfo}>
-            1 MintMe = ${mintmePrice} USD
-          </Typography>
-          <Typography variant="subtitle1" className={classes.priceInfo}>
-            1 🦴 BONE = {bonePrice} MintMe (${bonePriceInUSD} USD)
-          </Typography>
-        </>
-      )}
-      <Box className={classes.space}></Box>
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            <>
+              <Typography variant="subtitle1" className={classes.tvlValue}>
+                TVL = ${tvlData} USD
+              </Typography>
+              <Typography variant="subtitle1" className={classes.priceInfo}>
+                1 MintMe = ${mintmePrice} USD
+              </Typography>
+              <Typography variant="subtitle1" className={classes.priceInfo}>
+                1 🦴 BONE = {bonePrice} MintMe (${bonePriceInUSD} USD)
+              </Typography>
+            </>
+          )}
+        </CardContent>
+      </Card>
     </Container>
   );
 };
