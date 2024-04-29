@@ -67,6 +67,7 @@ const TVLPage = () => {
   const [mintmePrice, setMintmePrice] = useState(null);
   const [bonePrice, setBonePrice] = useState(null);
   const [bonePriceInUSD, setBonePriceInUSD] = useState(null);
+  const [tvlChangePercentage, setTvlChangePercentage] = useState(0); // Add this line
 
   useEffect(() => {
     fetchData();
@@ -136,20 +137,21 @@ const TVLPage = () => {
         const poolTVL = token0ValueInUSD + token1ValueInUSD;
         tvl += poolTVL;
       }
+      
+      const newTvlChangePercentage =
+      tvlData && tvlDataPrev
+        ? ((tvlData - tvlDataPrev) / tvlDataPrev) * 100
+        : 0;
 
-      const tvlChangePercentage =
-        tvlData && tvlDataPrev
-          ? ((tvlData - tvlDataPrev) / tvlDataPrev) * 100
-          : 0;
+    setTvlChangePercentage(newTvlChangePercentage); // Update the state with the new percentage
+    setTVLDataPrev(tvlData); // Update previous TVL data
 
-      setTVLDataPrev(tvlData); // Update previous TVL data
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-    }
-  };
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    setLoading(false);
+  }
+};
 
   const getTokenPrice = (reserve0, reserve1) => {
     if (reserve0 === 0 || reserve1 === 0) {
