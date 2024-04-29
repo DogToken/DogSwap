@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Container, Typography, CircularProgress, Box, Card, CardContent, Grid } from "@material-ui/core";
+import { Container, Typography, CircularProgress, Box } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
 import pairABI from "../../build/IUniswapV2Pair.json";
@@ -11,14 +11,11 @@ const useStyles = makeStyles((theme) => ({
   container: {
     textAlign: "center",
     padding: theme.spacing(2),
-    maxWidth: 800,
-    margin: "auto",
-  },
-  card: {
-    padding: theme.spacing(2),
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
     borderRadius: theme.spacing(2),
     background: "#FFFFFF",
+    maxWidth: 600,
+    margin: "auto",
   },
   space: {
     height: theme.spacing(4),
@@ -53,25 +50,6 @@ const getBoneTokenInstance = (networkId, signer) => {
   return new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
 };
 
-const getTokenPrice = (reserve0, reserve1, token0IsBone, token1IsBone) => {
-  if (reserve0 === 0 || reserve1 === 0) {
-    return 0;
-  }
-
-  let tokenPrice;
-  if (token0IsBone) {
-    tokenPrice = reserve1 / reserve0 * bonePriceInMintMe;
-  } else if (token1IsBone) {
-    tokenPrice = reserve0 / reserve1 * bonePriceInMintMe;
-  } else {
-    const token0PriceInMintMe = reserve1 / reserve0;
-    const token1PriceInMintMe = reserve0 / reserve1;
-    tokenPrice = token0PriceInMintMe / token1PriceInMintMe;
-  }
-
-  return tokenPrice;
-};
-
 const TVLPage = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
@@ -79,7 +57,6 @@ const TVLPage = () => {
   const [mintmePrice, setMintmePrice] = useState(null);
   const [bonePrice, setBonePrice] = useState(null);
   const [bonePriceInUSD, setBonePriceInUSD] = useState(null);
-  const [tokenPrices, setTokenPrices] = useState({});
 
   useEffect(() => {
     fetchData();
@@ -107,98 +84,85 @@ const TVLPage = () => {
       const boneReserves = await new Contract(bonePool.address, pairABI.abi, signer).getReserves();
       const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS; // Adjusting the decimal precision for BONE
       const boneReserve1 = boneReserves[1] / 10 ** 18; // Adjusting the decimal precision for WMINT
-      const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1, true, false);
+      const boneInWMINT = getTokenPrice(boneReserve0, boneReserve1);
       const bonePriceInMintMe = 1 / boneInWMINT;
       const bonePriceInUSDTemp = bonePriceInMintMe * mintmePriceData;
       setBonePriceInUSD(bonePriceInUSDTemp.toFixed(8)); // Limiting to 8 digits after the comma
       setBonePrice(bonePriceInMintMe.toFixed(8)); // Limiting to 8 digits after the comma
 
-      const tokenPricesData = {};
-
-      // Calculate token prices from pool data
-      for (const pool of POOLS) {
-        const [token0, token1] = pool.name.split("-");
-        const token0IsBone = token0 === "$BONE";
-        const token1IsBone = token1 === "$BONE";
-
-        const poolReserves = await new Contract(pool.address, pairABI.abi, signer).getReserves();
-        const reserve0 = poolReserves[0] / 10 ** 18;
-        const reserve1 = poolReserves[1] / 10 ** 18;
-
-        const token0Price = getTokenPrice(reserve0, reserve1, token0IsBone, token1IsBone);
-        const token1Price = getTokenPrice(reserve1, reserve0, token1IsBone, token0IsBone);
-
-        tokenPricesData[token0.replace("$", "").toLowerCase()] = token0Price;
-        tokenPricesData[token1.replace("$", "").toLowerCase()] = token1Price;
-      }
-      
-      setTokenPrices(tokenPricesData);
-
-      // Calculate TVL using the token prices
+      // Calculate TVL using the MintMe price
       let tvl = 0;
       for (const pool of POOLS) {
         const poolReserves = await new Contract(pool.address, pairABI.abi, signer).getReserves();
-        const reserve0 = poolReserves[0] / 10 ** 18;
-        const reserve1 = poolReserves[1] / 10 ** 18;
-    
-        const [token0, token1] = pool.name.split("-");
-        const token0Price = tokenPrices[token0.replace("$", "").toLowerCase()] || 0;
-        const token1Price = tokenPrices[token1.replace("$", "").toLowerCase()] || 0;
-    
-        const token0ValueInUSD = reserve0 * token0Price * mintmePriceData;
-        const token1ValueInUSD = reserve1 * token1Price * mintmePriceData;
-    
+        const reserve0 = poolReserves[0] / 10 ** 18; // Adjusting the decimal precision for token0
+        const reserve1 = poolReserves[1] / 10 ** 18; // Adjusting the decimal precision for token1
+
+        // Determine the token pair in the pool
+        const token0 = pool.name.split("-")[0];
+        const token1 = pool.name.split("-")[1];
+
+        // Calculate the value of each token reserve in MintMe
+        let token0ValueInUSD;
+        let token1ValueInUSD;
+        if (token0 === "WMINT") {
+          token0ValueInUSD = reserve0 * mintmePriceData;
+        } else if (token0 === "$BONE") {
+          token0ValueInUSD = reserve0 * bonePriceInUSDTemp;
+        } else {
+          token0ValueInUSD = reserve0; // Assuming token0 is already in USD
+        }
+
+        if (token1 === "WMINT") {
+          token1ValueInUSD = reserve1 * mintmePriceData;
+        } else if (token1 === "$BONE") {
+          token1ValueInUSD = reserve1 * bonePriceInUSDTemp;
+        } else {
+          token1ValueInUSD = reserve1; // Assuming token1 is already in USD
+        }
+
+        // Sum the values of the two token reserves in USD
         const poolTVL = token0ValueInUSD + token1ValueInUSD;
         tvl += poolTVL;
       }
-    
-      setTVLData(tvl.toFixed(8));
+
+      setTVLData(tvl.toFixed(8)); // Limiting to 8 digits after the comma
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
       setLoading(false);
     }
-  };return (
+  };
+
+  const getTokenPrice = (reserve0, reserve1) => {
+    if (reserve0 === 0 || reserve1 === 0) {
+      return 0;
+    }
+    const tokenPrice = reserve1 / reserve0;
+    return tokenPrice;
+  };
+
+  return (
     <Container className={classes.container}>
-    <Typography variant="h4" gutterBottom>
-    Total Value Locked (TVL)
-    </Typography>
-    <Grid container spacing={3}>
-    <Grid item xs={12} md={6}>
-    <Card className={classes.card}>
-    <CardContent>
-    {loading ? (
-    <CircularProgress />
-    ) : (
-    <>
-    <Typography variant="h5" gutterBottom>
-    Total Value Locked
-    </Typography>
-    <Typography variant="subtitle1" className={classes.tvlValue}>
-    ${tvlData} USD
-    </Typography>
-    </>
-    )}
-    </CardContent>
-    </Card>
-    </Grid>
-    <Grid item xs={12} md={6}>
-    <Card className={classes.card}>
-    <CardContent>
-    <Typography variant="h5" gutterBottom>
-    Token Prices
-    </Typography>
-    <Typography variant="subtitle1" className={classes.priceInfo}>
-    1 MintMe = ${mintmePrice} USD
-    </Typography>
-    <Typography variant="subtitle1" className={classes.priceInfo}>
-    1 🦴 BONE = {bonePrice} MintMe (${bonePriceInUSD} USD)
-    </Typography>
-    </CardContent>
-    </Card>
-    </Grid>
-    </Grid>
+      <Typography variant="h4">Total Value Locked (TVL)</Typography>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <Box className={classes.space}></Box>
+          <Typography variant="subtitle1" className={classes.priceInfo}>
+            TVL = ${tvlData} USD
+          </Typography>
+          <Typography variant="subtitle1" className={classes.priceInfo}>
+            1 MintMe = ${mintmePrice} USD
+          </Typography>
+          <Typography variant="subtitle1" className={classes.priceInfo}>
+            1 🦴 BONE = {bonePrice} MintMe (${bonePriceInUSD} USD)
+          </Typography>
+        </>
+      )}
+      <Box className={classes.space}></Box>
     </Container>
-    );
-    };
-    export default TVLPage;
+  );
+};
+
+export default TVLPage;
