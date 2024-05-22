@@ -43,7 +43,7 @@
     "@web3-react/core": "8.2.0",
     "axios": "1.6.8"
   },
-  "homepage": "https://dogswap.online/",
+  "homepage": "https://dogswap.xyz/",
   "scripts": {
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",

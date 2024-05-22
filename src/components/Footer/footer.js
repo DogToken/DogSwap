@@ -28,7 +28,7 @@ const Footer = () => {
               <a href="https://www.bybit.com/invite?ref=73ARRG" target="_blank" rel="noopener noreferrer">
                 BYBIT <FiExternalLink />
               </a>
-              <a href="https://bridge.dogswap.online" target="_blank" rel="noopener noreferrer">
+              <a href="https://bridge.dogswap.xyz" target="_blank" rel="noopener noreferrer">
                 Bridge <FiExternalLink />
               </a>
             </div>
@@ -78,7 +78,7 @@ const Footer = () => {
           <Button
               variant="contained"
               color="primary"
-              startIcon={<img src="https://dogswap.online/images/coins/mintmelogo.png" alt="MintMe" width="100" height="20" />}
+              startIcon={<img src="https://dogswap.xyz/images/coins/mintmelogo.png" alt="MintMe" width="100" height="20" />}
               href="https://www.mintme.com/token/BONE/invite"
               target="_blank"
               rel="noopener noreferrer"
@@ -90,7 +90,7 @@ const Footer = () => {
             <Button
               variant="contained"
               color="primary"
-              startIcon={<img src="https://dogswap.online/images/coins/nordlogo.svg" alt="Nord" width="20" height="20" />}
+              startIcon={<img src="https://dogswap.xyz/images/coins/nordlogo.svg" alt="Nord" width="20" height="20" />}
               href="https://ref.nordvpn.com/DRUHsAoWykw"
               target="_blank"
               rel="noopener noreferrer"
@@ -104,7 +104,7 @@ const Footer = () => {
             <Button
               variant="contained"
               color="primary"
-              startIcon={<img src="https://dogswap.online/images/ui/warpcast.png" alt="warpcast" width="20" height="20" />}
+              startIcon={<img src="https://dogswap.xyz/images/ui/warpcast.png" alt="warpcast" width="20" height="20" />}
               href="https://warpcast.com/~/invite-page/365010?id=faf4569c"
               target="_blank"
               rel="noopener noreferrer"
@@ -120,10 +120,10 @@ const Footer = () => {
           <h3>Contact</h3>
           <div className="contact-info">
             <p>
-              <FaGlobe /> www.dogswap.online
+              <FaGlobe /> www.dogswap.xyz
             </p>
             <p>
-              <FaEnvelope /> support@dogswap.online
+              <FaEnvelope /> support@dogswap.xyz
             </p>
             <p>
               <FaPhoneAlt /> +1 (555) WOOF-WOOF

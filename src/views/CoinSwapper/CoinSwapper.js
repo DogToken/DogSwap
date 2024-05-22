@@ -431,7 +431,7 @@ function CoinSwapper(props) {
         open={showNotification}
         autoHideDuration={null}
         onClose={handleCloseNotification}
-        message="Our bridge is now online! Visit https://bridge.dogswap.online!"
+        message="Our bridge is now online! Visit https://bridge.dogswap.xyz!"
         action={
           <IconButton
             size="small"

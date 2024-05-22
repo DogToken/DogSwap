@@ -51,7 +51,7 @@ function Privacy() {
     <Container maxWidth="md" className={classes.container}>
       <Paper className={classes.root}>
         <Typography variant="h4" className={classes.title}>
-          Privacy Policy for DogSwap.Online
+          Privacy Policy for dogswap.xyz
         </Typography>
 
         {/* Improved readability by breaking content into sections */}
@@ -116,8 +116,8 @@ function Privacy() {
 
         <Typography variant="body1">
           Please contact us at{" "}
-          <Link href="mailto:contact@dogswap.online">
-            contact@dogswap.online
+          <Link href="mailto:contact@dogswap.xyz">
+            contact@dogswap.xyz
           </Link>{" "}
           with any questions about this privacy policy.
         </Typography>
