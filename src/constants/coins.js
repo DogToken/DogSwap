@@ -46,6 +46,12 @@ const MINTMECoins = [
     logoUrl: "https://dogswap.xyz/images/coins/anukis.png",
   },
   {
+    name: "Dance And Music",
+    abbr: "Dance And Music",
+    address: "0x381911b21E0Cd8C3F4A57B332adCcfC0a64E26c5",
+    logoUrl: "https://www.mintme.com/media/cache/avatar_large/uploads/images/4e771a96-d83b-11ec-bec9-ac162db679ce.png",
+  },
+  {
     name: "Shells",
     abbr: "SHELLS",
     address: "0xaa153ce997e1363cb31231e644c4266d9c954630",
