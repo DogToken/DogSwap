@@ -21,11 +21,17 @@ const MINTMECoins = [
     address: "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF",
     logoUrl: "https://dogswap.xyz/images/coins/bone.png",
   },
+  // {
+  //   name: "Bridged Bone",
+  //   abbr: "bBONE",
+  //   address: "0x46700A70314623D4F17561c237252Ff0F6bEe656",
+  //   logoUrl: "https://dogswap.xyz/images/coins/bone.png",
+  // },
   {
-    name: "Bridged Bone",
-    abbr: "bBONE",
-    address: "0x46700A70314623D4F17561c237252Ff0F6bEe656",
-    logoUrl: "https://dogswap.xyz/images/coins/bone.png",
+    name: "1000x",
+    abbr: "1000X",
+    address: "0x7b535379bBAfD9cD12b35D91aDdAbF617Df902B2",
+    logoUrl: "https://dogswap.xyz/images/coins/1000x.png",
   },
   {
     name: "Peppermint",
@@ -34,16 +40,10 @@ const MINTMECoins = [
     logoUrl: "https://dogswap.xyz/images/coins/peppermint.png",
   },
   {
-    name: "1000x",
-    abbr: "1000X",
-    address: "0x7b535379bBAfD9cD12b35D91aDdAbF617Df902B2",
-    logoUrl: "https://dogswap.xyz/images/coins/1000x.png",
-  },
-  {
-    name: "Anukis",
-    abbr: "ANUKS",
-    address: "0xfcC19E279D0240cFdaBdEEB6885f6829FCCfa501",
-    logoUrl: "https://dogswap.xyz/images/coins/anukis.png",
+    name: "MintMeBull",
+    abbr: "MMBUL",
+    address: "0xd5c9BFF69210129764DEFEc86bD7e239dD2cE844",
+    logoUrl: "https://dogswap.xyz/images/coins/mintmebull.png",
   },
   {
     name: "Dance And Music",
@@ -56,6 +56,12 @@ const MINTMECoins = [
     abbr: "SHELLS",
     address: "0xaa153ce997e1363cb31231e644c4266d9c954630",
     logoUrl: "https://dogswap.xyz/images/coins/shells.jpeg",
+  },
+  {
+    name: "Anukis",
+    abbr: "ANUKS",
+    address: "0xfcC19E279D0240cFdaBdEEB6885f6829FCCfa501",
+    logoUrl: "https://dogswap.xyz/images/coins/anukis.png",
   },
   {
     name: "Prunity",
@@ -86,12 +92,6 @@ const MINTMECoins = [
     abbr: "MMT",
     address: "0xA27c1AbD15bfFAAde6c2e873C10fc7a2beb72d69",
     logoUrl: "https://dogswap.xyz/images/coins/mineminttoken.png",
-  },
-  {
-    name: "MintMeBull",
-    abbr: "MMBUL",
-    address: "0xd5c9BFF69210129764DEFEc86bD7e239dD2cE844",
-    logoUrl: "https://dogswap.xyz/images/coins/mintmebull.png",
   },
   {
     name: "MintMoXMR",
