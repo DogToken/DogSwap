@@ -1,4 +1,5 @@
-import { Contract, ethers } from "ethers";
+/* global BigInt */
+import { ethers, BrowserProvider, Contract } from 'ethers';
 import * as chains from "../constants/chains";
 import COINS from "../constants/coins";
 
@@ -8,7 +9,7 @@ const FACTORY = require("../build/IUniswapV2Factory.json");
 const PAIR = require("../build/IUniswapV2Pair.json");
 
 export function getProvider() {
-  return new ethers.providers.Web3Provider(window.ethereum);
+  return new BrowserProvider(window.ethereum);
 }
 
 export function getSigner(provider) {
@@ -87,8 +88,9 @@ export async function getBalanceAndSymbol(
     if (address === weth_address) {
       const balanceRaw = await provider.getBalance(accountAddress);
 
+      
       return {
-        balance: ethers.utils.formatEther(balanceRaw),
+        balance: ethers.formatEther(balanceRaw),
         symbol: coins[0].abbr,
       };
     } else {
@@ -98,7 +100,7 @@ export async function getBalanceAndSymbol(
       const symbol = await token.symbol();
 
       return {
-        balance: balanceRaw*10**(-tokenDecimals),
+        balance: parseInt(balanceRaw)*10**(-parseInt(tokenDecimals)),
         symbol: symbol,
       };
     }
@@ -128,18 +130,18 @@ export async function swapTokens(
 ) {
   const tokens = [address1, address2];
   const time = Math.floor(Date.now() / 1000) + 200000;
-  const deadline = ethers.BigNumber.from(time);
+  const deadline = BigInt(time);
 
   const token1 = new Contract(address1, ERC20.abi, signer);
   const tokenDecimals = await getDecimals(token1);
   
-  const amountIn = ethers.utils.parseUnits(amount, tokenDecimals);
-  const amountOut = await routerContract.callStatic.getAmountsOut(
-    amountIn,
-    tokens
+  const amountIn = await ethers.parseUnits(amount, tokenDecimals);
+  const amountOut = await routerContract.getAmountsOut(
+    ethers.parseUnits(String(amount), tokenDecimals),
+    [address1, address2]
   );
 
-  let tx = await token1.approve(routerContract.address, amountIn);
+  let tx = await token1.approve(routerContract.target, amountIn);
   await tx.wait()
   const wethAddress = await routerContract.WETH();
 
@@ -192,10 +194,11 @@ export async function getAmountOut(
     const token2Decimals = await getDecimals(token2);
 
     const values_out = await routerContract.getAmountsOut(
-      ethers.utils.parseUnits(String(amountIn), token1Decimals),
+      ethers.parseUnits(String(amountIn), token1Decimals),
       [address1, address2]
     );
-    const amount_out = values_out[1]*10**(-token2Decimals);
+
+    const amount_out = parseInt(values_out[1])*10**(-parseInt(token2Decimals));
     console.log('amount out: ', amount_out)
     return Number(amount_out);
   } catch {
@@ -230,8 +233,8 @@ export async function fetchReserves(address1, address2, pair, signer) {
 
     // Scale each to the right decimal place
     return [
-      (results[0]*10**(-coin1Decimals)),
-      (results[1]*10**(-coin2Decimals))
+      (parseInt(results[0])*10**(-parseInt(coin1Decimals))),
+      (parseInt(results[1])*10**(-parseInt(coin2Decimals)))
     ]
   } catch (err) {
     console.log("error!");
@@ -284,7 +287,7 @@ export async function getReserves(
       const reservesRaw = await fetchReserves(address1, address2, pair, signer);
       const liquidityTokens_BN = await pair.balanceOf(accountAddress);
       const liquidityTokens = Number(
-        ethers.utils.formatEther(liquidityTokens_BN)
+        ethers.formatEther(liquidityTokens_BN)
       );
     
       return [

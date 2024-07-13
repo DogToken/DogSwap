@@ -3,10 +3,9 @@ import { ethers } from "ethers";
 import Web3Provider from "./utils/network";
 import NavBar from "./components/NavBar/NavBar";
 import CoinSwapper from "./views/CoinSwapper/CoinSwapper";
-import { Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
 import Liquidity from "./views/Liquidity/Liquidity";
-import { createTheme, ThemeProvider } from "@material-ui/core";
 import Footer from "./components/Footer/footer";
 import "./components/Footer/footer.css";
 import { inject } from '@vercel/analytics';
@@ -22,7 +21,6 @@ import Lottery from "./views/Lottery/Lottery";
 import PostList from './views/Blog/PostList';
 import SinglePost from './views/Blog/SinglePost';
 import ReactGA from 'react-ga';
-import Market from './views/Market/NFTMarketplace';
 import VotingPage from "./views/Voting/vote"; 
 
 const TRACKING_ID = "G-PNK1QQHD9M"; // OUR_TRACKING_ID
@@ -31,73 +29,34 @@ ReactGA.initialize(TRACKING_ID);
 inject();
 injectSpeedInsights();
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#008e31",
-      contrastText: "#ffffff",
-    },
-    secondary: {
-      main: "#9e9e9e",
-      contrastText: "#ffffff",
-    },
-  },
-});
-
 const App = () => {
   return (
     <div className="App">
       <SnackbarProvider maxSnack={3}>
-        <ThemeProvider theme={theme}>
           <Web3Provider render={(network) => (
             <div>
               {/* Include the NavBar component */}
               <NavBar />
               <div className="NavbarContainer">
-                <Route exact path="/">
-                  <CoinSwapper network={network} />
-                </Route>
-                <Route exact path="/liquidity">
-                  <Liquidity network={network} />
-                </Route>
-                <Route exact path="/stake">
-                  <Staking network={network} />
-                </Route>
-                <Route exact path="/faucet">
-                  <Faucet network={network} />
-                </Route>
-                <Route exact path="/tvl">
-                  <TVL network={network} />
-                </Route>
-                <Route exact path="/pools">
-                  <Pools network={network} />
-                </Route>
-                <Route exact path="/lottery">
-                  <Lottery network={network} />
-                </Route>
-                <Route exact path="/market">
-                  <Market network={network} />
-                </Route>
-                <Route exact path="/vote">
-                  <VotingPage network={network} />
-                </Route>
-                <Route exact path="/about">
-                  <About />
-                </Route>
-                <Route exact path="/contact">
-                  <Contact />
-                </Route>
-                <Route exact path="/privacy">
-                  <Privacy />
-                </Route>
-                <Route exact path="/blog" component={PostList} />
-                <Route path="/posts/:id" component={SinglePost} />
+                <Routes>
+                  <Route exact path="/" element={<CoinSwapper network={network} />} />
+                  <Route exact path="/liquidity" element={<Liquidity network={network} />} />
+                  <Route exact path="/stake" element={<Staking network={network} />} />
+                  <Route exact path="/faucet" element={<Faucet network={network} />} />
+                  <Route exact path="/tvl" element={<TVL network={network} />} />
+                  <Route exact path="/pools" element={<Pools network={network} />} />
+                  <Route exact path="/lottery" element={<Lottery network={network} />} />
+                  <Route exact path="/vote" element={<VotingPage network={network} />} />
+                  <Route exact path="/about" element={<About />} />
+                  <Route exact path="/contact" element={<Contact />} />
+                  <Route exact path="/privacy" element={<Privacy />} />
+                  <Route exact path="/blog" component={PostList} />
+                  <Route path="/posts/:id" component={SinglePost} />
+                </Routes>
               </div>
             </div>
           )}></Web3Provider>
-          {/* Include the Footer component here */}
           <Footer />
-        </ThemeProvider>
       </SnackbarProvider>
     </div>
   );

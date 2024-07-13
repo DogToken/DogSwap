@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Button, Container, Typography, CircularProgress, TextField, Grid, Card, CardContent } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,50 +6,6 @@ import { faTicketAlt, faWallet, faCoins, faTrophy, faCog } from '@fortawesome/fr
 import lotteryABI from "../../build/Lottery.json";
 import boneTokenABI from "../../build/BoneToken.json";
 
-
-const useStyles = makeStyles((theme) => ({
-    container: {
-      marginTop: theme.spacing(4),
-      padding: theme.spacing(4),
-      textAlign: "center",
-      border: `2px solid ${theme.palette.primary.main}`,
-      borderRadius: theme.spacing(2),
-      background: theme.palette.background.default,
-      boxShadow: theme.shadows[3],
-    },
-    button: {
-      margin: theme.spacing(2),
-    },
-    loading: {
-      marginTop: theme.spacing(2),
-    },
-    title: {
-      marginBottom: theme.spacing(2),
-      fontWeight: "bold",
-      color: theme.palette.primary.main,
-    },
-    subTitle: {
-      color: theme.palette.text.secondary,
-      marginBottom: theme.spacing(2),
-    },
-    card: {
-      margin: theme.spacing(1),
-      padding: theme.spacing(2),
-      backgroundColor: theme.palette.secondary.light,
-    },
-    cardContent: {
-      textAlign: "left",
-      display: "flex",
-      alignItems: "center",
-    },
-    balanceIcon: {
-      marginRight: theme.spacing(1),
-    },
-    balanceText: {
-      fontSize: "1.2rem",
-      marginLeft: theme.spacing(1),
-    },
-  }));
 
 const LOTTERY_CONTRACT_ADDRESS = "0x70360f7c6ca76B81AF0B38C7aD8ee0e625190804"; // Update with the Lottery contract address
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
@@ -61,7 +15,6 @@ const getLotteryInstance = (networkId, signer) => {
 };
 
 const Lottery = () => {
-  const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [ticketPrice, setTicketPrice] = useState("");
@@ -95,11 +48,11 @@ const Lottery = () => {
 
       // Fetch total tickets
       const totalTickets = await lotteryContract.totalAmount();
-      setTotalTickets(ethers.utils.formatUnits(totalTickets, 18));
+      setTotalTickets(ethers.formatUnits(totalTickets, 18));
 
       // Fetch jackpot amount
       const jackpotAmount = await lotteryContract.totalAmount();
-      setJackpotAmount(ethers.utils.formatUnits(jackpotAmount, 18));
+      setJackpotAmount(ethers.formatUnits(jackpotAmount, 18));
 
       // Fetch max number
       const maxNumber = await lotteryContract.maxNumber();
@@ -107,7 +60,7 @@ const Lottery = () => {
 
       // Fetch min price
       const minPrice = await lotteryContract.minPrice();
-      setMinPrice(ethers.utils.formatUnits(minPrice, 18));
+      setMinPrice(ethers.formatUnits(minPrice, 18));
 
       // Check if the current user is an admin
       const adminAddress = await lotteryContract.adminAddress();
@@ -138,7 +91,7 @@ const Lottery = () => {
     // For example, you can use the ethers.js library to interact with the $BONE token contract
     const boneContract = new Contract(BONE_TOKEN_ADDRESS, boneTokenABI, signer);
     const balance = await boneContract.balanceOf(signer.getAddress());
-    return ethers.utils.formatUnits(balance, 18);
+    return ethers.formatUnits(balance, 18);
   };
 
   const buyTickets = async () => {
@@ -146,11 +99,11 @@ const Lottery = () => {
       setLoading(true);
 
       // Parse the ticket price and numbers
-      const parsedPrice = ethers.utils.parseUnits(ticketPrice, 18);
+      const parsedPrice = ethers.parseUnits(ticketPrice, 18);
       const parsedNumbers = ticketNumbers.map(num => parseInt(num, 10));
 
       // Ensure the ticket price and numbers are valid
-      if (parsedPrice.lt(ethers.utils.parseUnits(minPrice, 18))) {
+      if (parsedPrice.lt(ethers.parseUnits(minPrice, 18))) {
         throw new Error("The ticket price must be greater than or equal to the minimum price.");
       }
       for (let i = 0; i < parsedNumbers.length; i++) {
@@ -284,7 +237,7 @@ const Lottery = () => {
       const lotteryContract = getLotteryInstance(networkId, signer);
 
       // Call the setMinPrice function on the Lottery contract
-      const parsedMinPrice = ethers.utils.parseUnits(newMinPrice, 18);
+      const parsedMinPrice = ethers.parseUnits(newMinPrice, 18);
       const tx = await lotteryContract.setMinPrice(parsedMinPrice);
       await tx.wait();
 
@@ -357,48 +310,48 @@ const Lottery = () => {
   };
 
   return (
-    <Container className={classes.container}>
-      <Typography variant="h4" className={classes.title}>
+    <div>
+      <h4>
         🎟️ DogSwap Lottery
-      </Typography>
-      <Typography variant="body1" className={classes.subTitle}>
+      </h4>
+      <p>
         Buy tickets for a chance to win the jackpot! The more tickets you buy, the higher your chances of winning.
-      </Typography>
-      <Grid container spacing={2} justify="center">
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faWallet} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Your Balance: {walletBalance}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faTicketAlt} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Total Tickets: {totalTickets}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faCoins} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Jackpot: {jackpotAmount}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faTrophy} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Your Tickets: 0</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-      <TextField
+      </p>
+      <div div spacing={2} justify="center">
+        <div item xs={12} sm={6} md={3}>
+          <div>
+            <div>
+              <FontAwesomeIcon icon={faWallet} size="2x" />
+              <h6>Your Balance: {walletBalance}</h6>
+            </div>
+          </div>
+        </div>
+        <div item xs={12} sm={6} md={3}>
+          <div>
+            <div>
+              <FontAwesomeIcon icon={faTicketAlt} size="2x" />
+              <h6>Total Tickets: {totalTickets}</h6>
+            </div>
+          </div>
+        </div>
+        <div item xs={12} sm={6} md={3}>
+          <div>
+            <div>
+              <FontAwesomeIcon icon={faCoins} size="2x" />
+              <h6>Jackpot: {jackpotAmount}</h6>
+            </div>
+          </div>
+        </div>
+        <div item xs={12} sm={6} md={3}>
+          <div>
+            <div>
+              <FontAwesomeIcon icon={faTrophy} size="2x" />
+              <h6>Your Tickets: 0</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+      <textarea
         label="Ticket Price"
         variant="outlined"
         fullWidth
@@ -407,7 +360,7 @@ const Lottery = () => {
         onChange={(e) => setTicketPrice(e.target.value)}
       />
       {[0, 1, 2, 3].map((index) => (
-        <TextField
+        <textarea
           key={index}
           label={`Number ${index + 1}`}
           variant="outlined"
@@ -421,135 +374,128 @@ const Lottery = () => {
           }}
         />
       ))}
-      <Button
+      <button
         variant="contained"
         color="primary"
-        className={classes.button}
         onClick={buyTickets}
         disabled={loading}
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Buy Ticket 🎟️"}
-      </Button>
-      <Button
+        {loading ? <div size={24} color="inherit" /> : "Buy Ticket 🎟️"}
+      </button>
+      <button
         variant="contained"
         color="secondary"
-        className={classes.button}
         onClick={claimReward}
         disabled={loading}
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Claim Reward 💰"}
-      </Button>
+        {loading ? <div size={24} color="inherit" /> : "Claim Reward 💰"}
+      </button>
       {drawed && (
-        <Typography variant="body1" className={classes.loading}>
+        <p>
           Winning Numbers: {winningNumbers.join(", ")} (Issue {issueIndex})
-        </Typography>
+        </p>
       )}
       {isAdmin && (
         <>
-          <TextField
+          <textarea
             label="External Random Number"
             variant="outlined"
             fullWidth
             margin="normal"
           />
-          <Button
+          <button
             variant="contained"
             color="primary"
-            className={classes.button}
             onClick={() => drawWinningNumbers(0)} // Replace 0 with the external random number
             disabled={loading}>
             {loading ? (
-              <CircularProgress size={24} color="inherit" />
+              <div size={24} color="inherit" />
             ) : (
               "Draw Winning Numbers 🎰"
             )}
-          </Button>
-          <Button
+          </button>
+          <button
             variant="contained"
             color="secondary"
-            className={classes.button}
             onClick={resetLottery}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Reset Lottery 🔄"}
-          </Button>
-          <TextField
+            {loading ? <div size={24} color="inherit" /> : "Reset Lottery 🔄"}
+          </button>
+          <textarea
             label="New Minimum Price"
             variant="outlined"
             fullWidth
             margin="normal"
           />
-          <Button
+          <button
             variant="contained"
             color="primary"
-            className={classes.button}
             onClick={() => updateMinPrice("0.1")} // Replace "0.1" with the desired new minimum price
             disabled={loading}
           >
             {loading ? (
-              <CircularProgress size={24} color="inherit" />
+              <div size={24} color="inherit" />
             ) : (
               "Update Minimum Price 💰"
             )}
-          </Button>
-          <TextField
+          </button>
+          <textarea
             label="New Maximum Number"
             variant="outlined"
             fullWidth
             margin="normal"
           />
-          <Button
+          <button
             variant="contained"
             color="primary"
-            className={classes.button}
             onClick={() => updateMaxNumber(100)} // Replace 100 with the desired new maximum number
             disabled={loading}
           >
             {loading ? (
-              <CircularProgress size={24} color="inherit" />
+              <div size={24} color="inherit" />
             ) : (
               "Update Maximum Number 🔢"
             )}
-          </Button>
-          <TextField
+          </button>
+          <textarea
             label="Allocation 1 (%)"
             variant="outlined"
             fullWidth
             margin="normal"
           />
-          <TextField
+          <textarea
             label="Allocation 2 (%)"
             variant="outlined"
             fullWidth
             margin="normal"
           />
-          <TextField
+          <textarea
             label="Allocation 3 (%)"
             variant="outlined"
             fullWidth
             margin="normal"
           />
-          <Button
+          <button
             variant="contained"
             color="primary"
-            className={classes.button}
             onClick={() => updateAllocation(70, 20, 10)} // Replace 70, 20, 10 with the desired allocation percentages
             disabled={loading}
           >
             {loading ? (
-              <CircularProgress size={24} color="inherit" />
+              <div size={24} color="inherit" />
             ) : (
               "Update Allocation 📈"
             )}
-          </Button>
+          </button>
         </>
       )}
       {message && (
-        <Typography variant="body1" className={classes.loading}>
+        <p>
           {message}
-        </Typography>
+        </p>
       )}
-    </Container>
+    </div>
   );
  };
  

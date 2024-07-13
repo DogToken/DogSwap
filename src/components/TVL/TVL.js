@@ -1,36 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Container, Typography, CircularProgress, Box, Card, CardContent } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
 import pairABI from "../../build/IUniswapV2Pair.json";
 import boneTokenABI from "../../build/BoneToken.json";
 import axios from 'axios';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-    padding: theme.spacing(2),
-  },
-  card: {
-    maxWidth: 600,
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-    borderRadius: theme.spacing(2),
-    padding: theme.spacing(4),
-    background: "#FFFFFF",
-  },
-  tvlValue: {
-    fontWeight: "bold",
-    fontSize: "1.5rem",
-    marginTop: theme.spacing(2),
-  },
-  priceInfo: {
-    marginTop: theme.spacing(2),
-  },
-}));
 
 const POOLS = [
   { id: 0, name: "$BONE-WMINT", address: "0x21D897515b2C4393F7a23BBa210b271D13CCdF10" },
@@ -52,7 +26,6 @@ const getBoneTokenInstance = (networkId, signer) => {
 };
 
 const TVL = () => {
-    const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [tvlData, setTVLData] = useState(null);
     const [mintmePrice, setMintmePrice] = useState(null);
@@ -144,28 +117,28 @@ const TVL = () => {
 
 
   return (
-    <Card className={classes.card}>
-    <CardContent>
-      <Typography variant="h4" gutterBottom>
+    <div>
+    <div>
+      <h4>
         Total Value Locked (TVL)
-      </Typography>
+      </h4>
       {loading ? (
-        <CircularProgress />
+        <div />
       ) : (
-        <>
-          <Typography variant="subtitle1" className={classes.tvlValue}>
+        <div>
+          <div>
             TVL = ${tvlData} USD
-          </Typography>
-          <Typography variant="subtitle1" className={classes.priceInfo}>
+          </div>
+          <div>
             1 MintMe = ${mintmePrice} USD
-          </Typography>
-          <Typography variant="subtitle1" className={classes.priceInfo}>
+          </div>
+          <div>
             1 🦴 BONE = {bonePrice} MintMe (${bonePriceInUSD} USD)
-          </Typography>
-        </>
+          </div>
+        </div>
       )}
-    </CardContent>
-  </Card>
+    </div>
+  </div>
 );
 };
 

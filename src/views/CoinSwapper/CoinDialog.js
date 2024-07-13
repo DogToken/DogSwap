@@ -1,92 +1,10 @@
 import React from "react";
-import {
-  Button,
-  Dialog,
-  Grid,
-  IconButton,
-  makeStyles,
-  TextField,
-  Typography,
-  withStyles,
-} from "@material-ui/core";
 import COINS from "../../constants/coins";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import MuiDialogActions from "@material-ui/core/DialogActions";
-import CloseIcon from "@material-ui/icons/Close";
 import CoinButton from "./CoinButton";
 import { doesTokenExist } from "../../utils/ethereumFunctions";
 import PropTypes from "prop-types";
-import * as COLORS from "@material-ui/core/colors";
-
-const styles = (theme) => ({
-  dialogContainer: {
-    borderRadius: theme.spacing(2),
-  },
-  titleSection: {
-    padding: theme.spacing(2),
-  },
-  titleText: {
-    alignSelf: "center",
-  },
-  hr: {
-    margin: 0,
-  },
-  address: {
-    paddingLeft: theme.spacing(2.5),
-    paddingRight: theme.spacing(2.5),
-    paddingBottom: theme.spacing(2),
-  },
-  coinList: {
-    height: "300px",
-    // overflowY: "scroll",
-  },
-  coinContainer: {
-    paddingLeft: theme.spacing(0.5),
-    paddingRight: theme.spacing(0.5),
-    paddingTop: theme.spacing(2),
-    marginTop: theme.spacing(2),
-    overflow: "hidden", 
-    overflowY:"scroll"
-  },
-});
-
-const useStyles = makeStyles(styles);
 
 // This is a modified version of MaterialUI's DialogTitle component, I've added a close button in the top right corner
-const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle
-      className={classes.titleSection}
-      {...other}
-    >
-      <Grid
-        container
-        direction="row"
-        justifyContent="space-between"
-        alignContent="center"
-      >
-        <Typography variant="h6" className={classes.titleText}>
-          {children}
-        </Typography>
-        {onClose ? (
-          <IconButton aria-label="close" onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
-        ) : null}
-      </Grid>
-    </MuiDialogTitle>
-  );
-});
-
-// This is a modified version of MaterialUI's DialogActions component, the color has been changed by modifying the CSS
-const DialogActions = withStyles((theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-    backgroundColor: COLORS.grey[100],
-  },
-}))(MuiDialogActions);
 
 CoinDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
@@ -101,7 +19,6 @@ export default function CoinDialog(props) {
   // When the dialog closes, it will call the `onClose` prop with 1 argument which will either be undefined (if the
   // user closes the dialog without selecting anything), or will be a string containing the address of a coin.
 
-  const classes = useStyles();
   const { onClose, open, coins, signer, ...others } = props;
 
   const [address, setAddress] = React.useState("");
@@ -158,21 +75,20 @@ export default function CoinDialog(props) {
   };
 
   return (
-    <Dialog
+    <div
       open={open}
       onClose={() => exit(undefined)}
       fullWidth
       maxWidth="sm" // Change the maxWidth here
       sx={{ zIndex: 500000 }}
-      classes={{ paper: classes.dialogContainer }}
     >
-      <DialogTitle onClose={() => exit(undefined)}>Select Coin</DialogTitle>
+      <div onClose={() => exit(undefined)}>Select Coin</div>
 
-      <hr className={classes.hr} />
+      <hr/>
 
-      <div className={classes.coinContainer}>
-        <Grid container direction="column" spacing={1} alignContent="center">
-          <TextField
+      <div>
+        <div container direction="column" spacing={1} alignContent="center">
+          <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             variant="outlined"
@@ -180,36 +96,35 @@ export default function CoinDialog(props) {
             error={error !== ""}
             helperText={error}
             fullWidth
-            className={classes.address}
           />
 
-          <hr className={classes.hr} />
+          <hr/>
 
-          <Grid item className={classes.coinList}>
-            <Grid container direction="column">
+          <div item>
+            <div container direction="column">
               {/* Maps all of the tokens in the constants file to buttons */}
               {coins.map((coin, index) => (
-                <Grid item key={index} xs={12}>
+                <div item key={index} xs={12}>
                   <CoinButton
                     coinName={coin.name}
                     coinAbbr={coin.abbr}
                     onClick={() => exit(coin.address)}
                     logoUrl={coin.logoUrl} 
                   />
-                </Grid>
+                </div>
               ))}
-            </Grid>
-          </Grid>
-        </Grid>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <hr className={classes.hr} />
+      <hr />
 
-      <DialogActions>
-        <Button autoFocus onClick={submit} color="primary">
+      <div>
+        <button autoFocus onClick={submit} color="primary">
           Enter
-        </Button>
-      </DialogActions>
-    </Dialog>
+        </button>
+      </div>
+    </div>
   );
 }

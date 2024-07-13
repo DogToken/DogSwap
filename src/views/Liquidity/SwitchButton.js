@@ -1,7 +1,6 @@
 import React from "react";
-import { ButtonGroup, Button } from "@material-ui/core";
 
-export default function SwitchButton(props) {
+export default function Switchbutton(props) {
   const { setDeploy } = props;
 
   const changeStyles = (K) => {
@@ -22,8 +21,8 @@ export default function SwitchButton(props) {
 
   return (
     <div>
-      <ButtonGroup size="large" variant="contained">
-        <Button
+      <div size="large" variant="contained">
+        <button
           id="add-button"
           color="primary"
           text="white"
@@ -33,9 +32,9 @@ export default function SwitchButton(props) {
           }}
         >
           Deploy Liquidity
-        </Button>
+        </button>
 
-        <Button
+        <button
           id="remove-button"
           color="secondary"
           text="white"
@@ -45,8 +44,8 @@ export default function SwitchButton(props) {
           }}
         >
           Remove Liquidity
-        </Button>
-      </ButtonGroup>
+        </button>
+      </div>
     </div>
   );
 }

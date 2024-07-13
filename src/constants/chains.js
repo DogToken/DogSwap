@@ -1,7 +1,7 @@
-export const networks = [24734]
+export const networks = [24734n]
 
 export const ChainId = {
-  MINTME: 24734
+  MINTME: 24734n
 };
 
 export const routerAddress = new Map();

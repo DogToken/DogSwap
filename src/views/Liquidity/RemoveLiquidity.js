@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-import { Grid, makeStyles, Paper, Typography } from "@material-ui/core";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import { useSnackbar } from "notistack";
 import {
   getBalanceAndSymbol,
@@ -15,45 +13,7 @@ import CoinDialog from "../CoinSwapper/CoinDialog";
 import LoadingButton from "../../components/LoadingButton";
 import WrongNetwork from "../../components/wrongNetwork";
 
-const styles = (theme) => ({
-  paperContainer: {
-    borderRadius: theme.spacing(2),
-    padding: theme.spacing(2),
-    paddingBottom: theme.spacing(3),
-    width: "40%",
-    overflow: "wrap",
-    background: "linear-gradient(45deg, #008e31 30%, #53ff8e 90%)",
-    color: "white",
-  },
-  fullWidth: {
-    width: "100%",
-  },
-  values: {
-    width: "50%",
-  },
-  title: {
-    textAlign: "center",
-    padding: theme.spacing(0.5),
-    marginBottom: theme.spacing(1),
-  },
-  hr: {
-    width: "100%",
-  },
-  balance: {
-    padding: theme.spacing(1),
-    overflow: "wrap",
-    textAlign: "center",
-  },
-  buttonIcon: {
-    marginRight: theme.spacing(1),
-    padding: theme.spacing(0.4),
-  },
-});
-
-const useStyles = makeStyles(styles);
-
 function LiquidityRemover(props) {
-  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
   // Stores a record of whether their respective dialog window is open
@@ -318,8 +278,6 @@ function LiquidityRemover(props) {
 
   return (
     <div>
-      {/* Coin Swapper */}
-      <Typography variant="h5" className={classes.title}></Typography>
 
       {/* Dialog Windows */}
       <CoinDialog
@@ -338,8 +296,8 @@ function LiquidityRemover(props) {
         open={wrongNetworkOpen}
       />
 
-      <Grid container direction="column" alignItems="center" spacing={2}>
-        <Grid item xs={12} className={classes.fullWidth}>
+      <div container direction="column" alignItems="center" spacing={2}>
+        <div item xs={12}>
           <RemoveLiquidityField1
             activeField={true}
             value={field1Value}
@@ -347,121 +305,118 @@ function LiquidityRemover(props) {
             onChange={handleChange.field1}
             symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
           />
-        </Grid>
+        </div>
 
-        <Grid item xs={12} className={classes.fullWidth}>
+        <div item xs={12}>
           <RemoveLiquidityField2
             activeField={true}
             onClick={() => setDialog2Open(true)}
             symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
           />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
 
-      <Grid
+      <div
         container
         direction="row"
         alignItems="center"
         justifyContent="center"
         spacing={4}
-        className={classes.balance}
       >
-        <hr className={classes.hr} />
-        <Grid
+        <hr />
+        <div
           container
           item
-          className={classes.values}
           direction="column"
           alignItems="center"
           spacing={2}
         >
           {/* Balance Display */}
-          <Typography variant="h6">Your Balances</Typography>
-          <Grid container direction="row" justifyContent="space-between">
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
+          <h6>Your Balances</h6>
+          <div container direction="row" justifyContent="space-between">
+            <div item xs={6}>
+              <p>
                 {formatBalance(coin1.balance, coin1.symbol)}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
+              </p>
+            </div>
+            <div item xs={6}>
+              <p>
                 {formatBalance(coin2.balance, coin2.symbol)}
-              </Typography>
-            </Grid>
-          </Grid>
+              </p>
+            </div>
+          </div>
 
-          <hr className={classes.hr} />
+          <hr />
 
           {/* Reserves Display */}
-          <Typography variant="h6">Reserves</Typography>
-          <Grid container direction="row" justifyContent="space-between">
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
+          <h6>Reserves</h6>
+          <div container direction="row" justifyContent="space-between">
+            <div item xs={6}>
+              <p>
                 {formatReserve(reserves[0], coin1.symbol)}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
+              </p>
+            </div>
+            <div item xs={6}>
+              <p>
                 {formatReserve(reserves[1], coin2.symbol)}
-              </Typography>
-            </Grid>
-          </Grid>
+              </p>
+            </div>
+          </div>
 
-          <hr className={classes.hr} />
+          <hr />
 
           {/* Liquidity Tokens Display */}
-          <Typography variant="h6">Your Liquidity Pool Tokens</Typography>
-          <Grid container direction="row" justifyContent="center">
-            <Grid item xs={6}>
-              <Typography variant="body1" className={classes.balance}>
+          <h6>Your Liquidity Pool Tokens</h6>
+          <div container direction="row" justifyContent="center">
+            <div item xs={6}>
+              <p>
                 {formatReserve(liquidityTokens, "UNI-V2")}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
+              </p>
+            </div>
+          </div>
+        </div>
 
-        <Paper className={classes.paperContainer}>
+        <div >
           {/*Red  Display to show the quote */}
-          <Grid
+          <div
             container
             item
             direction="column"
             alignItems="center"
             spacing={2}
-            className={classes.fullWidth}
           >
             {/* Tokens in */}
-            <Typography variant="h6">Liquidity Pool Tokens in</Typography>
-            <Grid container direction="row" justifyContent="center">
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
+            <h6>Liquidity Pool Tokens in</h6>
+            <div container direction="row" justifyContent="center">
+              <div item xs={6}>
+                <p>
                   {formatBalance(tokensOut[0], "UNI-V2")}
-                </Typography>
-              </Grid>
-            </Grid>
+                </p>
+              </div>
+            </div>
 
-            <hr className={classes.hr} />
+            <hr />
 
             {/* Liquidity Tokens Display */}
-            <Typography variant="h6">Tokens Out</Typography>
-            <Grid container direction="row" justifyContent="space-between">
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
+            <h6>Tokens Out</h6>
+            <div container direction="row" justifyContent="space-between">
+              <div item xs={6}>
+                <p>
                   {formatBalance(tokensOut[1], coin1.symbol)}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
+                </p>
+              </div>
+              <div item xs={6}>
+                <p>
                   {formatBalance(tokensOut[2], coin2.symbol)}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Paper>
-        <hr className={classes.hr} />
-      </Grid>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+      </div>
 
-      <Grid container direction="column" alignItems="center" spacing={2}>
+      <div container direction="column" alignItems="center" spacing={2}>
         <LoadingButton
           loading={loading}
           valid={isButtonEnabled()}
@@ -469,10 +424,9 @@ function LiquidityRemover(props) {
           fail={false}
           onClick={remove}
         >
-          <ArrowDownwardIcon className={classes.buttonIcon} />
           Remove
         </LoadingButton>
-      </Grid>
+      </div>
     </div>
   );
 }

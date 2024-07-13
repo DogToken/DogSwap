@@ -1,63 +1,11 @@
 // StakingPool.jsx
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, Typography, CircularProgress, TextField, Grid, Card, CardContent } from '@material-ui/core';
 import { Contract, ethers } from 'ethers';
 import { getProvider, getSigner, getNetwork } from '../../utils/ethereumFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons';
 import boneTokenABI from '../../build/BoneToken.json';
 import masterChefABI from '../../build/MasterChef.json';
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      padding: theme.spacing(3),
-      backgroundColor: theme.palette.background.paper,
-      borderRadius: theme.spacing(1),
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    },
-    title: {
-      marginBottom: theme.spacing(2),
-      fontWeight: 'bold',
-      color: theme.palette.primary.main,
-    },
-    subTitle: {
-      marginBottom: theme.spacing(3),
-      color: theme.palette.text.secondary,
-    },
-    stakingContainer: {
-      marginTop: theme.spacing(3),
-    },
-    stakingAction: {
-      display: 'flex',
-      justifyContent: 'center',
-      marginTop: theme.spacing(2),
-      '& > *': {
-        margin: theme.spacing(1),
-      },
-    },
-    balanceContainer: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      marginBottom: theme.spacing(2),
-      padding: theme.spacing(1),
-      backgroundColor: theme.palette.secondary.light,
-      borderRadius: theme.spacing(1),
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    },
-    balanceItem: {
-      display: 'flex',
-      alignItems: 'center',
-    },
-    balanceIcon: {
-      marginRight: theme.spacing(0.5),
-      color: theme.palette.primary.main,
-    },
-    balanceText: {
-      fontSize: '0.8rem',
-      fontWeight: 'bold',
-    },
-  }));
 
   const StakingPool = ({
     title,
@@ -67,7 +15,6 @@ const useStyles = makeStyles((theme) => ({
     poolId,
     lpTokenAddress,
   }) => {
-    const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [claimMessage, setClaimMessage] = useState('');
     const [stakingAmount, setStakingAmount] = useState('');
@@ -91,22 +38,22 @@ const useStyles = makeStyles((theme) => ({
   
       // Fetch the balance of the user's wallet
         const walletBalance = await lpTokenContract.balanceOf(signer.getAddress());
-        const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
+        const formattedWalletBalance = ethers.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
         setWalletBalance(parseFloat(formattedWalletBalance).toFixed(5));
 
         // Fetch the total LP token supply
         const totalSupply = await lpTokenContract.totalSupply();
-        const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18);
+        const formattedTotalSupply = ethers.formatUnits(totalSupply, 18);
         setTotalLpTokens(parseFloat(formattedTotalSupply).toFixed(5));
   
         // Fetch staked LP tokens
         const userInfo = await masterChefContract.userInfo(poolId, signer.getAddress());
-        const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18);
+        const formattedStakedAmount = ethers.formatUnits(userInfo.amount, 18);
         setStakedLpTokens(parseFloat(formattedStakedAmount).toFixed(5));
   
         // Fetch pending rewards
         const pendingRewards = await masterChefContract.pendingBone(poolId, signer.getAddress());
-        const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18);
+        const formattedPendingRewards = ethers.formatUnits(pendingRewards, 18);
         setPendingBone(parseFloat(formattedPendingRewards).toFixed(5));
       } catch (error) {
         console.error('Error fetching balances:', error);
@@ -118,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
           setLoading(true);
       
           // Parse staking amount
-          const amountToStake = ethers.utils.parseUnits(stakingAmount, 18);
+          const amountToStake = ethers.parseUnits(stakingAmount, 18);
       
           // Ensure the amount to stake is greater than zero
           if (amountToStake.lte(0)) {
@@ -159,7 +106,7 @@ const useStyles = makeStyles((theme) => ({
       setLoading(true);
 
       // Parse withdrawal amount
-      const amountToWithdraw = ethers.utils.parseUnits(stakingAmount, 18);
+      const amountToWithdraw = ethers.parseUnits(stakingAmount, 18);
 
       // Ensure the amount to withdraw is greater than zero
       if (amountToWithdraw.lte(0)) {
@@ -201,29 +148,29 @@ const useStyles = makeStyles((theme) => ({
   };
 
   return (
-    <div className={classes.root}>
-      <Typography variant="h5" className={classes.title}>
+    <div>
+      <h5>
         {title}
-      </Typography>
-      <Typography variant="body1" className={classes.subTitle}>
+      </h5>
+      <p>
         {subTitle}
-      </Typography>
-      <div className={classes.balanceContainer}>
-        <div className={classes.balanceItem}>
-          <FontAwesomeIcon icon={faCoins} size="1x" className={classes.balanceIcon} />
-          <Typography variant="body2" className={classes.balanceText}>My Balance: {walletBalance}</Typography>
+      </p>
+      <div>
+        <div>
+          <FontAwesomeIcon icon={faCoins} size="1x" />
+          <p>My Balance: {walletBalance}</p>
         </div>
-        <div className={classes.balanceItem}>
-          <FontAwesomeIcon icon={faHandHoldingUsd} size="1x" className={classes.balanceIcon} />
-          <Typography variant="body2" className={classes.balanceText}>Staked: {stakedLpTokens}</Typography>
+        <div>
+          <FontAwesomeIcon icon={faHandHoldingUsd} size="1x" />
+          <p>Staked: {stakedLpTokens}</p>
         </div>
-        <div className={classes.balanceItem}>
-          <FontAwesomeIcon icon={faClock} size="1x" className={classes.balanceIcon} />
-          <Typography variant="body2" className={classes.balanceText}>Pending $BONE: {pendingBone}</Typography>
+        <div>
+          <FontAwesomeIcon icon={faClock} size="1x" />
+          <p>Pending $BONE: {pendingBone}</p>
         </div>
       </div>
-      <div className={classes.stakingContainer}>
-        <TextField
+      <div>
+        <input
           label="Amount to Deposit/Withdraw"
           variant="outlined"
           fullWidth
@@ -231,31 +178,29 @@ const useStyles = makeStyles((theme) => ({
           value={stakingAmount}
           onChange={(e) => setStakingAmount(e.target.value)}
         />
-        <div className={classes.stakingAction}>
-          <Button
+        <div>
+          <button
             variant="contained"
             color="primary"
-            className={classes.button}
             onClick={handleStakeTokens}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Deposit"}
-          </Button>
-          <Button
+            {loading ? <div size={24} color="inherit" /> : "Deposit"}
+          </button>
+          <button
             variant="contained"
             color="secondary"
-            className={classes.button}
             onClick={handleWithdrawTokens}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Withdraw"}
-          </Button>
+            {loading ? <div size={24} color="inherit" /> : "Withdraw"}
+          </button>
         </div>
       </div>
       {claimMessage && (
-        <Typography variant="body1" className={classes.loading}>
+        <p>
           {claimMessage}
-        </Typography>
+        </p>
       )}
     </div>
   );

@@ -1,54 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  Container,
-  Typography,
-  CircularProgress,
-  TextField,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Tooltip,
-} from "@material-ui/core";
 import { Contract, ethers } from "ethers";
 import boneTokenABI from "../../build/BoneToken.json";
 import { getProvider, getSigner, getNetwork, fetchReserves, fetchReservesRaw, getDecimals } from "../../utils/ethereumFunctions";
 
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(4),
-  },
-  card: {
-    padding: theme.spacing(2),
-  },
-  buttonContainer: {
-    marginTop: theme.spacing(2),
-  },
-  voteContainer: {
-    marginTop: theme.spacing(2),
-  },
-  voteItem: {
-    padding: theme.spacing(1, 2),
-  },
-  voteItemSecondaryAction: {
-    padding: theme.spacing(1, 2),
-  },
-  divider: {
-    margin: theme.spacing(2, 0),
-  },
-}));
-
 const VotingPage = () => {
-  const classes = useStyles();
   const [currentVotes, setCurrentVotes] = useState(0);
   const [newDelegateAddress, setNewDelegateAddress] = useState("");
   const [loading, setLoading] = useState(false);
@@ -63,7 +20,7 @@ const VotingPage = () => {
 
         // Fetch the current votes
         const currentVotesRaw = await boneContract.getCurrentVotes(provider.getSigner().getAddress());
-        const currentVotes = ethers.utils.formatEther(currentVotesRaw);
+        const currentVotes = ethers.formatEther(currentVotesRaw);
         setCurrentVotes(currentVotes);
 
         // Fetch the list of vote questions
@@ -104,7 +61,7 @@ const VotingPage = () => {
       const tx = await boneContract.delegate(newDelegateAddress);
       await tx.wait();
       const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
-      const updatedVotes = ethers.utils.formatEther(updatedVotesRaw);
+      const updatedVotes = ethers.formatEther(updatedVotesRaw);
       setCurrentVotes(updatedVotes);
     } catch (error) {
       console.error("Error delegating votes:", error);
@@ -122,7 +79,7 @@ const VotingPage = () => {
       const tx = await boneContract.castVote(voteIndex);
       await tx.wait();
       const updatedVotesRaw = await boneContract.getCurrentVotes(signer.getAddress());
-      const updatedVotes = ethers.utils.formatEther(updatedVotesRaw);
+      const updatedVotes = ethers.formatEther(updatedVotesRaw);
       setCurrentVotes(updatedVotes);
       setUserVotes({ ...userVotes, [voteIndex]: true });
     } catch (error) {
@@ -133,47 +90,42 @@ const VotingPage = () => {
   };
 
   return (
-    <Container className={classes.root}>
-      <Card className={classes.card}>
-        <CardContent>
+    <div>
+      <div>
+        <div>
           {/* ... (existing content) */}
-          <Grid container>
-            <Grid item xs={12}>
-              <Typography variant="h6" component="h3">
+          <div div>
+            <div item xs={12}>
+              <h6>
                 Vote on Questions
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
+              </h6>
+            </div>
+            <div item xs={12}>
               {voteQuestions.length > 0 ? (
-                <List>
+                <div>
                   {voteQuestions.map((question, index) => (
-                    <Card key={index} className={classes.voteItem}>
-                      <CardContent>
-                        <Tooltip title="The current vote question">
-                          <Typography variant="body1">{question}</Typography>
-                        </Tooltip>
-                      </CardContent>
-                      <CardActions className={classes.voteItemSecondaryAction}>
-                        <Button
+                    <div key={index}>
+                      <div>
+                        <button
                           variant="contained"
                           color={userVotes[index] ? "secondary" : "primary"}
                           onClick={() => handleVote(index)}
                           disabled={loading || userVotes[index]}
                         >
                           {userVotes[index] ? "Voted" : "Vote"}
-                        </Button>
-                      </CardActions>
-                    </Card>
+                        </button>
+                      </div>
+                    </div>
                   ))}
-                </List>
+                </div>
               ) : (
-                <Typography variant="body1">No vote questions available.</Typography>
+                <p>No vote questions available.</p>
               )}
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-    </Container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

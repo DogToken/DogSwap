@@ -1,6 +1,6 @@
 // useWeb3Provider.js
 import { useState, useEffect, useRef } from "react";
-import { ethers } from "ethers";
+import { ethers, BrowserProvider } from 'ethers';
 import { getAccount, getRouter, getNetwork, getWeth, getFactory } from "../utils/ethereumFunctions";
 import COINS from "../constants/coins";
 import * as chains from "../constants/chains";
@@ -20,7 +20,7 @@ const useWeb3Provider = () => {
 
   const setupConnection = async () => {
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const account = await getAccount();
       const chainId = await getNetwork(provider);

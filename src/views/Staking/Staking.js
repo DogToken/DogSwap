@@ -1,56 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Button, Container, Typography, CircularProgress, TextField, Grid, Card, CardContent } from "@material-ui/core";
 import { Contract, ethers } from "ethers";
 import { getProvider, getSigner, getNetwork } from "../../utils/ethereumFunctions";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins, faWallet, faHandHoldingUsd, faClock } from '@fortawesome/free-solid-svg-icons'; // Import FontAwesome icons
 import boneTokenABI from "../../build/BoneToken.json"; // Import the ABI for the $BONE token contract
 import masterChefABI from "../../build/MasterChef.json"; // Import the ABI for the MasterChef contract
-
-const useStyles = makeStyles((theme) => ({
-  container: {
-    marginTop: theme.spacing(4),
-    padding: theme.spacing(4),
-    textAlign: "center",
-    border: `2px solid ${theme.palette.primary.main}`,
-    borderRadius: theme.spacing(2),
-    background: theme.palette.background.default,
-    boxShadow: theme.shadows[3],
-  },
-  button: {
-    margin: theme.spacing(2),
-  },
-  loading: {
-    marginTop: theme.spacing(2),
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-    fontWeight: "bold",
-    color: theme.palette.primary.main,
-  },
-  subTitle: {
-    color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(2),
-  },
-  card: {
-    margin: theme.spacing(1),
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.secondary.light,
-  },
-  cardContent: {
-    textAlign: "left",
-    display: "flex",
-    alignItems: "center",
-  },
-  balanceIcon: {
-    marginRight: theme.spacing(1),
-  },
-  balanceText: {
-    fontSize: "1.2rem", // Adjust the font size
-    marginLeft: theme.spacing(1), // Add left margin for spacing
-  },
-}));
 
 const BONE_TOKEN_ADDRESS = "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF"; // Update with the $BONE token contract address
 const MASTER_CHEF_ADDRESS = "0x4f79af8335d41A98386f09d79D19Ab1552d0b925"; // Update with the MasterChef contract address
@@ -64,7 +18,6 @@ const getMasterChefInstance = (networkId, signer) => {
 };
 
 const Staking = () => {
-  const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [claimMessage, setClaimMessage] = useState("");
   const [stakingAmount, setStakingAmount] = useState("");
@@ -88,22 +41,22 @@ const Staking = () => {
 
       // Fetch the balance of the user's wallet
       const walletBalance = await boneTokenContract.balanceOf(signer.getAddress());
-      const formattedWalletBalance = ethers.utils.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
+      const formattedWalletBalance = ethers.formatUnits(walletBalance, 18); // Assuming 18 decimals for the token
       setWalletTokens(parseFloat(formattedWalletBalance).toFixed(5));
 
       // Fetch total token supply
       const totalSupply = await boneTokenContract.totalSupply();
-      const formattedTotalSupply = ethers.utils.formatUnits(totalSupply, 18); // Assuming 18 decimals for the token
+      const formattedTotalSupply = ethers.formatUnits(totalSupply, 18); // Assuming 18 decimals for the token
       setTotalTokens(parseFloat(formattedTotalSupply).toFixed(5));
 
       // Fetch pending rewards
       const pendingRewards = await masterChefContract.pendingBone(3, signer.getAddress()); // Assuming pool id is 0
-      const formattedPendingRewards = ethers.utils.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
+      const formattedPendingRewards = ethers.formatUnits(pendingRewards, 18); // Assuming 18 decimals for the token
       setPendingBone(parseFloat(formattedPendingRewards).toFixed(5));
 
       // Fetch staked amount
       const userInfo = await masterChefContract.userInfo(3, signer.getAddress()); // Assuming pool id is 0
-      const formattedStakedAmount = ethers.utils.formatUnits(userInfo.amount, 18); // Assuming 18 decimals for the token
+      const formattedStakedAmount = ethers.formatUnits(userInfo.amount, 18); // Assuming 18 decimals for the token
       setStakedAmount(parseFloat(formattedStakedAmount).toFixed(5));
     } catch (error) {
       console.error("Error fetching balances:", error);
@@ -115,7 +68,7 @@ const Staking = () => {
       setLoading(true);
 
       // Parse staking amount
-      const amountToStake = ethers.utils.parseUnits(stakingAmount, 18);
+      const amountToStake = ethers.parseUnits(stakingAmount, 18);
 
       // Ensure the amount to stake is greater than zero
       if (amountToStake.lte(0)) {
@@ -156,7 +109,7 @@ const Staking = () => {
       setLoading(true);
 
       // Parse withdrawal amount
-      const amountToWithdraw = ethers.utils.parseUnits(stakingAmount, 18);
+      const amountToWithdraw = ethers.parseUnits(stakingAmount, 18);
 
       // Ensure the amount to withdraw is greater than zero
       if (amountToWithdraw.lte(0)) {
@@ -186,48 +139,48 @@ const Staking = () => {
   };
 
   return (
-    <Container className={classes.container}>
-      <Typography variant="h4" className={classes.title}>
+    <div>
+      <h4>
         💰 Staking $BONE
-      </Typography>
-      <Typography variant="body1" className={classes.subTitle}>
+      </h4>
+      <p>
         Stake your $BONE tokens to earn rewards and support the DogSwap ecosystem. Carefull, there is a 10% deposit fee.
-      </Typography>
-      <Grid container spacing={2} justify="center">
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faCoins} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Total $BONE: {totalTokens}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faWallet} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Your $BONE: {walletTokens}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faHandHoldingUsd} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Staked $BONE: {stakedAmount}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <FontAwesomeIcon icon={faClock} size="2x" className={classes.balanceIcon} />
-              <Typography variant="h6" className={classes.balanceText}>Pending $BONE: {pendingBone}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-      <TextField
+      </p>
+      <div div spacing={2} justify="center">
+        <div item xs={12} sm={6} md={3}>
+          <div>
+            <div>
+              <FontAwesomeIcon icon={faCoins} size="2x" />
+              <h6>Total $BONE: {totalTokens}</h6>
+            </div>
+          </div>
+        </div>
+        <div item xs={12} sm={6} md={3}>
+          <div>
+            <div>
+              <FontAwesomeIcon icon={faWallet} size="2x" />
+              <h6>Your $BONE: {walletTokens}</h6>
+            </div>
+          </div>
+        </div>
+        <div item xs={12} sm={6} md={3}>
+          <div>
+            <div>
+              <FontAwesomeIcon icon={faHandHoldingUsd} size="2x" />
+              <h6>Staked $BONE: {stakedAmount}</h6>
+            </div>
+          </div>
+        </div>
+        <div item xs={12} sm={6} md={3}>
+          <div>
+            <div>
+              <FontAwesomeIcon icon={faClock} size="2x" />
+              <h6>Pending $BONE: {pendingBone}</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input
         label="Amount to Stake/Withdraw"
         variant="outlined"
         fullWidth
@@ -235,30 +188,28 @@ const Staking = () => {
         value={stakingAmount}
         onChange={(e) => setStakingAmount(e.target.value)}
       />
-      <Button
+      <button
         variant="contained"
         color="primary"
-        className={classes.button}
         onClick={handleStakeTokens}
         disabled={loading}
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Stake $BONE 💰"}
-      </Button>
-      <Button
+        {loading ? <div size={24} color="inherit" /> : "Stake $BONE 💰"}
+      </button>
+      <button
         variant="contained"
         color="secondary"
-        className={classes.button}
         onClick={handleWithdrawTokens}
         disabled={loading}
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : "Withdraw $BONE 💰"}
-      </Button>
+        {loading ? <div size={24} color="inherit" /> : "Withdraw $BONE 💰"}
+      </button>
       {claimMessage && (
-        <Typography variant="body1" className={classes.loading}>
+        <p>
           {claimMessage}
-        </Typography>
+        </p>
       )}
-    </Container>
+    </div>
   );
 };
 

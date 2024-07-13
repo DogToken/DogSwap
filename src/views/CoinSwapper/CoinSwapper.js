@@ -1,15 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  Container,
-  Grid,
-  IconButton,
-  makeStyles,
-  Paper,
-  Typography,
-} from "@material-ui/core";
-import SwapVerticalCircleIcon from "@material-ui/icons/SwapVerticalCircle";
 import { useSnackbar } from "notistack";
-import LoopIcon from "@material-ui/icons/Loop";
 import {
   getAccount,
   getFactory,
@@ -29,45 +19,8 @@ import LoadingButton from "../../components/LoadingButton";
 import WrongNetwork from "../../components/wrongNetwork";
 import COINS from "../../constants/coins";
 import * as chains from "../../constants/chains";
-import { Snackbar } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
-
-const styles = (theme) => ({
-  paperContainer: {
-    borderRadius: theme.spacing(2),
-    padding: theme.spacing(1),
-    paddingBottom: theme.spacing(3),
-  },
-  switchButton: {
-    zIndex: 1,
-    margin: "-16px",
-    padding: theme.spacing(0.5),
-  },
-  fullWidth: {
-    width: "100%",
-  },
-  title: {
-    textAlign: "center",
-    padding: theme.spacing(0.5),
-    marginBottom: theme.spacing(1),
-  },
-  hr: {
-    width: "100%",
-  },
-  balance: {
-    padding: theme.spacing(1),
-    overflow: "wrap",
-    textAlign: "center",
-  },
-  footer: {
-    marginTop: "100px",
-  },
-});
-
-const useStyles = makeStyles(styles);
 
 function CoinSwapper(props) {
-  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
   // Stores a record of whether their respective dialog window is open
@@ -154,7 +107,7 @@ function CoinSwapper(props) {
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      getBalanceAndSymbol(props.network.account, address, props.network.provider, props.network.signer, props.network.weth.address, props.network.coins).then((data) => {
+      getBalanceAndSymbol(props.network.account, address, props.network.provider, props.network.signer, props.network.weth.target, props.network.coins).then((data) => {
         setCoin1({
           address: address,
           symbol: data.symbol,
@@ -176,7 +129,7 @@ function CoinSwapper(props) {
     // We only update the values if the user provides a token
     else if (address) {
       // Getting some token data is async, so we need to wait for the data to return, hence the promise
-      getBalanceAndSymbol(props.network.account, address, props.network.provider, props.network.signer, props.network.weth.address, props.network.coins).then((data) => {
+      getBalanceAndSymbol(props.network.account, address, props.network.provider, props.network.signer, props.network.weth.target, props.network.coins).then((data) => {
         setCoin2({
           address: address,
           symbol: data.symbol,
@@ -245,7 +198,7 @@ function CoinSwapper(props) {
       setField2Value("");
     } else if (parseFloat(field1Value) && coin1.address && coin2.address) {
       getAmountOut(coin1.address, coin2.address, field1Value, props.network.router, props.network.signer).then(
-        (amount) => setField2Value(amount.toFixed(7))
+        (amount) => setField2Value(amount)
       ).catch(e => {
         console.log(e);
         setField2Value("NA");
@@ -290,7 +243,7 @@ function CoinSwapper(props) {
           coin1.address,
           props.network.provider,
           props.network.signer,
-          props.network.weth.address,
+          props.network.weth.target,
           props.network.coins
           ).then(
           (data) => {
@@ -307,7 +260,7 @@ function CoinSwapper(props) {
           coin2.address,
           props.network.provider,
           props.network.signer,
-          props.network.weth.address,
+          props.network.weth.target,
           props.network.coins
           ).then(
           (data) => {
@@ -344,71 +297,70 @@ function CoinSwapper(props) {
         />
 
       {/* Coin Swapper */}
-      <Container maxWidth="xs">
-        <Paper className={classes.paperContainer}>
-          <Typography variant="h5" className={classes.title}>
+      <div maxWidth="xs">
+        <div>
+          <h5>
             Swap Coins
-          </Typography>
+          </h5>
 
-          <Grid container direction="column" alignItems="center" spacing={2}>
-            <Grid item xs={12} className={classes.fullWidth}>
+          <div div direction="column" alignItems="center" spacing={2}>
+            <div item xs={12}>
               <CoinField
                 activeField={true}
-                value={field1Value}
+                value={field1Value.toString()}
                 onClick={() => setDialog1Open(true)}
                 onChange={handleChange.field1}
                 symbol={coin1.symbol !== undefined ? coin1.symbol : "Select"}
               />
-            </Grid>
+            </div>
 
-            <IconButton onClick={switchFields} className={classes.switchButton}>
-              <SwapVerticalCircleIcon fontSize="medium" />
-            </IconButton>
+            <button onClick={switchFields}>
+            </button>
 
-            <Grid item xs={12} className={classes.fullWidth}>
+            <div item xs={12}>
               <CoinField
                 activeField={false}
-                value={field2Value}
+                value={field2Value.toString()}
                 onClick={() => setDialog2Open(true)}
                 symbol={coin2.symbol !== undefined ? coin2.symbol : "Select"}
               />
-            </Grid>
+            </div>
 
-            <hr className={classes.hr} />
+            <hr/>
 
             {/* Balance Display */}
-            <Typography variant="h6">Your Balances</Typography>
-            <Grid container direction="row" justifyContent="space-between">
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
+            <h6>Your Balances</h6>
+            <div div direction="row" justifyContent="space-between">
+              <div item xs={6}>
+                <div>
                   {formatBalance(coin1.balance, coin1.symbol)}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
+                </div>
+              </div>
+              <div item xs={6}>
+                <div>
                   {formatBalance(coin2.balance, coin2.symbol)}
-                </Typography>
-              </Grid>
-            </Grid>
+                </div>
+              </div>
+            </div>
 
-            <hr className={classes.hr} />
+            <hr/>
 
             {/* Reserves Display */}
-            <Typography variant="h6">Reserves</Typography>
-            <Grid container direction="row" justifyContent="space-between">
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
+            <h6>Reserves</h6>
+            <div div direction="row" justifyContent="space-between">
+              <div item xs={6}>
+                <div>
                   {formatReserve(reserves[0], coin1.symbol)}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1" className={classes.balance}>
+                </div>
+              </div>
+              <div item xs={6}>
+                <div>
                   {formatReserve(reserves[1], coin2.symbol)}
-                </Typography>
-              </Grid>
-            </Grid>
+                </div>
+              </div>
+            </div>
 
-            <hr className={classes.hr} />
+            <hr />
 
             <LoadingButton
               loading={loading}
@@ -417,40 +369,11 @@ function CoinSwapper(props) {
               fail={false}
               onClick={swap}
             >
-              <LoopIcon />
               Swap
             </LoadingButton>
-          </Grid>
-        </Paper>
-      </Container>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={showNotification}
-        autoHideDuration={null}
-        onClose={handleCloseNotification}
-        message="Our bridge is now online! Visit https://bridge.dogswap.xyz!"
-        action={
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={handleCloseNotification}
-          >
-      <CloseIcon fontSize="small" />
-    </IconButton>
-  }
-/>
-      <Grid
-        container
-        className={classes.footer}
-        direction="row"
-        justifyContent="center"
-        alignItems="flex-end"
-      >
-      </Grid>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

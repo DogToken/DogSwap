@@ -1,16 +1,15 @@
-import { Contract, ethers, BigNumber } from "ethers";
+/* global BigInt */
+import { Contract, ethers} from "ethers";
 import { fetchReserves, fetchReservesRaw, getDecimals } from "../../utils/ethereumFunctions";
-
-window.BigNumber = BigNumber;
 
 const ERC20 = require("../../build/ERC20.json");
 const PAIR = require("../../build/IUniswapV2Pair.json");
 
-const ONE = ethers.BigNumber.from(1);
-const TWO = ethers.BigNumber.from(2);
+const ONE = 1n;
+const TWO = 2n;
 
 function sqrt(value) {
-    let x = ethers.BigNumber.from(value);
+    let x = BigInt(value);
     let z = x.add(ONE).div(TWO);
     let y = x;
     while (z.sub(y).isNegative()) {
@@ -55,14 +54,14 @@ export async function addLiquidity(
   const token1Decimals = await getDecimals(token1);
   const token2Decimals = await getDecimals(token2);
 
-  const amountIn1 = ethers.utils.parseUnits(amount1, token1Decimals);
-  const amountIn2 = ethers.utils.parseUnits(amount2, token2Decimals);
+  const amountIn1 = ethers.parseUnits(amount1, token1Decimals);
+  const amountIn2 = ethers.parseUnits(amount2, token2Decimals);
 
-  const amount1Min = ethers.utils.parseUnits(amount1min, token1Decimals);
-  const amount2Min = ethers.utils.parseUnits(amount2min, token2Decimals);
+  const amount1Min = ethers.parseUnits(amount1min, token1Decimals);
+  const amount2Min = ethers.parseUnits(amount2min, token2Decimals);
 
   const time = Math.floor(Date.now() / 1000) + 200000;
-  const deadline = ethers.BigNumber.from(time);
+  const deadline = BigInt(time);
 
    // Approve token1 for the router contract
    const token1ApprovalTx = await token1.approve(routerContract.address, amountIn1);
@@ -152,19 +151,19 @@ export async function removeLiquidity(
 
   const Getliquidity = (liquidity_tokens)=>{
     if (liquidity_tokens < 0.001){
-      return ethers.BigNumber.from(liquidity_tokens*10**18);
+      return BigInt(liquidity_tokens*10**18);
     }
-    return ethers.utils.parseUnits(String(liquidity_tokens), 18);
+    return ethers.parseUnits(String(liquidity_tokens), 18);
   }
 
   const liquidity = Getliquidity(liquidity_tokens);
   console.log('liquidity: ', liquidity);
 
-  const amount1Min = ethers.utils.parseUnits(String(amount1min), token1Decimals);
-  const amount2Min = ethers.utils.parseUnits(String(amount2min), token2Decimals);
+  const amount1Min = ethers.parseUnits(String(amount1min), token1Decimals);
+  const amount2Min = ethers.parseUnits(String(amount2min), token2Decimals);
 
   const time = Math.floor(Date.now() / 1000) + 200000;
-  const deadline = ethers.BigNumber.from(time);
+  const deadline = BigInt(time);
 
   const wethAddress = await routerContract.WETH();
   const pairAddress = await factory.getPair(address1, address2);
@@ -295,8 +294,8 @@ async function quoteMintLiquidity(
   // let amountA = amountA*1, amountB = amountB*1;
 
   console.log(amountA,amountB)
-  const valueA = ethers.utils.parseUnits(amountA+'', token1Decimals)
-  const valueB = ethers.utils.parseUnits(amountB+'', token2Decimals)
+  const valueA = ethers.parseUnits(amountA+'', token1Decimals)
+  const valueB = ethers.parseUnits(amountB+'', token2Decimals)
 
   const reserveA = _reserveA
   const reserveB = _reserveB
@@ -304,13 +303,13 @@ async function quoteMintLiquidity(
 
   if (totalSupply === 0){
     const val = sqrt(valueA.mul(valueB).sub(MINIMUM_LIQUIDITY));
-    return ethers.utils.formatEther(val)-0;
+    return ethers.formatEther(val)-0;
   };
   const fee = await estimateFee(pair,factory,reserveA,reserveB);
   console.log(fee);
   totalSupply = totalSupply.add(fee);
   let liquidity = min(valueA.mul(totalSupply).div(reserveA), valueB.mul(totalSupply).div(reserveB));
-  return ethers.utils.formatEther(liquidity)-0;
+  return ethers.formatEther(liquidity)-0;
 };
 
 export async function quoteAddLiquidity(
@@ -398,8 +397,8 @@ export async function quoteRemoveLiquidity(
   const pair = new Contract(pairAddress, PAIR.abi, signer);
 
   const reservesRaw = await fetchReserves(address1, address2, pair, signer); // Returns the reserves already formated as ethers
-  const reserveA = ethers.utils.parseEther(reservesRaw[0]+"");
-  const reserveB = ethers.utils.parseEther(reservesRaw[1]+"");
+  const reserveA = ethers.parseEther(reservesRaw[0]+"");
+  const reserveB = ethers.parseEther(reservesRaw[1]+"");
 
   const feeOn =
     (await factory.feeTo()) !== '0x3D041510f58665a17D722EE2BC73Ae409BB8715b';
@@ -419,7 +418,7 @@ export async function quoteRemoveLiquidity(
   //   console.log(ethers.utils.formatEther(totalSupply),ethers.utils.formatEther(feeLiquidity))
   // }
 
-  totalSupply = ethers.utils.formatEther(totalSupply)-0;
+  totalSupply = ethers.formatEther(totalSupply)-0;
 
 
   const Aout = (reservesRaw[0] * liquidity) / totalSupply;

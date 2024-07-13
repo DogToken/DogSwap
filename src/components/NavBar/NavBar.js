@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MenuItems } from './MenuItems';
 import './NavBar.css';
-import { ethers } from 'ethers';
+import { ethers, BrowserProvider } from 'ethers';
 import { FaUserCircle, FaBars, FaTimes, FaCaretDown } from 'react-icons/fa';
 import Tooltip from '@mui/material/Tooltip';
 import boneTokenABI from "../../build/BoneToken.json";
@@ -35,9 +35,10 @@ const NavBar = () => {
   const connectWallet = async () => {
     try {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
+      const provider = new BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+
+      const address = signer.address;
 
       // $BONE token contract
       const boneContract = new ethers.Contract(
@@ -47,11 +48,11 @@ const NavBar = () => {
         signer
       );
       const boneBalance = await boneContract.balanceOf(address);
-      setBoneBalance(ethers.utils.formatUnits(boneBalance, 4));
+      setBoneBalance(ethers.formatUnits(boneBalance, 4));
 
       // Native token (MintMe) balance
       const mintmeBalance = await provider.getBalance(address);
-      setMintmeBalance(ethers.utils.formatEther(mintmeBalance));
+      setMintmeBalance(ethers.formatEther(mintmeBalance));
 
       // Calculate $BONE price in USD
       const bonePriceInMintMe = await getBonePriceInMintMe(boneContract, provider);
@@ -119,8 +120,8 @@ const NavBar = () => {
   const getBonePriceInMintMe = async (boneContract, provider) => {
     const bonePool = POOLS.find(pool => pool.name === "$BONE-WMINT");
     const boneReserves = await new ethers.Contract(bonePool.address, pairABI.abi, provider).getReserves();
-    const boneReserve0 = boneReserves[0] / 10 ** BONE_TOKEN_DECIMALS;
-    const boneReserve1 = boneReserves[1] / 10 ** 18;
+    const boneReserve0 = parseInt(boneReserves[0]) / 10 ** parseInt(BONE_TOKEN_DECIMALS);
+    const boneReserve1 = parseInt(boneReserves[1]) / 10 ** 18;
     const boneInWMINT = boneReserve1 / boneReserve0;
     const bonePriceInMintMe = 1 / boneInWMINT;
     return bonePriceInMintMe.toFixed(8);
@@ -128,6 +129,7 @@ const NavBar = () => {
 
   const getMintmePriceInUSD = async () => {
     const coinId = 'webchain';
+    return 0;
     try {
       const mintmePriceResponse = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
       const mintmePriceData = mintmePriceResponse.data[coinId]?.usd;
