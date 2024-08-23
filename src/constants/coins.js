@@ -21,12 +21,6 @@ const MINTMECoins = [
     address: "0x9D8dd79F2d4ba9E1C3820d7659A5F5D2FA1C22eF",
     logoUrl: "https://dogswap.xyz/images/coins/bone.png",
   },
-  // {
-  //   name: "Bridged Bone",
-  //   abbr: "bBONE",
-  //   address: "0x46700A70314623D4F17561c237252Ff0F6bEe656",
-  //   logoUrl: "https://dogswap.xyz/images/coins/bone.png",
-  // },
   {
     name: "1000x",
     abbr: "1000X",
@@ -110,12 +104,6 @@ const MINTMECoins = [
     abbr: "SMILE",
     address: "0xe5a65FE59B03301C2409c6C5aDe432F44fa1eD0c",
     logoUrl: "https://dogswap.xyz/images/coins/smile.png",
-  },
-  {
-    name: "VEXE",
-    abbr: "VXE",
-    address: "0x54DAa721aaF6938cdc3c6c455A9C5400e9A9462e",
-    logoUrl: "https://dogswap.xyz/images/coins/vexe.png",
   },
   {
     name: "Zenny",
