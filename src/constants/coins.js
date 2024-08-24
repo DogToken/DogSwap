@@ -52,6 +52,12 @@ const MINTMECoins = [
     logoUrl: "https://www.mintme.com/media/cache/avatar_large/uploads/images/a36d2a38-4f17-11ed-be77-ac162db679ce.png",
   },
   {
+    name: "D Club",
+    abbr: "DClub",
+    address: "0x7457a49688E2D7a2067694f687Ff87A3D10008B3",
+    logoUrl: "https://www.mintme.com/media/cache/avatar_large/uploads/images/f0e22c40-60e6-11ef-a94b-ac162db679ce.png",
+  },
+  {
     name: "Shells",
     abbr: "SHELLS",
     address: "0xaa153ce997e1363cb31231e644c4266d9c954630",
