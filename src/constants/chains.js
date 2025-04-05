@@ -5,5 +5,5 @@ export const ChainId = {
 };
 
 export const routerAddress = new Map();
-routerAddress.set(ChainId.MINTME, "0xa6c72da53025c5291d326fadc5a1277aa21fef2c");
+routerAddress.set(ChainId.MINTME, "0xFD4a9c7957BA1314f2546b0b9Ec7cEe01ac24cB9");
 
